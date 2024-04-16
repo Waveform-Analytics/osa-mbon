@@ -1,0 +1,7 @@
+pandas
+scikit-learn
+jupyterlab>=3
+ipywidgets>=7.6
+dash
+jupyter-dash
+plotly==5.20.0
