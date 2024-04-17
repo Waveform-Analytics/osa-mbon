@@ -1,0 +1,12 @@
+name: biosound-mbon
+title: biosound-mbon
+username: waveform-analytics
+account: waveform-analytics
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11784102
+bundleId: 8505312
+url: https://waveform-analytics.shinyapps.io/biosound-mbon/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

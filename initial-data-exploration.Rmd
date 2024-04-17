@@ -1,0 +1,82 @@
+---
+title: "BioSound - MBON Project"
+output: html_notebook
+---
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(plotly)
+library(dplyr)
+library(lubridate)
+```
+
+
+This is an exploratory data notebook. It's a sort of sandbox to prepare and do some quick visualizations prior to building the Shiny App. 
+
+## Load data
+Some data was already prepped for this, so we'll start by loading the file and doing some preliminary plotting. 
+
+```{r}
+indices_table <- read.csv("data/prepped/keywest-withfish.csv")
+
+indices_table <- indices_table %>%
+  mutate(datetime = ymd_hms(datetime))
+# indices_table$datetime <- as.POSIXct(indices_table$datetime, format = "%Y-%m-%d %H:%M:%S")
+str(indices_table$datetime)
+```
+
+## Quick line plot
+
+
+```{r}
+fig <- plot_ly(data = indices_table, height = 400)
+
+# Adding the line trace
+fig <- fig %>%
+  add_trace(
+    x = ~datetime,
+    y = ~ACI,
+    type = 'scatter',
+    mode = 'lines',
+    name = 'ACI'
+  )
+
+# Adding the marker trace
+fig <- fig %>%
+  add_trace(
+    x = ~datetime,
+    y = ~ACI,
+    type = 'scatter',
+    mode = 'markers',
+    name = 'Presence',
+    marker = list(size = ~Em * 7)
+  )
+
+# Updating layout
+fig <- fig %>%
+  layout(
+    legend = list(itemclick = FALSE, 
+                  itemdoubleclick = "toggleothers" 
+                  #itemsizing = 'constant'
+                  )
+    
+  )
+
+# Show the plot
+fig
+
+```
+
+## Correlation matrix
+
+
+```{r}
+# Select only the acoustic index columns
+index_columns <- names(indices_table)[3:62]
+
+# Calculate the correlation matrix
+cor_matrix <- cor(mtcars[cols])
+
+
+```
+
+
