@@ -7,6 +7,7 @@ output: html_notebook
 library(plotly)
 library(dplyr)
 library(lubridate)
+library(corrplot)
 ```
 
 
@@ -20,8 +21,7 @@ indices_table <- read.csv("data/prepped/keywest-withfish.csv")
 
 indices_table <- indices_table %>%
   mutate(datetime = ymd_hms(datetime))
-# indices_table$datetime <- as.POSIXct(indices_table$datetime, format = "%Y-%m-%d %H:%M:%S")
-str(indices_table$datetime)
+
 ```
 
 ## Quick line plot
@@ -69,14 +69,17 @@ fig
 ## Correlation matrix
 
 
-```{r}
+```{r correlation-plot, fig.width=8}
 # Select only the acoustic index columns
-index_columns <- names(indices_table)[3:62]
+index_columns <- names(indices_table)[3:15]
 
 # Calculate the correlation matrix
-cor_matrix <- cor(mtcars[cols])
+cor_matrix <- cor(indices_table[index_columns])
 
-
+# Plot the correlation matrix
+corrplot(cor_matrix, type = 'lower', order = 'hclust', tl.col = 'black',
+        cl.ratio = 0.2, tl.srt = 45, col = COL2('PuOr', 10))
+# corrplot(cor_matrix)
 ```
 
 
