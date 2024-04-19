@@ -26,7 +26,7 @@ ui <- page_sidebar(
 
 server <- function(input, output) {
   
-  indices_table <- read.csv("./data/keywest-withfish.csv")
+  indices_table <- read.csv("./shinydata/keywest-withfish.csv")
   indices_table <- indices_table %>%
     mutate(datetime = ymd_hms(datetime))
   

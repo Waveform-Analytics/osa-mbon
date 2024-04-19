@@ -140,6 +140,7 @@ venv.bak/
 
 # mkdocs documentation
 /site
+/shiny/shinydata/fromLiz
 
 # mypy
 .mypy_cache/
