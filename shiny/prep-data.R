@@ -75,6 +75,11 @@ print(tables_query)
 describe_table_query <- dbGetQuery(con, "DESCRIBE fish_data")
 print(describe_table_query)
 
+# Describe what's in the acoustic data table
+describe_table_query <- dbGetQuery(con, "DESCRIBE acoustic_indices")
+print(describe_table_query)
+
+
 # Preview data from a table
 print(dbGetQuery(con, "SELECT * FROM fish_data LIMIT 10"))
 

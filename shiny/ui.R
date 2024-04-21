@@ -12,7 +12,18 @@ ui <- page_sidebar(
   fillable=FALSE,
   sidebar = sidebar(
     title="More info",
-    "App sidebar - nothing here yet but maybe we could add selections for things like location or sample rate etc."
+    "Select an index to and date range to view a time series",
+    selectInput("selectedIndices", "Choose a Column:",
+                choices = index_columns,
+                selected = "ACI",
+                multiple = TRUE),
+    dateRangeInput("dateRange",
+                   label = "Select Date Range:",
+                   start = date_range$MinDate,
+                   end = date_range$MaxDate,
+                   min = date_range$MinDate,
+                   max = date_range$MaxDate)
+
   ),
   card(
     height=400,
@@ -23,5 +34,11 @@ ui <- page_sidebar(
     height=500,
     card_header("Correlation matrix"),
     plotOutput("corrPlot")
+  ),
+  card(
+    height=500,
+    card_header("Line plot"),
+    plotOutput("line_plot")
   )
+  
 )
