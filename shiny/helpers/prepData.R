@@ -5,6 +5,7 @@ library(readxl)
 library(duckdb)
 library(readr)
 library(lubridate)
+library(stringr)
 
 ##### Set up a Duckdb database #####
 
@@ -17,17 +18,31 @@ con <- dbConnect(duckdb::duckdb(), duckdb_file)
 
 ##### Add a table containing all acoustic indices #####
 
-root_dir = "shinydata/fromLiz/FWRI_KeyWest/"
+# root_dir = "shinydata/fromLiz/FWRI_KeyWest/"
+root_dir = "shinydata/fromLiz/"
 csv_files <- list.files(path = root_dir, pattern = "\\.csv$", recursive = TRUE)
+# csv_files <- csv_files[3:length(csv_files)]
 
 # Loop through each file path in the csv_files vector
 for (file in csv_files) {
-  # Read the CSV file into a data frame
-  aco_data <- read_csv(paste0(root_dir, file), show_col_types = FALSE)
-  aco_data$Date <- as.POSIXct(aco_data$Date, format = "%m/%d/%Y %H:%M")
-  
-  # Append the data to DuckDB table
-  dbWriteTable(con, "acoustic_indices", aco_data, append = TRUE)
+  if (str_detect(file, "Acoustic_Indices")) {
+    print(file)
+    # Read the CSV file into a data frame
+    aco_data <- read_csv(paste0(root_dir, file), show_col_types = FALSE)
+    if (str_detect(file, "Chuckchi")) {
+        # Chuckchi dataset doesn't have all the same columns, so filling in manually for now
+        aco_data$Dataset <- "Chuckchi"
+        aco_data$Sampling_Rate_kHz <- -1
+        aco_data$FFT <- -1
+        aco_data$Duration_sec <- 2500
+        aco_data$Thresholds_Hz <- '-1;-1;-1'
+      }
+    
+    aco_data$Date <- as.POSIXct(aco_data$Date, format = "%m/%d/%Y %H:%M")
+    # Append the data to DuckDB table
+    dbWriteTable(con, "acoustic_indices", aco_data, append = TRUE)
+    
+  }
 }
 
 ##### Add fish data to a different table #####
@@ -37,6 +52,7 @@ fish_files <- list.files(path = root_dir, pattern = "\\.txt$", recursive = TRUE)
 
 for (file in fish_files) {
   # Read the fish annotations CSV file into a data frame
+  print(file)
   fish_data <- read_tsv(paste0(root_dir, file), show_col_types = FALSE)
   # call cutoff @ end,	calls overlap
   fish_data$`call cutoff @ end` <- NULL
@@ -75,10 +91,9 @@ print(tables_query)
 describe_table_query <- dbGetQuery(con, "DESCRIBE fish_data")
 print(describe_table_query)
 
-# Describe what's in the acoustic data table
+# Describe what's in the data table
 describe_table_query <- dbGetQuery(con, "DESCRIBE acoustic_indices")
 print(describe_table_query)
-
 
 # Preview data from a table
 print(dbGetQuery(con, "SELECT * FROM fish_data LIMIT 10"))
