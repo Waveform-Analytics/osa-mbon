@@ -44,11 +44,27 @@ if __name__ == "__main__":
 
     data_folder = "shiny/shinydata/fromLiz"
 
+    # Set up the fish annotations table - this is specifically from key west data
+    fish_file_list = glob.glob(f"{data_folder}/**/*.txt", recursive=True)
+    df_fish = pd.DataFrame()
+    for file in fish_file_list:
+        df = pd.read_csv(file, delimiter="\t")
+        print(df.columns)
+        if ("Begin File" in df.columns): 
+            df["time"] = pd.to_datetime(df['Begin File'].str[:-4], format='%Y%m%dT%H%M%S')
+        elif ("Begin Path" in df.columns):
+            df["time"] = pd.to_datetime(df["Begin Path"].str[-19:-4], format='%Y%m%dT%H%M%S')
+        df_fish = pd.concat([df_fish, df])
+    # Reduce columns
+    df_fish = df_fish[["time", 'Low Freq (Hz)', 'High Freq (Hz)', 'Delta Time (s)',
+       'species', 'call variant', 'level']]
+
+
+
+    # Find the acoustic table files
     file_list = glob.glob(f"{data_folder}/**/*.csv", recursive=True)
     acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
 
-    # Set up the duckdb file
-    con = duckdb.connect(example.duckdb)
-
+   
 
 
