@@ -7,3 +7,4 @@ jupyter-dash
 plotly==5.20.0
 dash-core-components
 dash-bootstrap-components
+openpyxl
