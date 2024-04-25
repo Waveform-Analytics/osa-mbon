@@ -141,6 +141,8 @@ venv.bak/
 # mkdocs documentation
 /site
 /shiny/shinydata/fromLiz
+.RData
+.Rhistory
 
 # mypy
 .mypy_cache/

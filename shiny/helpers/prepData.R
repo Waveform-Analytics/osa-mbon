@@ -6,6 +6,8 @@ library(duckdb)
 library(readr)
 library(lubridate)
 library(stringr)
+library(data.table)
+
 
 ##### Set up a Duckdb database #####
 
@@ -16,10 +18,13 @@ if (file.exists(duckdb_file)) {
 }
 con <- dbConnect(duckdb::duckdb(), duckdb_file)
 
+
+root_dir = "shinydata/fromLiz/"
+
 ##### Add a table containing all acoustic indices #####
 
 # root_dir = "shinydata/fromLiz/FWRI_KeyWest/"
-root_dir = "shinydata/fromLiz/"
+
 csv_files <- list.files(path = root_dir, pattern = "\\.csv$", recursive = TRUE)
 # csv_files <- csv_files[3:length(csv_files)]
 
@@ -44,6 +49,8 @@ for (file in csv_files) {
     
   }
 }
+
+##### Add presence 
 
 ##### Add fish data to a different table #####
 
@@ -81,22 +88,50 @@ for (file in fish_files) {
   dbWriteTable(con, "fish_data", fish_data, append = TRUE)
 }
 
-# Get some quick info on the database and table(s)
 
-# Query to list all tables
-tables_query <- dbGetQuery(con, "SHOW TABLES")
-print(tables_query)
 
-# Describe what's in the acoustic data table
-describe_table_query <- dbGetQuery(con, "DESCRIBE fish_data")
-print(describe_table_query)
 
-# Describe what's in the data table
-describe_table_query <- dbGetQuery(con, "DESCRIBE acoustic_indices")
-print(describe_table_query)
+##############
 
-# Preview data from a table
-print(dbGetQuery(con, "SELECT * FROM fish_data LIMIT 10"))
+# Join Fish annotations with 
+
+dfA <- df_sub
+dfB <- df_fish
+
+# Calculate the time differences and find the median
+time_diffs <- diff(dfA$datetime_aco)
+median_diff <- median(time_diffs)
+
+# Shift datetime_aco down by one row
+dfA$end_time <- c(dfA$datetime_aco[-1], NA)
+# Set the last row's end_time using median_diff
+dfA$end_time[nrow(dfA)] <- dfA$datetime_aco[nrow(dfA)] + median_diff
+
+# Sort the dataframe
+dfA <- arrange(dfA, datetime_aco)
+
+# Convert dfA and dfB to data.table if they aren't already
+setDT(dfA)
+setDT(dfB)
+
+# Perform the non-equi join
+# This joins dfA with dfB where dfB's datetime_fish falls between dfA's datetime_aco and end_time
+results <- dfA[, .(present = any(dfB$datetime_fish >= datetime_aco & 
+                                   dfB$datetime_fish <= end_time)), 
+               by = .(datetime_aco, end_time)]
+dfA <- merge(dfA, results, by = c("datetime_aco", "end_time"), all.x = TRUE)
+
+
+# If you want to keep all rows from dfA and mark those without matches
+dfA[, present := FALSE]  # Add a default FALSE present column to dfA
+dfA[results, on = .(datetime_aco, end_time), present := i.present]  # Update with TRUE where matches occur
+
+# Convert back to data.frame if necessary
+dfA <- as.data.frame(dfA)
+
+
+#########
+
 
 dbDisconnect(con)
 

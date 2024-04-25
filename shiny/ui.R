@@ -1,4 +1,5 @@
 ui <- page_sidebar(
+  
   tags$head(tags$style(HTML("
     .bslib-card, .tab-content, .tab-pane, .card-body {
       overflow: visible !important;
@@ -32,10 +33,11 @@ ui <- page_sidebar(
   
   ## First Tab
   tabsetPanel(
-    tabPanel("Acoustic indices overview",
+    tabPanel("Annotated data",
              tags$br(),
-             tags$h1("Acoustic Indices Overview"),
-             tags$p("The Dataset and index selected on the sidebar are used to determine the data shown here."),
+             tags$h1("Acoustic Indices with correlates"),
+             tags$p("The Dataset and index selected on the sidebar are used to 
+                    determine the data shown here."),
              card(
                height=400,
                card_header("Line plot"),

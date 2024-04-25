@@ -1,0 +1,9 @@
+Dataset,Origin,Ecosystem_Type,Latitude,Longitude,Sampling_Rate_Hz,Hydrophone_Depth,Duty_Cycle,File_Duration_min
+Caesar Creek,University of Miami,Mangrove,25.396167,-80.2367,32000,N/A,10 sec/min,0.16 (10 seconds)
+Chuckchi Sea (Hanna Shoal),Oregon State University,Offshore,71.6,-161.5,16384,30,25 min/hour,25
+Gray's Reef NMS,NOAA Fisheries Northeast Fisheries Science Center,Offshore,31.396417,-80.8904,48000,16,Continuous,330
+Key West (WDR_grouper),Florida Fish and Wildlife Conservation Commission,Coral Reef,24.4416,-81.9336,48000,23,30 sec/hour,0.5 (30 seconds)
+May River,University of South Carolina Beaufort,Estuary,32.1946,-80.79224,80000,4.5,2 min/hour,2
+ONC (MEF Hydrophone),Ocean Networks Canada,Offshore,47.9493,-129.098351,64000,2189,Continuous,5
+OOI (HYDBBA 106),Ocean Observatories Initiative,Oregon Shelf,44.63704,-124.30586,64000,80,Continuous,5
+Hawaiian Islands Humpback NMS,SanctSound (H101),Island/Nearshore,20.80734,-156.65543,48000,60,Continuous,330
