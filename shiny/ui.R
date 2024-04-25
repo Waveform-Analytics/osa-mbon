@@ -1,4 +1,4 @@
-ui <- page_sidebar(
+ui <- page_navbar(
   
   tags$head(tags$style(HTML("
     .bslib-card, .tab-content, .tab-pane, .card-body {
@@ -7,76 +7,44 @@ ui <- page_sidebar(
   "))),
   
   title = "BioSound MBON Project Dashboard",
-  theme = bs_theme(bootswatch = "sandstone"),
+  theme = bs_theme(bootswatch = "minty"),
   fillable=FALSE,
   
-  # SIDEBAR
+  nav_panel(title = "Overview", 
+            h1("BioSound MBON Project overview"),
+            p("Overview contents here (interactive map, site descriptions, etc.")
+            
+            ),
   
-  sidebar = sidebar(
-    title="Dataset selection",
-    "Select an index and date range to view a time series",
-    
-    selectInput("selectedIndices", "Choose acoustic indices to plot:",
-                choices = index_columns,
-                selected = index_columns[1],
-                multiple = TRUE),
-    
-    dateRangeInput("dateRange",
-                   label = "Select Date Range:",
-                   start = date_range$MinDate,
-                   end = date_range$MaxDate,
-                   min = date_range$MinDate,
-                   max = date_range$MaxDate)
-  ),
-  
-  # MAIN PAGE AREA
-  
-  ## First Tab
-  tabsetPanel(
-    tabPanel("Annotated data",
-             tags$br(),
-             tags$h1("Acoustic Indices with correlates"),
-             tags$p("The Dataset and index selected on the sidebar are used to 
-                    determine the data shown here."),
-             card(
-               height=400,
-               card_header("Line plot"),
-               plotOutput("line_plot")
-             ),
-             
-             layout_columns(
-               card(
-                 height=350,
-                 card_header("Correlation matrix"),
-                 plotOutput("corrPlot")
-               ),
-               card(
-                 card_header("Placeholder")
-               ))
-    ),
-    
-    ## Second Tab
-    tabPanel("Fish annotations",
-             tags$br(),
-             tags$h1("Acoustic indices and fish annotations"),
-             
-             layout_columns(col_widths = c(4,8),
-                            card(
-                              card_header("User selection"),
-                              selectInput("selectedDataset", "Choose a dataset:",
-                                          choices = unique_datasets$Dataset,
-                                          selected = unique_datasets$Dataset[1],
-                                          multiple = FALSE),
-                            ),
-                            card(
-                              card_header("Plot visualization")
-                            )
-                            
-             )
-             
-             
-    ),
-    
-  )
-  
+  nav_panel(title = "Data explorer", 
+            h1("BioSound MBON Data Explorer"),
+            # Page contents
+            navset_underline(
+              nav_panel(title = "All Datasets", 
+                        h2("Overview of all datasets"),
+                        p("This tab will present an overview of the acoustic indices
+                          and water class data for all datasets. The user may 
+                          select a dataset, a year (if more than one year is 
+                          available) and an acoustic index."),
+                        p("One plot will show time series data overlaid on the
+                          water class data. A second plot will show the water
+                          class data reduced to the same time resolution as
+                          the satellite/water class data, and they will be 
+                          plotted against each other to visualize any possible
+                          correlations.")
+                        ),
+              
+              nav_panel(title = "Annotations", 
+                        h2("Acoustic indices with annotations"),
+                        
+                        ),
+              
+              nav_panel(title = "Recorded Durations", 
+                        h2("Compare different durations"),
+                        
+                        )
+              
+            )
+            ),
+
 )

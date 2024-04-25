@@ -10,9 +10,6 @@ library(ggplot2)
 # DB
 library(duckdb)
 library(dbplyr)
-conflicts_prefer(dplyr::filter)
-
-source("helpers/getPresence.R")
 
 # Establish connection to DuckDB
 con <- dbConnect(duckdb::duckdb(), "biosound-mbon.duckdb")
