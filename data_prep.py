@@ -1,14 +1,10 @@
 """Module for preparing data for the OSA/BioSound MBON project"""
 
 import glob
-import time
-from typing import List
-import numba
 
 import numpy as np
 import pandas as pd
 import duckdb
-
 
 
 def normalize_df(df_in, col_names):
@@ -29,94 +25,6 @@ def normalize_df(df_in, col_names):
         df_new[col] = df_zero/max(abs(df_zero))
 
     return df_new
-
-@numba.jit(nopython=True)
-def fish_overlap_numba(start_time, end_time, df_fishes, code):
-    """
-    Calculate the number of fish with the given code that overlap with the given time range.
-
-    This function uses the numba library to compile the function to machine code for faster execution.
-
-    Args:
-        start_time (float): The start time of the time range.
-        end_time (float): The end time of the time range.
-        df_fishes (pandas.DataFrame): The dataframe containing fish annotations.
-        code (str): The code of the fish species to count.
-
-    Returns:
-        int: The number of fish with the given code that overlap with the given time range.
-    """
-    n_fishes = 0
-    for _, row in df_fishes.iterrows():
-        if row["species"] == code and row["start_time"] <= end_time and start_time <= row["end_time"]:
-            n_fishes += 1
-    return n_fishes
-
-
-def get_fish_presence_numba(df_in: pd.DataFrame, df_fishes: pd.DataFrame, unq_codes: List[str]) -> pd.DataFrame:
-    """
-    Generate columns for fish/annotations presence/absence using vectorized operations and numba.
-
-    Args:
-        df_in: Input dataframe containing time steps.
-        df_fishes: Dataframe containing fish annotations.
-        unq_codes: List of unique fish codes.
-
-    Returns:
-        pd.DataFrame: Dataframe with added presence/absence columns.
-    """
-    df_out = df_in.copy()
-
-    for code in unq_codes:
-        df_out[f"{code}_n"] = df_out.apply(
-            lambda row: fish_overlap_numba(row["start_time"], row["end_time"], df_fishes[df_fishes["species"] == code], code),
-            axis=1
-        )
-        df_out[f"{code}_present"] = df_out[f"{code}_n"].apply(lambda x: x > 0)
-
-    return df_out
-
-# def get_fish_presence_2(df_in: pd.DataFrame, df_fishes: pd.DataFrame, unq_codes: list) -> pd.DataFrame:
-#     """Generate columns for fish/annotations presence/absence.
-
-#     This function appends columns for each of the unique fish codes to the input DataFrame,
-#     indicating both how many were logged at each time step, and also a boolean stating how 
-#     whether there is overlap. 
-
-#     Args:
-#         df_in (pd.DataFrame): Input DataFrame containing columns 'start_time' and 'end_time'.
-#         df_fishes (pd.DataFrame): DataFrame with fish data, must include 'species', 'start_time',
-#                                   and 'end_time' columns.
-#         unq_codes (list): List of unique fish species codes to check presence for.
-
-#     Returns:
-#         pd.DataFrame: The original DataFrame augmented with two columns per species code:
-#                       one indicating the count of fishes present ('_n') and one indicating
-#                       whether any fish were present at all ('_present') during the time interval.
-
-#     """
-#     df_out = df_in.copy()
-#     for code in unq_codes:
-#         # Filter rows for current species only once
-#         df_this_species = df_fishes[df_fishes["species"] == code]
-
-#         # Initialize lists to store results for each row in df_in
-#         n_fishes = []
-#         is_present = []
-
-#         # Use vectorized operations to calculate overlaps
-#         for start_time, end_time in zip(df_in["start_time"], df_in["end_time"]):
-#             overlap = df_this_species[(df_this_species["start_time"] <= end_time) &
-#                                       (start_time <= df_this_species["end_time"])]
-#             n_fishes_count = len(overlap)
-#             n_fishes.append(n_fishes_count)
-#             is_present.append(n_fishes_count > 0)
-
-#         # Add results to output DataFrame
-#         df_out[code + "_n"] = n_fishes
-#         df_out[code + "_present"] = is_present
-
-#     return df_out
 
 
 def get_fish_presence(df_in, df_fishes, unq_codes):
@@ -143,6 +51,7 @@ def get_fish_presence(df_in, df_fishes, unq_codes):
 if __name__ == "__main__":
 
     DATA_FOLDER = "shiny/shinydata/fromLiz"
+    OUT_FOLDER = "shiny/shinydata/prepped_tables"
 
     # ################################################################################## #
     # KEY WEST ANNOTATIONS
@@ -226,24 +135,27 @@ if __name__ == "__main__":
     # Normalize the indices
     df_aco_norm = normalize_df(df_aco, df_aco.columns[7:-2])
 
+    # ################################################################################## #
+    ## SAVE DATAFRAMES TO PARQUET TABLES
 
-    # Add columns to the main acoustic dataframe for presence/absence of species, based on annotation data
-    # Key West
-    # unique_codes_keywest = np.unique(df_fish_codes[df_fish_codes["key_west"] == True]["code"])
+    df_aco.to_parquet(OUT_FOLDER + '/t_aco.parquet')
+    df_aco_norm.to_parquet(OUT_FOLDER + '/t_aco_norm.parquet')
 
-    # print("start running first")
-    # t1 = time.time() 
-    # test1 = get_fish_presence(df_aco_norm_keywest, df_fish_keywest, unique_codes_keywest)
-    # t2 = time.time()
-    # elapsed_time = t2 - t1 
-    # print(elapsed_time)
-    # test1b = get_fish_presence(df_aco_norm, df_fish_keywest, unique_codes_keywest)
-    # t3 = time.time()
-    # elapsed_time_2 = t3-t2
-    # print(elapsed_time_2)
-    # # May River
-    # unique_codes_mayriver = np.unique(df_fish_codes[df_fish_codes["may_river"] == True]["code"])
-    # test2 = get_fish_presence(df_aco_norm, df_fish_mayriver, unique_codes_mayriver)
+    # Sort out some type inconsistencies within columns
+    df_fish_keywest_valid = df_fish_keywest.dropna().copy()
+    df_fish_keywest_valid.drop("level", axis=1, inplace=True)
+    # Save to parquet file
+    df_fish_keywest_valid.to_parquet(OUT_FOLDER + '/t_fish_keywest.parquet')
 
-    # print('breakpoint here for debugging')
+    # Sort out some type inconsistencies within columns
+    df_fish_mayriver_valid = df_fish_mayriver.dropna().copy()
+    df_fish_mayriver_valid.to_parquet(OUT_FOLDER + '/t_fish_mayriver.parquet')
 
+    # ################################################################################## #
+    ## SAVE PARQUET TABLES TO DUCKDB DATABASE FILE`
+    con = duckdb.connect('shiny/mbon.duckdb')
+    con.execute("CREATE TABLE t_aco AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco.parquet')")
+    con.execute("CREATE TABLE t_aco_norm AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco_norm.parquet')")
+    con.execute("CREATE TABLE t_fish_keywest AS SELECT # FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")
+    con.execute("CREATE TABLE t_fish_mayriver AS SELECT # FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")
+    con.close()

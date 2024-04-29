@@ -142,6 +142,7 @@ venv.bak/
 # mkdocs documentation
 /site
 /shiny/shinydata/fromLiz
+/shiny/shinydata/prepped_tables
 .RData
 .Rhistory
 /shiny/deprecated
