@@ -1,6 +1,23 @@
-code,species,latin
-Em,red grouper, Epinephelus morio
-Es,Nassau grouper, (Epinephelus striatus
-Mb,black grouper, Mycteroperca bonaci
-Uk,unknown, NA
-Vs,vessel, NA
+code,species,short_name,key_west,may_river
+Em,red grouper,red grouper,1,0
+Es,Nassau grouper,Nassau grouper,1,0
+Mb,black grouper,black grouper,1,0
+Uk,unknown,unknown,1,0
+Vs,vessel,vessel,1,0
+Sp,Silver perch,Silver perch,0,1
+Sp,Silver perch interruption,Silver perch,0,1
+Oy,Oyster toadfish boat whistle,Oyster,0,1
+Oy,Oyster toadfish grunt,Oyster,0,1
+Oy,Oyster toadfish interruption,Oyster,0,1
+Bd,Black drum,Black drum,0,1
+Bd,Black drum interruption,Black drum,0,1
+Ss,Spotted seatrout,Spotted seatrout,0,1
+Ss,Spotted seatrout interrpution,Spotted seatrout,0,1
+Rd,Red drum,Red drum,0,1
+Rd,Red drum interruption,Red drum,0,1
+Ac,Atlantic croaker,Atlantic croaker,0,1
+Wf,Weakfish,Weakfish,0,1
+Bo,Bottlenose dolphin echolocation,Bottlenose dolphin,0,1
+Bo,Bottlenose dolphin burst pulses,Bottlenose dolphin,0,1
+Bo,Bottlenose dolphin whistles,Bottlenose dolphin,0,1
+Vs,Vessel,vessel,0,1

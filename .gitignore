@@ -144,6 +144,8 @@ venv.bak/
 /shiny/shinydata/fromLiz
 .RData
 .Rhistory
+/shiny/deprecated
+/shiny/sandbox
 
 # mypy
 .mypy_cache/
