@@ -7,57 +7,50 @@ library(dplyr)
 # Plotting
 library(corrplot)
 library(ggplot2)
+library(dygraphs)
 # DB
 library(duckdb)
-library(dbplyr)
+library(arrow)
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "biosound-mbon.duckdb")
-# Access the tables via dplyr
-acousticIndices <- tbl(con, "acoustic_indices")
-fishData <- tbl(con, "fish_data")
+con <- dbConnect(duckdb::duckdb(), "mbon.duckdb")
 
-# Extract the full acoustic indices dataframe
-df_aco <- acousticIndices %>% collect()
-# Extract the full fish data dataframe
-df_fish <- fishData %>% collect()
-# Rename columns
-df_fish <- df_fish %>% rename(
-  datetime_fish = datetime
-)
-df_aco <- df_aco %>% rename(
-  datetime_aco = Date
-)
+# Load the tables into memory (may need to adjust this if we get bogged down)
+df_fish_keywest <- dbReadTable(con, "t_fish_keywest")
+df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver")
+df_aco <- dbReadTable(con, "t_aco")
+df_aco_norm <- dbReadTable(con, "t_aco_norm")
 
+# Get all of the unique datasets
+unique_datasets <- df_aco %>% distinct(Dataset)
 
-# For testing, get a subset of df_aco
-df_sub <- df_aco %>%
-  filter((Dataset == "Key West") & (FFT == 512)) %>%
-  distinct() %>%
-  collect()
+# Get all of the unique sample rates for the selected dataset
+unique_sr <- df_aco %>% 
+  filter(Dataset == unique_datasets$Dataset[1]) %>%
+  select(Sampling_Rate_kHz) %>%
+  distinct()
 
-# Get all column names
-aco_col_names <- colnames(acousticIndices)
+# Get unique durations based on previous selections
+unique_durations <- df_aco %>%
+  filter(Dataset == unique_datasets$Dataset[1]) %>%
+  filter(Sampling_Rate_kHz == unique_sr$Sampling_Rate_kHz[1]) %>%
+  select(Duration_sec) %>%
+  distinct()
 
 # Extract the column names that represent all acoustic indices
-index_columns_all <- aco_col_names[8:length(aco_col_names)]
+col_names = names(df_aco)
+index_columns_all <- col_names[8:(length(col_names)-4)]
 
-# A subset of the index columns
+# A subset of the index columns - update to pre-select a subset
 index_columns <- index_columns_all[1:10]
+selected_columns <- c("ZCR")
 
-# Pull out all the unique values in the "Dataset" column
-unique_datasets <- acousticIndices %>%
-  select(Dataset) %>%
-  distinct() %>%
-  collect() 
+subset_df_test <- df_aco %>%
+    filter(Dataset == "Key West",
+           Sampling_Rate_kHz == 48,
+           Duration_sec == 30)
+idxPicks_test <- subset_df_test[, c("start_time", selected_columns), drop = FALSE] 
 
-# Get the date range from the Date column
-date_range <- acousticIndices %>% 
-  summarize(
-    MinDate = min(Date),
-    MaxDate = max(Date)
-  ) %>% 
-  collect()
 
 dbDisconnect(con)
 

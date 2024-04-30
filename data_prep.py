@@ -132,14 +132,20 @@ if __name__ == "__main__":
     # Tidy up the dataframe
     df_aco = df_aco.drop(columns=['file_id','time_diff', 'median_diff'])
 
+    # Fix: Caser Creek to Caesar Creek
+    df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
+
     # Normalize the indices
     df_aco_norm = normalize_df(df_aco, df_aco.columns[7:-2])
 
+
     # ################################################################################## #
     ## SAVE DATAFRAMES TO PARQUET TABLES
+    df_aco_valid = df_aco.dropna()
+    df_aco_valid.to_parquet(OUT_FOLDER + '/t_aco.parquet')
 
-    df_aco.to_parquet(OUT_FOLDER + '/t_aco.parquet')
-    df_aco_norm.to_parquet(OUT_FOLDER + '/t_aco_norm.parquet')
+    df_aco_norm_valid = df_aco_norm.dropna()
+    df_aco_norm_valid.to_parquet(OUT_FOLDER + '/t_aco_norm.parquet')
 
     # Sort out some type inconsistencies within columns
     df_fish_keywest_valid = df_fish_keywest.dropna().copy()
@@ -156,6 +162,6 @@ if __name__ == "__main__":
     con = duckdb.connect('shiny/mbon.duckdb')
     con.execute("CREATE TABLE t_aco AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco.parquet')")
     con.execute("CREATE TABLE t_aco_norm AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco_norm.parquet')")
-    con.execute("CREATE TABLE t_fish_keywest AS SELECT # FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")
-    con.execute("CREATE TABLE t_fish_mayriver AS SELECT # FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")
+    con.execute("CREATE TABLE t_fish_keywest AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")
+    con.execute("CREATE TABLE t_fish_mayriver AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_mayriver.parquet')")
     con.close()
