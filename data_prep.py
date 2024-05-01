@@ -1,6 +1,7 @@
 """Module for preparing data for the OSA/BioSound MBON project"""
 
 import glob
+import os
 
 import numpy as np
 import pandas as pd
@@ -21,7 +22,7 @@ def normalize_df(df_in, col_names):
     """
     df_new = df_in.copy()
     for col in col_names:
-        df_zero = df_in[col] - np.median(df_in[col])
+        df_zero = df_in[col] - np.nanmedian(df_in[col])
         df_new[col] = df_zero/max(abs(df_zero))
 
     return df_new
@@ -159,7 +160,11 @@ if __name__ == "__main__":
 
     # ################################################################################## #
     ## SAVE PARQUET TABLES TO DUCKDB DATABASE FILE`
-    con = duckdb.connect('shiny/mbon.duckdb')
+    DB_FILE = 'shiny/mbon.duckdb'
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+
+    con = duckdb.connect(DB_FILE)
     con.execute("CREATE TABLE t_aco AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco.parquet')")
     con.execute("CREATE TABLE t_aco_norm AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_aco_norm.parquet')")
     con.execute("CREATE TABLE t_fish_keywest AS SELECT * FROM read_parquet('shiny/shinydata/prepped_tables/t_fish_keywest.parquet')")

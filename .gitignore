@@ -142,6 +142,8 @@ venv.bak/
 
 # mkdocs documentation
 /site
+
+# Miscellaneous folders to ignore
 /shiny/shinydata/fromLiz
 /shiny/shinydata/prepped_tables
 .RData
