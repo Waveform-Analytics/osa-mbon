@@ -1,4 +1,5 @@
 library(shiny)
+
 # UI files
 source("R/ui_overview.R")
 source("R/ui_tab1.R")
@@ -9,8 +10,12 @@ source("R/server_overview.R")
 source("R/server_tab1.R")
 source("R/server_tab2.R")
 source("R/server_tab3.R")
+# Modules
+source("R/ui_components.R")
+source("R/server_components.R")
+source("R/mod_srPicker.R")
 
-
+# UI - Big Picture
 ui <- page_navbar(
   tags$head(tags$style(
     HTML(
@@ -21,17 +26,17 @@ ui <- page_navbar(
   "
     )
   )),
-  
+
   title = "BioSound MBON Project Dashboard",
   theme = bs_theme(bootswatch = "minty"),
   fillable = FALSE,
-  
+
   nav_panel(title = "Overview", ui_overview),
-  
+
   nav_panel(
     fillable=FALSE,
     title = "Data explorer",
-    h1("BioSound MBON Data Explorer"),
+    # h1("BioSound MBON Data Explorer"),
     # Page contents
     navset_underline(
       nav_panel(title = "All Datasets", ui_tab1),
@@ -39,15 +44,14 @@ ui <- page_navbar(
       nav_panel(title = "Recorded Durations", ui_tab3)
     )
   ),
-  
+
 )
 
-
+# SERVER - Big Picture
 server <- function(input, output, session) {
   server_tab1(input, output, session)
 }
 
-
-
+# Run the App
 shinyApp(ui = ui, server = server)
 
