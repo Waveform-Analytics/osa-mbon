@@ -14,6 +14,7 @@ source("R/server_tab3.R")
 source("R/ui_components.R")
 source("R/server_components.R")
 source("R/mod_srPicker.R")
+source("R/mod_durationPicker.R")
 
 # UI - Big Picture
 ui <- page_navbar(

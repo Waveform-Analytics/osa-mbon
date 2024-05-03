@@ -1,4 +1,6 @@
 source("R/ui_components.R")
+source("R/mod_durationPicker.R")
+
 
 ui_tab1 <- fluidPage(
   br(),
@@ -16,17 +18,13 @@ ui_tab1 <- fluidPage(
       ui_indexPicker("t1_indexPick"),
       ui_datasetPicker("t1_datasetPick"),
       ui_srPicker("t1_srPick"),
+      ui_durationPicker("t1_durationPick"),
 
       # selectInput(
-      #   "p1SampleRatePick",
-      #   "Select Sample Rate (kHz)",
-      #   choices = unique_sr,
+      #   "p1DurationPick",
+      #   "Select Duration (seconds)",
+      #   choices = unique_durations,
       # ),
-      selectInput(
-        "p1DurationPick",
-        "Select Duration (seconds)",
-        choices = unique_durations,
-      ),
       radioButtons(
         "normPick",
         "Normalize values?",
