@@ -7,44 +7,28 @@ server_tab1 <- function(input, output, session) {
 
   # Function to select the appropriate dataset
   get_dataset <- reactive({
-    if (input$normPick == "No") {
-      df_aco
-    } else {
-      df_aco_norm
-    }
-  })
+    if (input$normPick == "No") {df_aco} else {df_aco_norm}})
 
+  # Dataset drop down selector
   selected_dataset <- server_datasetPicker("t1_datasetPick")
+
+  # Index drop down selector
   selected_indices <- server_indexPicker("t1_indexPick")
-  selected_sr <- reactive({
-    req(get_dataset(), selected_dataset())
-    server_srPicker("t1_srPick", get_dataset(),
-                    selected_dataset())})
-  selected_duration <- reactive({
-    req(get_dataset(), selected_dataset(), selected_sr())
-    server_durationPicker("t1_durationPick", get_dataset(),
-                          selected_dataset(), selected_sr())})
 
-  # Testing
-  # observe({
-  #   test <- selected_sr()
-  #   print("Print out the selection:")
-  #   print(test)
-  # })
+  # Sample rate drop down selector
+  selected_sr <- server_srPicker("t1_srPick", get_dataset, selected_dataset)
 
-  # # Reactive: Unique Durations
-  # unique_durations_pick <- reactive({
-  #   req(selected_dataset(), selected_sr())
-  #   get_dataset() %>%
-  #     filter(Dataset == selected_dataset(),
-  #            Sampling_Rate_kHz == selected_sr()) %>%
-  #     distinct(Duration_sec) %>%
-  #     pull(Duration_sec)
-  # })
-  #
-  # # Observer: Update Duration Dropdown
+  # Duration drop down selector
+  selected_duration <-
+    server_durationPicker("t1_durationPick",
+                          get_dataset,selected_dataset, selected_sr)
+
+  # # Testing
   # observe({
-  #   observeUpdateSelectInput(session, "p1DurationPick", choices = unique_durations_pick())
+  #   print("Current dataset selection: ")
+  #   print(selected_dataset())
+  #   print("Current sample rate selection: ")
+  #   print(selected_sr())
   # })
 
   # Reactive: Filtered Data Subset
@@ -53,7 +37,8 @@ server_tab1 <- function(input, output, session) {
     get_dataset() %>%
       filter(Dataset == selected_dataset(),
              Sampling_Rate_kHz == selected_sr(),
-             Duration_sec == selected_duration())
+             Duration_sec == selected_duration(),
+             FFT == 512)
   })
 
   # Reactive: Index Picks
@@ -68,7 +53,7 @@ server_tab1 <- function(input, output, session) {
     req(df_indexPicks())
     df_idxPicks <- df_indexPicks()
     if (nrow(df_idxPicks) == 0) {
-      return(NULL)  # Return NULL if empty
+      return(NULL)
     }
 
     # Create dygraph plot

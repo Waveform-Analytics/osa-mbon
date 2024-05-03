@@ -1,12 +1,3 @@
-# # Function to select the appropriate dataset
-# get_dataset <- reactive({
-#   if (input$normPick == "No") {
-#     df_aco
-#   } else {
-#     df_aco_norm
-#   }
-# })
-
 # Server logic for dataset picker
 server_datasetPicker <- function(id) {
   moduleServer(id, function(input, output, session) {

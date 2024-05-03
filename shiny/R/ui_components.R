@@ -20,12 +20,3 @@ ui_datasetPicker <- function(id) {
   )
 }
 
-# # Dropdown for picking sample rate
-# ui_srPicker <- function(id) {
-#   ns <- NS(id)
-#   selectInput(
-#     ns("srPick"),
-#     "Select Sample Rate (kHz):",
-#     choices = c("opt1", "opt2", "opt3")
-#   )
-# }

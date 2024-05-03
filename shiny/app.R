@@ -11,10 +11,10 @@ source("R/server_tab1.R")
 source("R/server_tab2.R")
 source("R/server_tab3.R")
 # Modules
-source("R/ui_components.R")
-source("R/server_components.R")
-source("R/mod_srPicker.R")
 source("R/mod_durationPicker.R")
+source("R/mod_indexPicker.R")
+source("R/mod_srPicker.R")
+source("R/mod_datasetPicker.R")
 
 # UI - Big Picture
 ui <- page_navbar(
@@ -45,7 +45,6 @@ ui <- page_navbar(
       nav_panel(title = "Recorded Durations", ui_tab3)
     )
   ),
-
 )
 
 # SERVER - Big Picture

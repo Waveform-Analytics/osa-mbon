@@ -10,7 +10,6 @@ library(ggplot2)
 library(dygraphs)
 # DB
 library(duckdb)
-# library(arrow)
 
 # Establish connection to DuckDB
 con <- dbConnect(duckdb::duckdb(), "mbon.duckdb")

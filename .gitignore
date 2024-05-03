@@ -150,6 +150,7 @@ venv.bak/
 .Rhistory
 /shiny/deprecated
 /shiny/sandbox
+/sandbox
 
 # mypy
 .mypy_cache/
