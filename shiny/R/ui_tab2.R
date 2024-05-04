@@ -15,8 +15,8 @@ ui_tab2 <- fluidPage(
       title = "Options",
       # User selections
       ui_indexPicker("t2_indexPick", FALSE),
-      ui_datasetPicker("t2_datasetPick", FALSE),
-
+      ui_datasetPicker("t2_datasetPick", unique_datasets_ann, FALSE),
+      ui_speciesPicker("t2_speciesPick", TRUE)
     ),
 
   )

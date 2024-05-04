@@ -17,7 +17,7 @@ ui_tab1 <- fluidPage(
       title = "Options",
       # User selections
       ui_indexPicker("t1_indexPick", TRUE),
-      ui_datasetPicker("t1_datasetPick", FALSE),
+      ui_datasetPicker("t1_datasetPick", unique_datasets, FALSE),
       ui_srPicker("t1_srPick"),
       ui_durationPicker("t1_durationPick"),
       radioButtons(

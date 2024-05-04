@@ -1,7 +1,7 @@
 server_tab1 <- function(input, output, session) {
 
   # Dataset drop down selector
-  selected_dataset <- server_datasetPicker("t1_datasetPick")
+  selected_dataset <- server_datasetPicker("t1_datasetPick", unique_datasets)
 
   # Index drop down selector
   selected_indices <- server_indexPicker("t1_indexPick")

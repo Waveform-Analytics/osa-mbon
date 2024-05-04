@@ -2,7 +2,7 @@
 ui_speciesPicker <- function(id, multiselect) {
   selectInput(
     NS(id, "speciesPick"),
-    "Select Species",
+    "Select Annotation Type:",
     choices = unique_species,
     selected = unique_species[1],
     multiple = multiselect
@@ -10,7 +10,7 @@ ui_speciesPicker <- function(id, multiselect) {
 }
 
 # Server logic for species picker
-server_srPicker <- function(id, datasetPick) {
+server_speciesPicker <- function(id, datasetPick) {
   moduleServer(id, function(input, output, session) {
     # Unique Sample Rates
     observe({
@@ -21,7 +21,10 @@ server_srPicker <- function(id, datasetPick) {
         filter(Dataset == current_dataset_pick) %>%
         distinct(code) %>% pull(code)
 
-      updateSelectInput(session, "speciesPick", choices = unique_species_pick)
+      updateSelectInput(session, "speciesPick",
+                        choices = unique_species_pick,
+                        selected = unique_species_pick[1]
+                        )
     })
 
     return(reactive({input$speciesPick}))

@@ -1,14 +1,15 @@
 server_tab2 <- function(input, output, session) {
 
   # Dataset drop down selector
-  selected_dataset <- server_datasetPicker("t2_datasetPick")
+  selected_dataset <- server_datasetPicker("t2_datasetPick", unique_datasets_ann)
 
   # Index drop down selector
   selected_indices <- server_indexPicker("t2_indexPick")
 
-  # Selected Sample Rate
-  # For now, just pick the first option from the unique SR list
-  # Later specify which one to use (original, decimated, etc)
+  # Species drop down selector
+  selected_species <- server_speciesPicker("t2_speciesPick", selected_dataset)
+
+  # Sample Rate list
   this_unique_sr <- reactive({
     df_aco_norm %>%
       filter(Dataset == selected_dataset()) %>%
@@ -16,6 +17,7 @@ server_tab2 <- function(input, output, session) {
       pull(Sampling_Rate_kHz)
   })
 
+  # Duration list
   this_unique_durations <- reactive({
     df_aco_norm %>%
       filter(Dataset == selected_dataset(),
@@ -33,6 +35,8 @@ server_tab2 <- function(input, output, session) {
   # })
 
   # Reactive: Filtered Data Subset
+  # Note that for now we're just grabbing the first available sample
+  # rate and duration, but these can be specified later as needed.
   subset_df <- reactive({
     req(selected_dataset(), selected_sr(), selected_duration())
     fcn_filterAco(df_aco_norm, selected_dataset(),

@@ -8,31 +8,48 @@ fcn_filterAco <- function(data, selected_dataset, selected_sr,
            FFT == fft)
 }
 
-# Function to find presence/absence by getting the overlap between two dataframes
-# that both contain "start_time" and "end_time" columns.
-add_overlap_indicator <-
-  function(df_A, df_B, start_time_col = "start_time", end_time_col = "end_time") {
-  # Convert dataframes to data.tables
-  setDT(df_A)
-  setDT(df_B)
 
-  # Create an interval object for each row in data.tables A and B
-  A_intervals <- df_A[, .(start = start_time, end = end_time)]
-  B_intervals <- df_B[, .(start = start_time, end = end_time)]
+# Function to compute presence/absence for different species/annotations
+get_species_presence <- function(df_A, df_spp) {
 
-  # Set keys for joining
-  setkey(A_intervals, start, end)
-  setkey(B_intervals, start, end)
+  df_spp <- df_spp %>% arrange(start_time)
 
-  # Perform overlap join
-  overlap <- foverlaps(A_intervals, B_intervals, which = TRUE)
+  min_time <- min(df_spp$start_time)
+  max_time <- max(df_spp$end_time)
+  df_A <- df_A %>%
+    filter(start_time >= min_time, end_time <= max_time) %>%
+    arrange(start_time)
 
-  # If any overlap is found, mark the corresponding row in A as present
-  df_A[unique(overlap$yid), is_present := TRUE]
+  # Local function to process each species
+  process_species <- function(spec, A, B) {
+    B_subset <- B[B$species == spec, ]
 
-  # Fill NA with FALSE
-  df_A[is.na(is_present), is_present := FALSE]
+    # Apply condition and create a data frame marking each overlap
+    overlaps <- sapply(1:nrow(A), function(i) {
+      a_end <- A$end_time[i]
+      a_start <- A$start_time[i]
+      any(B_subset$start_time < a_end & B_subset$end_time > a_start)
+    })
 
-  return(df_A)
+    # Return a dataframe marking overlaps with species and A's row index
+    data.frame(row_id = 1:nrow(A), species = spec, is_present = overlaps)
+  }
+
+  # Process each species and combine results
+  results <- map_df(unique(df_spp$species), ~process_species(.x, df_A, df_spp))
+
+  # Add a row identifier to A for merging
+  df_A$row_id <- 1:nrow(df_A)
+
+  # Merge results into A and pivot data
+  final_A <- df_A %>%
+    left_join(results, by = "row_id") %>%
+    filter(is_present) %>%
+    pivot_wider(names_from = species,
+                values_from = is_present,
+                values_fill = list(is_present = FALSE)) %>%
+    select(-row_id)
+
+  # Return the final data frame
+  return(final_A)
 }
-

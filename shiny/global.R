@@ -5,6 +5,7 @@ library(tidyr)
 library(lubridate)
 library(dplyr)
 library(readr)
+library(purrr)
 # Plotting
 library(corrplot)
 library(ggplot2)
@@ -18,6 +19,7 @@ source("R/mod_durationPicker.R")
 source("R/mod_indexPicker.R")
 source("R/mod_srPicker.R")
 source("R/mod_datasetPicker.R")
+source("R/mod_speciesPicker.R")
 # Functions
 source("R/functions.R")
 
@@ -78,6 +80,8 @@ unique_datasets_ann <- c("Key West", "May River")
 unique_species <- fish_codes %>%
   filter(Dataset == unique_datasets_ann[1]) %>%
   distinct(code) %>% pull(code)
+
+
 
 dbDisconnect(con)
 
