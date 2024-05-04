@@ -1,23 +1,23 @@
-code,species,short_name,key_west,may_river
-Em,red grouper,red grouper,1,0
-Es,Nassau grouper,Nassau grouper,1,0
-Mb,black grouper,black grouper,1,0
-Uk,unknown,unknown,1,0
-Vs,vessel,vessel,1,0
-Sp,Silver perch,Silver perch,0,1
-Sp,Silver perch interruption,Silver perch,0,1
-Oy,Oyster toadfish boat whistle,Oyster,0,1
-Oy,Oyster toadfish grunt,Oyster,0,1
-Oy,Oyster toadfish interruption,Oyster,0,1
-Bd,Black drum,Black drum,0,1
-Bd,Black drum interruption,Black drum,0,1
-Ss,Spotted seatrout,Spotted seatrout,0,1
-Ss,Spotted seatrout interrpution,Spotted seatrout,0,1
-Rd,Red drum,Red drum,0,1
-Rd,Red drum interruption,Red drum,0,1
-Ac,Atlantic croaker,Atlantic croaker,0,1
-Wf,Weakfish,Weakfish,0,1
-Bo,Bottlenose dolphin echolocation,Bottlenose dolphin,0,1
-Bo,Bottlenose dolphin burst pulses,Bottlenose dolphin,0,1
-Bo,Bottlenose dolphin whistles,Bottlenose dolphin,0,1
-Vs,Vessel,vessel,0,1
+code,species,short_name,Dataset
+Em,red grouper,red grouper,Key West
+Es,Nassau grouper,Nassau grouper,Key West
+Mb,black grouper,black grouper,Key West
+Uk,unknown,unknown,Key West
+Vs,vessel,vessel,Key West
+Sp,Silver perch,Silver perch,May River
+Sp,Silver perch interruption,Silver perch,May River
+Oy,Oyster toadfish boat whistle,Oyster,May River
+Oy,Oyster toadfish grunt,Oyster,May River
+Oy,Oyster toadfish interruption,Oyster,May River
+Bd,Black drum,Black drum,May River
+Bd,Black drum interruption,Black drum,May River
+Ss,Spotted seatrout,Spotted seatrout,May River
+Ss,Spotted seatrout interrpution,Spotted seatrout,May River
+Rd,Red drum,Red drum,May River
+Rd,Red drum interruption,Red drum,May River
+Ac,Atlantic croaker,Atlantic croaker,May River
+Wf,Weakfish,Weakfish,May River
+Bo,Bottlenose dolphin echolocation,Bottlenose dolphin,May River
+Bo,Bottlenose dolphin burst pulses,Bottlenose dolphin,May River
+Bo,Bottlenose dolphin whistles,Bottlenose dolphin,May River
+Vs,Vessel,vessel,May River

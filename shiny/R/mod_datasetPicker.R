@@ -1,9 +1,11 @@
 # Dropdown for picking dataset (i.e., location)
-ui_datasetPicker <- function(id) {
+ui_datasetPicker <- function(id, multiselect) {
   selectInput(
     NS(id, "datasetPick"),
     "Select Dataset",
     choices = unique_datasets,
+    selected = unique_datasets[1],
+    multiple = multiselect
   )
 }
 
@@ -11,8 +13,10 @@ ui_datasetPicker <- function(id) {
 server_datasetPicker <- function(id) {
   moduleServer(id, function(input, output, session) {
     updateSelectInput(session, "datasetPick",
-                      choices = unique_datasets)
+                      choices = unique_datasets,
+                      selected = unique_datasets[1]
+                      )
 
-    return(input$datasetPick)
+    return(reactive({ input$datasetPick }))
   })
 }

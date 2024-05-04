@@ -1,14 +1,5 @@
 server_tab1 <- function(input, output, session) {
 
-  # Helper function to update select inputs more cleanly
-  observeUpdateSelectInput <- function(session, inputId, choices) {
-    updateSelectInput(session, inputId, choices = choices)
-  }
-
-  # Function to select the appropriate dataset
-  get_dataset <- reactive({
-    if (input$normPick == "No") {df_aco} else {df_aco_norm}})
-
   # Dataset drop down selector
   selected_dataset <- server_datasetPicker("t1_datasetPick")
 
@@ -21,7 +12,7 @@ server_tab1 <- function(input, output, session) {
   # Duration drop down selector
   selected_duration <-
     server_durationPicker("t1_durationPick",
-                          get_dataset,selected_dataset, selected_sr)
+                          get_dataset, selected_dataset, selected_sr)
 
   # # Testing
   # observe({
@@ -31,21 +22,21 @@ server_tab1 <- function(input, output, session) {
   #   print(selected_sr())
   # })
 
+  # Function to select the appropriate dataset
+  get_dataset <- reactive({
+    if (input$normPick == "No") {df_aco} else {df_aco_norm}})
+
   # Reactive: Filtered Data Subset
   subset_df <- reactive({
     req(selected_dataset(), selected_sr(), selected_duration())
-    get_dataset() %>%
-      filter(Dataset == selected_dataset(),
-             Sampling_Rate_kHz == selected_sr(),
-             Duration_sec == selected_duration(),
-             FFT == 512)
+    fcn_filterAco(get_dataset(), selected_dataset(),
+                  selected_sr(), selected_duration())
   })
 
   # Reactive: Index Picks
   df_indexPicks <- reactive({
     req(subset_df(), selected_indices())
-    subset_df() %>%
-      select(start_time, selected_indices())
+    subset_df() %>% select(start_time, selected_indices())
   })
 
   # Render Dygraph
@@ -55,7 +46,6 @@ server_tab1 <- function(input, output, session) {
     if (nrow(df_idxPicks) == 0) {
       return(NULL)
     }
-
     # Create dygraph plot
     dygraph(df_idxPicks, x = "start_time") %>%
       dyRangeSelector(height = 30)

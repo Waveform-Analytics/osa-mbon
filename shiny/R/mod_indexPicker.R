@@ -1,10 +1,11 @@
-# Dropdown for picking index (multiples allowed)
-ui_indexPicker <- function(id) {
+# Dropdown for picking index
+ui_indexPicker <- function(id, multiselect) {
   selectInput(
     NS(id, "selectedIndices"),
     "Select Indices:",
     choices = index_columns,
-    multiple = TRUE
+    selected = index_columns[1],
+    multiple = multiselect
   )
 }
 
@@ -12,7 +13,9 @@ ui_indexPicker <- function(id) {
 server_indexPicker <- function(id) {
   moduleServer(id, function(input, output, session) {
     updateSelectInput(session, "selectedIndices",
-                      choices = index_columns)
-    return(input$selectedIndices)
+                      choices = index_columns,
+                      selected = index_columns[1])
+
+    return(reactive({input$selectedIndices}))
   })
 }

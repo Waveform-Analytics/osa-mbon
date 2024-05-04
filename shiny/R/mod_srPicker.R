@@ -10,7 +10,6 @@ ui_srPicker <- function(id) {
 
 server_srPicker <- function(id, dataset, datasetPick) {
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns
     # Unique Sample Rates
     observe({
       current_dataset <- dataset()
@@ -21,9 +20,6 @@ server_srPicker <- function(id, dataset, datasetPick) {
         filter(Dataset == current_dataset_pick) %>%
         distinct(Sampling_Rate_kHz) %>%
         pull(Sampling_Rate_kHz)
-
-      # print("sample rate choices:")
-      # print(unique_sr_pick)
 
       updateSelectInput(session, "srPick", choices = unique_sr_pick)
     })

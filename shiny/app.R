@@ -10,11 +10,6 @@ source("R/server_overview.R")
 source("R/server_tab1.R")
 source("R/server_tab2.R")
 source("R/server_tab3.R")
-# Modules
-source("R/mod_durationPicker.R")
-source("R/mod_indexPicker.R")
-source("R/mod_srPicker.R")
-source("R/mod_datasetPicker.R")
 
 # UI - Big Picture
 ui <- page_navbar(
@@ -37,12 +32,12 @@ ui <- page_navbar(
   nav_panel(
     fillable=FALSE,
     title = "Data explorer",
-    # h1("BioSound MBON Data Explorer"),
     # Page contents
     navset_underline(
       nav_panel(title = "All Datasets", ui_tab1),
       nav_panel(title = "Annotations",ui_tab2),
       nav_panel(title = "Recorded Durations", ui_tab3)
+
     )
   ),
 )
@@ -50,6 +45,7 @@ ui <- page_navbar(
 # SERVER - Big Picture
 server <- function(input, output, session) {
   server_tab1(input, output, session)
+  server_tab2(input, output, session)
 }
 
 # Run the App

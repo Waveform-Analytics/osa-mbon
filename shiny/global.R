@@ -4,23 +4,47 @@ library(bslib)
 library(tidyr)
 library(lubridate)
 library(dplyr)
+library(readr)
 # Plotting
 library(corrplot)
 library(ggplot2)
 library(dygraphs)
-# DB
+library(plotly)
+# Data
 library(duckdb)
+library(data.table)
+# Modules
+source("R/mod_durationPicker.R")
+source("R/mod_indexPicker.R")
+source("R/mod_srPicker.R")
+source("R/mod_datasetPicker.R")
+# Functions
+source("R/functions.R")
 
 # Establish connection to DuckDB
 con <- dbConnect(duckdb::duckdb(), "mbon.duckdb")
 
-print("global.R file sourced")
-
 # Load the tables into memory (may need to adjust this if we get bogged down)
-df_fish_keywest <- dbReadTable(con, "t_fish_keywest")
-df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver")
+
+# Key West Annotations
+df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
+  select(start_time, end_time, species)
+
+# May River Annotations
+df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
+  select(start_time, end_time, species)
+
+# Combine the fish annotation data
+df_fish_keywest$Dataset <- "Key West"
+df_fish_mayriver$Dataset <- "May River"
+df_fish <- rbind(df_fish_keywest, df_fish_mayriver)
+
+# Acoustic indices.
 df_aco <- dbReadTable(con, "t_aco")
 df_aco_norm <- dbReadTable(con, "t_aco_norm")
+
+# Annotations lookup table
+fish_codes <- read_csv("shinydata/fish_codes.csv", show_col_types = FALSE)
 
 # Get all of the unique datasets
 unique_datasets <- df_aco %>%
@@ -48,8 +72,12 @@ index_columns_all <- col_names[8:(length(col_names)-4)]
 
 # A subset of the index columns - update to pre-select a subset
 index_columns <- index_columns_all[1:10]
-selected_columns <- c("ZCR")
 
+# Unique datasets with annotations
+unique_datasets_ann <- c("Key West", "May River")
+unique_species <- fish_codes %>%
+  filter(Dataset == unique_datasets_ann[1]) %>%
+  distinct(code) %>% pull(code)
 
 dbDisconnect(con)
 

@@ -1,8 +1,7 @@
-# source("R/mod_durationPicker.R")
-# source("R/mod_indexPicker.R")
-# source("R/mod_srPicker.R")
-# source("R/mod_datasetPicker.R")
-
+source("R/mod_datasetPicker.R")
+source("R/mod_indexPicker.R")
+source("R/mod_srPicker.R")
+source("R/mod_durationPicker.R")
 
 ui_tab1 <- fluidPage(
   br(),
@@ -17,8 +16,8 @@ ui_tab1 <- fluidPage(
     sidebar = sidebar(
       title = "Options",
       # User selections
-      ui_indexPicker("t1_indexPick"),
-      ui_datasetPicker("t1_datasetPick"),
+      ui_indexPicker("t1_indexPick", TRUE),
+      ui_datasetPicker("t1_datasetPick", FALSE),
       ui_srPicker("t1_srPick"),
       ui_durationPicker("t1_durationPick"),
       radioButtons(
