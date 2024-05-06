@@ -14,14 +14,21 @@ library(plotly)
 # Data
 library(duckdb)
 library(data.table)
-# Modules
-source("R/mod_durationPicker.R")
-source("R/mod_indexPicker.R")
-source("R/mod_srPicker.R")
-source("R/mod_datasetPicker.R")
-source("R/mod_speciesPicker.R")
 # Functions
 source("R/functions.R")
+
+# # UI files
+# source("R/ui_overview.R")
+# source("R/ui_tab1.R")
+# source("R/ui_tab2.R")
+# source("R/ui_tab3.R")
+# # Server files
+# source("R/server_overview.R")
+# source("R/server_tab1.R")
+# source("R/server_tab2.R")
+# source("R/server_tab3.R")
+
+print("sourced global.R")
 
 # Establish connection to DuckDB
 con <- dbConnect(duckdb::duckdb(), "mbon.duckdb")
@@ -73,15 +80,14 @@ col_names = names(df_aco)
 index_columns_all <- col_names[8:(length(col_names)-4)]
 
 # A subset of the index columns - update to pre-select a subset
-index_columns <- index_columns_all[1:10]
+# index_columns <- index_columns_all[1:10]
+index_columns <- index_columns_all
 
 # Unique datasets with annotations
 unique_datasets_ann <- c("Key West", "May River")
 unique_species <- fish_codes %>%
   filter(Dataset == unique_datasets_ann[1]) %>%
   distinct(code) %>% pull(code)
-
-
 
 dbDisconnect(con)
 

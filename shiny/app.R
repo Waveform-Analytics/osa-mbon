@@ -1,5 +1,4 @@
-library(shiny)
-
+source("globalvars.R")
 # UI files
 source("R/ui_overview.R")
 source("R/ui_tab1.R")
@@ -10,6 +9,12 @@ source("R/server_overview.R")
 source("R/server_tab1.R")
 source("R/server_tab2.R")
 source("R/server_tab3.R")
+# Modules
+source("R/mod_durationPicker.R")
+source("R/mod_indexPicker.R")
+source("R/mod_srPicker.R")
+source("R/mod_datasetPicker.R")
+source("R/mod_speciesPicker.R")
 
 # UI - Big Picture
 ui <- page_navbar(

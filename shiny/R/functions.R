@@ -44,11 +44,11 @@ get_species_presence <- function(df_A, df_spp) {
   # Merge results into A and pivot data
   final_A <- df_A %>%
     left_join(results, by = "row_id") %>%
-    filter(is_present) %>%
-    pivot_wider(names_from = species,
-                values_from = is_present,
-                values_fill = list(is_present = FALSE)) %>%
-    select(-row_id)
+    # filter(is_present) %>%
+    # pivot_wider(names_from = species,
+    #             values_from = is_present,
+    #             values_fill = list(is_present = FALSE)) %>%
+    select(-row_id, -end_time)
 
   # Return the final data frame
   return(final_A)
