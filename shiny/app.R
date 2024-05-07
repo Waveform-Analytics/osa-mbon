@@ -1,20 +1,26 @@
-source("globalvars.R")
+# Functions and extras
+source("R/required_packages.R")
+source("R/functions.R")
 # UI files
 source("R/ui_overview.R")
 source("R/ui_tab1.R")
 source("R/ui_tab2.R")
-source("R/ui_tab3.R")
+# source("R/ui_tab3.R")
 # Server files
 source("R/server_overview.R")
 source("R/server_tab1.R")
 source("R/server_tab2.R")
-source("R/server_tab3.R")
+# source("R/server_tab3.R")
 # Modules
 source("R/mod_durationPicker.R")
 source("R/mod_indexPicker.R")
 source("R/mod_srPicker.R")
 source("R/mod_datasetPicker.R")
 source("R/mod_speciesPicker.R")
+# Data Prep
+source("data/prep_data.R")
+
+print(test_string)
 
 # UI - Big Picture
 ui <- page_navbar(
@@ -27,25 +33,26 @@ ui <- page_navbar(
   "
     )
   )),
-
+  
   title = "BioSound MBON Project Dashboard",
   theme = bs_theme(bootswatch = "minty"),
   fillable = FALSE,
-
+  
   nav_panel(title = "Overview", ui_overview),
-
+  
   nav_panel(
     fillable=FALSE,
     title = "Data explorer",
     # Page contents
     navset_underline(
-      nav_panel(title = "All Datasets", ui_tab1),
-      nav_panel(title = "Annotations",ui_tab2),
-      nav_panel(title = "Recorded Durations", ui_tab3)
-
+      nav_panel(title = "All Datasets", ui_tab1(unique_datasets)),
+      nav_panel(title = "Annotations",ui_tab2(unique_datasets)),
+      # nav_panel(title = "Recorded Durations", ui_tab3)
+      
     )
   ),
 )
+
 
 # SERVER - Big Picture
 server <- function(input, output, session) {
