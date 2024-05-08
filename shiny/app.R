@@ -45,7 +45,6 @@ ui <- page_navbar(
   ),
 )
 
-
 # SERVER - Big Picture
 server <- function(input, output, session) {
   server_tab1(input, output, session)

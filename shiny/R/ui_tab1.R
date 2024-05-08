@@ -23,6 +23,14 @@ ui_tab1 <- function(unq_datasets) {
         h4("May River"),
         dygraphOutput("p1_plot_ts_mayriver"),
       ),
+      card(
+        h4("Caesar Creek"),
+        dygraphOutput("p1_plot_ts_caesarcreek"),
+      ),
+      card(
+        h4("Gray's Reef"),
+        dygraphOutput("p1_plot_ts_graysreef"),
+      ),
     ),
   )
 }
