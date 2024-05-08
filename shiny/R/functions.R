@@ -1,3 +1,38 @@
+# Get a subset of acoustic indices based on location and indices
+# Assume we will just grab the first SR and first duration for each subset
+# for now. 
+df_selected <- function(location_name, get_dataset, selected_indices) {
+  reactive({
+    req(get_dataset(), selected_indices())
+    dataset <- get_dataset()
+    sr <- get_first_sr(location_name, dataset)
+    duration <- get_first_duration(location_name, dataset, sr)
+    filtered_data <- fcn_filterAco(dataset, location_name, sr, duration)
+    
+    # Select specific columns based on indices
+    filtered_data %>% select(start_time, all_of(selected_indices()))
+  })
+}
+
+# Get the first sample rate from a dataset
+get_first_sr <- function(dataset_name, df) {
+  sr_subset <- df %>%
+    filter(Dataset == dataset_name) %>%
+    distinct(Sampling_Rate_kHz) %>%
+    pull(Sampling_Rate_kHz)
+  sr_subset[1]
+}
+
+# Get first duration based on dataset and sample rate
+get_first_duration <- function (dataset_name, df, sr) {
+  duration_subset <- df %>%
+    filter(Dataset == dataset_name,
+           Sampling_Rate_kHz == sr) %>%
+    distinct(Duration_sec) %>%
+    pull(Duration_sec)
+  duration_subset[1]
+}
+
 # Function to filter the acoustic indices dataset
 fcn_filterAco <- function(data, selected_dataset, selected_sr,
                         selected_duration, fft=512) {
@@ -49,3 +84,5 @@ get_species_presence <- function(df_A, df_spp) {
   # Return the final data frame
   return(final_A)
 }
+
+

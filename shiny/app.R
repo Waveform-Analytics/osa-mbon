@@ -1,6 +1,7 @@
 # Functions and extras
 source("R/required_packages.R")
 source("R/functions.R")
+source("R/plot_functions.R")
 # UI files
 source("R/ui_overview.R")
 source("R/ui_tab1.R")
@@ -24,16 +25,7 @@ print(test_string)
 
 # UI - Big Picture
 ui <- page_navbar(
-  tags$head(tags$style(
-    HTML(
-      "
-    .bslib-card, .tab-content, .tab-pane, .card-body, .div  {
-      overflow: visible !important;
-    }
-  "
-    )
-  )),
-  
+
   title = "BioSound MBON Project Dashboard",
   theme = bs_theme(bootswatch = "minty"),
   fillable = FALSE,
