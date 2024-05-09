@@ -1,7 +1,16 @@
-data
+deprecated/
 .DS_Store
 *.wal
 *.duckdb
+
+# Miscellaneous folders to ignore
+/shiny/shinydata/fromLiz
+/shiny/shinydata/prepped_tables
+.RData
+.Rhistory
+/shiny/deprecated
+/shiny/sandbox
+/sandbox
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -142,15 +151,6 @@ venv.bak/
 
 # mkdocs documentation
 /site
-
-# Miscellaneous folders to ignore
-/shiny/shinydata/fromLiz
-/shiny/shinydata/prepped_tables
-.RData
-.Rhistory
-/shiny/deprecated
-/shiny/sandbox
-/sandbox
 
 # mypy
 .mypy_cache/

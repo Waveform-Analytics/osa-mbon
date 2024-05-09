@@ -4,7 +4,6 @@ jupyterlab>=3
 ipywidgets>=7.6
 dash
 jupyter-dash
-plotly==5.20.0
-dash-core-components
 dash-bootstrap-components
 openpyxl
+duckdb
