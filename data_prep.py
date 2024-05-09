@@ -70,6 +70,10 @@ if __name__ == "__main__":
     DATA_FOLDER = "shiny/shinydata/fromLiz"
     OUT_FOLDER = "shiny/shinydata/prepped_tables"
 
+    # ###
+    # Data Summary File
+    SUMMARY_FILE = "shiny/data/BioSound_Datasets.csv"
+    df_summary = pd.read_csv(SUMMARY_FILE)
     # ################################################################################## #
     # KEY WEST ANNOTATIONS
     # Set up the fish annotations table - this is specifically from key west data
@@ -173,6 +177,10 @@ if __name__ == "__main__":
     for s_file in seascaper_files:
         df_temp = pd.read_csv(s_file)
         df_temp["date"] = pd.to_datetime(df_temp["date"])
+        this_dataset = df_summary[df_summary["Seascaper File"] == s_file.name]["short name"].values[0]
+        print(s_file)
+        print(this_dataset)
+        df_temp["Dataset"] = this_dataset
         s_list.append(df_temp)
 
     df_seascaper = pd.concat(s_list)
@@ -200,7 +208,7 @@ if __name__ == "__main__":
     df_ships_grays_valid.to_parquet(OUT_FOLDER + "/t_ships_grays.parquet")
 
     # Seascaper
-    df_seascaper.to_parquet(OUT_FOLDER + "/t_seascaper")
+    df_seascaper.to_parquet(OUT_FOLDER + "/t_seascaper.parquet")
 
     # ################################################################################## #
     # SAVE PARQUET TABLES TO DUCKDB DATABASE FILE`
