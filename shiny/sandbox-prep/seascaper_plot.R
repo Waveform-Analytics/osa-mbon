@@ -64,22 +64,63 @@ selected_index <- "ACI"
 df_idx <- 
   df_filt %>% 
   select(start_time, all_of(selected_index)) %>%
-  mutate(interval = cut(start_time, 
+  mutate(date = cut(start_time, 
                         breaks = dates_list, 
                         include.lowest = TRUE, 
                         right = FALSE),
-         interval = as.POSIXct(interval)) %>%
+         date = as.POSIXct(date)) %>%
   rename(index = all_of(selected_index))
 
-df_idx$interval <- as.factor(df_idx$interval)
+df_idx$date <- as.factor(df_idx$date)
 
-p2 <- ggplot(df_idx, aes(x=interval, y=index)) +
-  geom_boxplot()
+p2 <- ggplot(df_idx, aes(x=date, y=index)) +
+  geom_boxplot() +
+  theme_minimal()
 
 print(p2)
 
 
 ###############################################
 ###############################################
+
+df_idx_summ <- df_idx %>%
+  group_by(date) %>%
+  summarise(mean = mean(index))
+d_water$date <- as.factor(d_water$date)
+
+df_combo <- left_join(df_idx_summ, d_water, by = "date")
+
+this_class <- c("3", "15")
+this_df_combo <- df_combo %>%
+  filter(class == this_class)
+
+p3 <- ggplot(df_combo, aes(x=mean, y=pct, color=class)) + 
+  geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
+  theme_minimal() + 
+  labs(y="Water class percentage", x="Mean index value")
+
+ggplotly(p3)
+
+# Fit the model
+model <- lm(pct ~ mean, data = this_df_combo)
+
+# Summary of the model
+model_summary <- summary(model)
+
+# Print the summary
+print(model_summary)
+
+###############################################
+###############################################
+
+df_idx_big <- 
+  df_filt %>% 
+  select(start_time, all_of(index_columns)) %>%
+  mutate(date = cut(start_time, 
+                    breaks = dates_list, 
+                    include.lowest = TRUE, 
+                    right = FALSE),
+         date = as.POSIXct(date)) 
+
 
 
