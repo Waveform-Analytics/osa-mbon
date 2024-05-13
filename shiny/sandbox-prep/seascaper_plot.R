@@ -1,18 +1,23 @@
 df_seascaper_sub <- df_seascaper %>%
   filter(Dataset == "Key West", !is.na(cellvalue))
 
-max_cells_notna <- df_seascaper_sub |>
-  group_by(date) |>
-  summarize(sum_n_cells = sum(n_cells)) |>
-  pull(sum_n_cells) |>
-  max()
+# max_cells_notna <- df_seascaper_sub |>
+#   group_by(date) |>
+#   summarize(sum_n_cells = sum(n_cells)) |>
+#   pull(sum_n_cells) |>
+#   max()
 
 unique_classes <- as.character(df_seascaper_sub %>%
   distinct(cellvalue) %>%
   pull())
 
+unique_classes_numeric <- df_seascaper_sub %>%
+  distinct(cellvalue) %>%
+  arrange(cellvalue) %>%
+  pull()
+
 # water class percentages
-d_water <- df_seascaper_sub %>%
+df_water <- df_seascaper_sub %>%
   group_by(date) %>%
   mutate(
     total_cells = sum(n_cells), 
@@ -31,10 +36,10 @@ d_water <- df_seascaper_sub %>%
   ) %>%
   arrange(date, class_num) 
 
-d_water$class <- as.factor(d_water$class)
+df_water$class <- as.factor(df_water$class)
 
 
-p <- ggplot(d_water, aes(x = date, y=pct, fill=class)) +
+p <- ggplot(df_water, aes(x = date, y=pct, fill=class)) +
   geom_area(alpha = 0.5) +
   geom_area(aes(color = class), fill = NA, size = .7) +
   theme_minimal() +
@@ -86,9 +91,9 @@ print(p2)
 df_idx_summ <- df_idx %>%
   group_by(date) %>%
   summarise(mean = mean(index))
-d_water$date <- as.factor(d_water$date)
+df_water$date <- as.factor(df_water$date)
 
-df_combo <- left_join(df_idx_summ, d_water, by = "date")
+df_combo <- left_join(df_idx_summ, df_water, by = "date")
 
 this_class <- c("3", "15")
 this_df_combo <- df_combo %>%
@@ -113,6 +118,7 @@ print(model_summary)
 ###############################################
 ###############################################
 
+# One dataset (location), all indices, summarized by date and index
 df_idx_big <- 
   df_filt %>% 
   select(start_time, all_of(index_columns)) %>%
@@ -120,7 +126,62 @@ df_idx_big <-
                     breaks = dates_list, 
                     include.lowest = TRUE, 
                     right = FALSE),
-         date = as.POSIXct(date)) 
+         date = as.POSIXct(date),
+         # date = with_tz(date, "UTC")
+         ) %>%
+  pivot_longer(
+    cols = all_of(index_columns),
+    names_to = "index",
+    values_to = "value"
+  ) %>%
+  group_by(date, index) %>%
+  summarise(
+    mean_val = mean(value),
+    .groups = "keep"
+  ) %>%
+  mutate(
+    date = force_tz(date, "UTC")
+  )
 
+df_idx_big$date <- as.factor(df_idx_big$date)
 
+get_cor_value <- 
+  function(df_index, 
+           df_water_class, 
+           this_class, 
+           this_index) {
+    
+    this_pct <- df_water_class %>%
+      filter(class_num == this_class)
+    
+    this_value <- df_index %>%
+      filter(index == this_index)
+    
+    df_join <- inner_join(this_pct, this_value, by = "date")
+    
+    return(cor(df_join$pct, df_join$mean_val))
+  }
 
+# Initialize an empty dataframe with 'unique_classes' as columns
+df_heatmap <- setNames(
+  data.frame(matrix(ncol = length(unique_classes_numeric), 
+                    nrow = length(index_columns))), 
+  unique_classes_numeric)
+rownames(df_heatmap) <- index_columns
+
+# Populate the dataframe
+for (index in index_columns) {
+  for (class in unique_classes_numeric) {
+    # Apply function and store the result in the appropriate cell
+    df_heatmap[index, as.character(class)] <- 
+      get_cor_value(df_idx_big, df_water, class, index)
+  }
+}
+
+# Assuming df_heatmap is your DataFrame ready for the heatmap
+pheatmap(df_heatmap,
+         cluster_rows = FALSE,  # Disables clustering of rows
+         cluster_cols = FALSE,  # Disables clustering of columns
+         na_col = "grey",  # Color for NaN values
+         display_numbers = FALSE,  # Optionally display the correlation values
+         main = "Correlations: index vs water class")

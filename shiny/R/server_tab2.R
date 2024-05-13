@@ -30,14 +30,6 @@ server_tab2 <- function(input, output, session) {
     duration_subset[1]
   })
   
-  # # Testing
-  # observe({
-  #   print("Current dataset selection: ")
-  #   print(selected_dataset())
-  #   print("Current duration selection: ")
-  #   print(this_unique_durations()[1])
-  # })
-  
   # Reactive: Filtered Data Subset
   # Note that for now we're just grabbing the first available sample
   # rate and duration, but these can be specified later as needed.

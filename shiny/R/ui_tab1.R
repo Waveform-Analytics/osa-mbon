@@ -1,4 +1,4 @@
-ui_tab1 <- function(unq_datasets) {
+ui_tab1 <- function() {
   tagList(
     br(),
     h2("Overview of all datasets"),

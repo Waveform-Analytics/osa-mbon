@@ -20,7 +20,4 @@ create_hour_plot <- function(id, df_in, output){
     theme(legend.position = "none",
           panel.grid.major.y = element_blank(),
           panel.grid.minor.y = element_blank())
-  
-  
-  
 }
