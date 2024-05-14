@@ -1,12 +1,6 @@
 df_seascaper_sub <- df_seascaper %>%
   filter(Dataset == "Key West", !is.na(cellvalue))
 
-# max_cells_notna <- df_seascaper_sub |>
-#   group_by(date) |>
-#   summarize(sum_n_cells = sum(n_cells)) |>
-#   pull(sum_n_cells) |>
-#   max()
-
 unique_classes <- as.character(df_seascaper_sub %>%
   distinct(cellvalue) %>%
   pull())
@@ -75,7 +69,6 @@ df_idx <-
                         right = FALSE),
          date = as.POSIXct(date)) %>%
   rename(index = all_of(selected_index))
-
 df_idx$date <- as.factor(df_idx$date)
 
 p2 <- ggplot(df_idx, aes(x=date, y=index)) +
@@ -142,7 +135,6 @@ df_idx_big <-
   mutate(
     date = force_tz(date, "UTC")
   )
-
 df_idx_big$date <- as.factor(df_idx_big$date)
 
 get_cor_value <- 

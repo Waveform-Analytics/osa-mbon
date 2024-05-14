@@ -13,6 +13,7 @@ library(corrplot)
 library(ggplot2)
 library(dygraphs)
 library(plotly)
+library(leaflet)
 # Data
 library(duckdb)
 library(data.table)

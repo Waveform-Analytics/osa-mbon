@@ -1,26 +1,3 @@
-# Functions and extras
-source("R/required_packages.R")
-source("R/functions.R")
-source("R/plot_functions.R")
-# UI files
-source("R/ui_overview.R")
-source("R/ui_tab1.R")
-source("R/ui_tab2.R")
-# source("R/ui_tab3.R")
-# Server files
-source("R/server_overview.R")
-source("R/server_tab1.R")
-source("R/server_tab2.R")
-# source("R/server_tab3.R")
-# Modules
-source("R/mod_durationPicker.R")
-source("R/mod_indexPicker.R")
-source("R/mod_srPicker.R")
-source("R/mod_datasetPicker.R")
-source("R/mod_speciesPicker.R")
-# Data Prep
-source("data/prep_data.R")
-
 # UI - Big Picture
 ui <- page_navbar(
 
@@ -37,7 +14,7 @@ ui <- page_navbar(
     navset_underline(
       nav_panel(title = "All Datasets", ui_tab1()),
       nav_panel(title = "Annotations",ui_tab2(unique_datasets)),
-      nav_panel(title = "Water Classes", ui_tab3(unique_datasets)),
+      nav_panel(title = "Water Classes", ui_tab3()),
       
     )
   ),
@@ -45,6 +22,7 @@ ui <- page_navbar(
 
 # SERVER - Big Picture
 server <- function(input, output, session) {
+  server_overview(input, output, session)
   server_tab1(input, output, session)
   server_tab2(input, output, session)
   server_tab3(input, output, session)

@@ -79,4 +79,31 @@ unique_species <- fish_codes %>%
 
 # #################################################################
 # #################################################################
-# SEASCAPER DATA
+# CLASS INFO
+df_seascaper_sub <- df_seascaper %>%
+  filter(Dataset == "Key West", !is.na(cellvalue))
+
+unique_classes <- as.character(df_seascaper_sub %>%
+                                 distinct(cellvalue) %>%
+                                 pull())
+
+unique_classes_numeric <- df_seascaper_sub %>%
+  distinct(cellvalue) %>%
+  arrange(cellvalue) %>%
+  pull()
+
+
+# #################################################################
+# #################################################################
+# MAP INFO
+
+site_info_file <- "data/BioSound_Datasets.csv"
+df_site_info <- read_csv(site_info_file, show_col_types = FALSE)
+df_site_info <- 
+  df_site_info %>%
+  rename(
+    "lon" = "Hydrophone Longitude",
+    "lat" = "Hydrophone Latitude",
+    "name" = "short name"
+  )
+df_site_info$site_id <- seq_len(nrow(df_site_info))

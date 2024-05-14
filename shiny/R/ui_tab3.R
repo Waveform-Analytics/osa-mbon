@@ -1,6 +1,6 @@
 ui_tab3 <- function() {
   
-  taglist(
+  tagList(
     
     br(),
     h2("Water Classes"),
@@ -14,6 +14,7 @@ ui_tab3 <- function() {
         title = "Options",
         ui_datasetPicker("t3_datasetPick", unique_datasets, FALSE),
         ui_indexPicker("t3_indexPick", FALSE),
+        ui_classPicker("t3_classPick", FALSE)
         
       )
     )
