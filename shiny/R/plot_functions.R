@@ -2,9 +2,11 @@ create_ts_plot <- function(id, df_in, output){
   output[[id]] <- renderDygraph({
     req(df_in())
     df_idxPicks <- df_in()
+    
     if (nrow(df_idxPicks) == 0) {
       return(NULL)
     }
+    
     dygraph(df_idxPicks, x = "start_time") %>%
       dyRangeSelector(height = 30)
   })

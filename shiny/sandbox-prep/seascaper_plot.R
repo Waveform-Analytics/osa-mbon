@@ -88,19 +88,27 @@ df_water$date <- as.factor(df_water$date)
 
 df_combo <- left_join(df_idx_summ, df_water, by = "date")
 
-this_class <- c("3", "15")
+this_class <- "3"
 this_df_combo <- df_combo %>%
   filter(class == this_class)
 
-p3 <- ggplot(df_combo, aes(x=mean, y=pct, color=class)) + 
-  geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
-  theme_minimal() + 
-  labs(y="Water class percentage", x="Mean index value")
-
-ggplotly(p3)
-
 # Fit the model
 model <- lm(pct ~ mean, data = this_df_combo)
+
+p3 <- ggplot(this_df_combo, aes(x=mean, y=pct, color=class)) + 
+  geom_smooth(method = "lm", se = TRUE) +
+  geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
+  theme_minimal() + 
+  labs(y="Water class percentage", x="Mean index value") +    
+  theme(legend.position = "none") +
+  annotate("text", x = Inf, y = Inf, 
+           label = sprintf("y = %.1fx + %.1f\nR² = %.2f",
+                           coef(model)[2], coef(model)[1], 
+                           summary(model)$r.squared),
+           hjust = 1.1, vjust = 1.1, size = 5)
+
+print(p3)
+
 
 # Summary of the model
 model_summary <- summary(model)
@@ -161,12 +169,14 @@ df_heatmap <- setNames(
   unique_classes_numeric)
 rownames(df_heatmap) <- index_columns
 
+
+
 # Populate the dataframe
 for (index in index_columns) {
   for (class in unique_classes_numeric) {
-    # Apply function and store the result in the appropriate cell
-    df_heatmap[index, as.character(class)] <- 
-      get_cor_value(df_idx_big, df_water, class, index)
+    cor_value <- get_cor_value(df_idx_big, d_water, class, index)
+    
+    df_heatmap[index, as.character(class)] <- cor_value
   }
 }
 
@@ -177,3 +187,11 @@ pheatmap(df_heatmap,
          na_col = "grey",  # Color for NaN values
          display_numbers = FALSE,  # Optionally display the correlation values
          main = "Correlations: index vs water class")
+
+pheatmap(df_heat(),
+         cluster_rows = FALSE,  
+         cluster_cols = FALSE,  
+         na_col = "grey",  
+         display_numbers = FALSE,  
+         main = "Correlations: index vs water class")
+})

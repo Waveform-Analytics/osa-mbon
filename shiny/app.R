@@ -1,3 +1,6 @@
+# Data Prep
+source("data/prep_data.R")
+
 # UI - Big Picture
 ui <- page_navbar(
 

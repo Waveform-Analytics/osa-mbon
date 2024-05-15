@@ -6,12 +6,13 @@ server_tab3 <- function(input, output, session) {
   # Index drop down selector
   selected_index <- server_indexPicker("t3_indexPick")
   
-  # Class drop down selector
-  selected_class <- server_classPicker("t3_classPick")
-  
+  # # Class drop down selector
+  # selected_class <- server_classPicker("t3_classPick", df_combo)
+
   # Selected sample rate (not a user choice)
   selected_sr <- reactive({
     req(selected_dataset())
+    
     sr_subset <- df_aco_norm %>%
       filter(Dataset == selected_dataset()) %>%
       distinct(Sampling_Rate_kHz) %>%
@@ -22,6 +23,7 @@ server_tab3 <- function(input, output, session) {
   # Selected duration (not a user choice)
   selected_duration <- reactive({
     req(selected_dataset(), selected_sr())
+    
     duration_subset <- df_aco_norm %>%
       filter(Dataset == selected_dataset(),
              Sampling_Rate_kHz == selected_sr()) %>%
@@ -33,6 +35,7 @@ server_tab3 <- function(input, output, session) {
   # Get the selected water class dataframe
   df_seascaper_sub <- reactive({
     req(selected_dataset())
+    
     df_seascaper %>%
       filter(Dataset == selected_dataset(), !is.na(cellvalue))
   })
@@ -43,9 +46,10 @@ server_tab3 <- function(input, output, session) {
                    distinct(cellvalue) %>%
                    pull())
   })
-    
+  
   unique_classes_numeric <-  reactive({
     req(df_seascaper_sub())
+    
     df_seascaper_sub() %>%
       distinct(cellvalue) %>%
       arrange(cellvalue) %>%
@@ -55,7 +59,8 @@ server_tab3 <- function(input, output, session) {
   # Prepare water class data
   # water class percentages
   df_water <- reactive({
-    req(df_seascaper_sub())
+    req(df_seascaper_sub(), unique_classes())
+    
     df_temp<- 
       df_seascaper_sub() %>%
       group_by(date) %>%
@@ -67,7 +72,7 @@ server_tab3 <- function(input, output, session) {
         names_from  = cellvalue,
         values_from = pct, values_fill = 0) %>%
       pivot_longer(
-        cols = unique_classes,
+        cols = unique_classes(),
         names_to = "class",
         values_to = "pct"
       ) %>%
@@ -76,10 +81,11 @@ server_tab3 <- function(input, output, session) {
       ) %>%
       arrange(date, class_num) 
     df_temp$class <- as.factor(df_temp$class)
+    df_temp$date <- as.factor(df_temp$date) 
     return(df_temp)
   })
   
-  # Get the list of dates from thie water column subset
+  # Get the list of dates from the water column subset
   dates_list <- reactive({
     df_seascaper_sub() %>% 
       distinct(date) %>% 
@@ -97,12 +103,13 @@ server_tab3 <- function(input, output, session) {
   
   # 
   df_idx <- reactive({
-    req(selected_index(), df_filt())
+    req(selected_index(), df_filt(), dates_list())
+    
     df_idx_temp <- 
       df_filt() %>% 
       select(start_time, all_of(selected_index())) %>%
       mutate(date = cut(start_time, 
-                        breaks = dates_list, 
+                        breaks = dates_list(), 
                         include.lowest = TRUE, 
                         right = FALSE),
              date = as.POSIXct(date)) %>%
@@ -113,24 +120,37 @@ server_tab3 <- function(input, output, session) {
   
   
   df_combo <- reactive({
+    req(df_idx(), df_water())
+    
     df_idx_summ <- df_idx() %>%
       group_by(date) %>%
       summarise(mean = mean(index))
-    df_water$date <- as.factor(df_water$date)
-    df_idx_summ_temp <- left_join(df_idx_summ, df_water, by = "date")
+    df_idx_summ_temp <- left_join(df_idx_summ, df_water(), by = "date")
     return(df_idx_summ_temp)
   })
   
+  # Class drop down selector
+  selected_class <- server_classPicker("t3_classPick", df_combo)
+  
+  
+  this_df_combo <- reactive({
+    req(df_combo(), selected_class())
+    
+    df_combo() %>%
+      filter(class == selected_class())
+  })
+  
   df_idx_big <- reactive({
-    req(df_filt())
+    req(df_filt(), dates_list())
+    
     df_temp <- 
       df_filt() %>% 
       select(start_time, all_of(index_columns)) %>%
       mutate(date = cut(start_time, 
-                        breaks = dates_list, 
+                        breaks = dates_list(), 
                         include.lowest = TRUE, 
                         right = FALSE),
-             date = as.POSIXct(date),
+             date = as.POSIXct(date)
              # date = with_tz(date, "UTC")
       ) %>%
       pivot_longer(
@@ -147,7 +167,60 @@ server_tab3 <- function(input, output, session) {
         date = force_tz(date, "UTC")
       )
     df_temp$date <- as.factor(df_temp$date)
-    return(df_idx)
+    return(df_temp)
+  })
+  
+  # Function to compute correlations for heatmap
+  get_cor_value <- 
+    function(df_index, 
+             df_water_class, 
+             this_class, 
+             this_index) {
+      
+      this_pct <- df_water_class %>%
+        filter(class_num == this_class)
+      
+      this_value <- df_index %>%
+        filter(index == this_index)
+      
+      df_join <- inner_join(this_pct, this_value, by = "date")
+      
+      return(cor(df_join$pct, df_join$mean_val))
+    }
+  
+  # Initialize and populate heatmap dataframe
+  df_heatmap <- reactive({
+    req(unique_classes(), unique_classes_numeric(), df_idx_big(), df_water())
+    
+    df_temp <- setNames(
+      data.frame(
+        matrix(ncol = length(unique_classes()), 
+               nrow = length(index_columns))), 
+      unique_classes_numeric())
+    rownames(df_temp) <- index_columns
+    
+    # Populate the dataframe
+    for (index in index_columns) {
+      for (class in unique_classes_numeric()) {
+        cor_value <- get_cor_value(df_idx_big(), df_water(), class, index)
+        
+        df_temp[index, as.character(class)] <- cor_value
+        
+      }
+    }
+
+    return(df_temp)
+  })
+  
+  output$t3_plot_heatmap = renderPlot({
+    req(df_heatmap(), df_idx_big(), selected_dataset(), df_water())
+    
+    pheatmap(df_heatmap(),
+             cluster_rows = FALSE,
+             cluster_cols = FALSE,
+             na_col = "grey",
+             display_numbers = FALSE,
+             main = "Correlations: index vs water class")
   })
   
 }

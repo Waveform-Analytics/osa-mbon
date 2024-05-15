@@ -14,6 +14,7 @@ library(ggplot2)
 library(dygraphs)
 library(plotly)
 library(leaflet)
+library(pheatmap)
 # Data
 library(duckdb)
 library(data.table)

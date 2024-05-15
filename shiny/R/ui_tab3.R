@@ -16,7 +16,12 @@ ui_tab3 <- function() {
         ui_indexPicker("t3_indexPick", FALSE),
         ui_classPicker("t3_classPick", FALSE)
         
-      )
+      ),
+      
+      card(
+        plotOutput("t3_plot_heatmap", height = 600),
+      ),
+      
     )
   )
 }

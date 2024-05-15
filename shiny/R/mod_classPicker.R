@@ -13,9 +13,10 @@ ui_classPicker <- function(id, multiselect) {
 server_classPicker <- function(id, df_combo_temp) {
   moduleServer(id, function(input, output, session) {
     observe({
+      req(df_combo_temp())
       
       unique_class_pick <- 
-        df_combo_temp %>% 
+        df_combo_temp() %>% 
         distinct(class) %>% 
         pull()
       
