@@ -11,7 +11,7 @@ df_indexPicks <-
 
 # Annotations - Testing
 # Extract just one species from the key west annotations
-spp <- c("Mb", "Em", "Vs")
+spp <- c("Mb", "Em")
 # spp <- c("Em")
 ann_spp <- df_fish %>%
   filter(species %in% spp, Dataset == "Key West") %>%
@@ -32,6 +32,27 @@ p1 <- ggplot(data = df_indexPicks, aes(x = start_time, y = index)) +
   theme_minimal()
 
 ggplotly(p1)
+
+##### Try with plotly directly
+
+present_only <- present_only %>% arrange(start_time)
+df_indexPicks <- df_indexPicks %>% arrange(start_time)
+df_indexPicks$species <- 0
+
+p1b <- plot_ly()
+
+p1b <- p1b %>% add_trace(data=df_indexPicks, 
+                         x=~start_time, y=~index,
+                         type='scatter', mode='lines', 
+                         line = list(color = 'gray'),
+                         showlegend=FALSE)
+
+p1b <- p1b %>% add_markers(data=present_only, name=~species,
+                           x=~start_time, y=~index, 
+                           color=~species)
+
+p1b
+
 
 ## box plots - presence/absence
 p2 <- ggplot(A, aes(x=species, y=index, fill=is_present)) +

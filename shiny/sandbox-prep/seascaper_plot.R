@@ -32,7 +32,6 @@ df_water <- df_seascaper_sub %>%
 
 df_water$class <- as.factor(df_water$class)
 
-
 p <- ggplot(df_water, aes(x = date, y=pct, fill=class)) +
   geom_area(alpha = 0.5) +
   geom_area(aes(color = class), fill = NA, size = .7) +
@@ -194,4 +193,4 @@ pheatmap(df_heat(),
          na_col = "grey",  
          display_numbers = FALSE,  
          main = "Correlations: index vs water class")
-})
+

@@ -81,7 +81,7 @@ server_tab3 <- function(input, output, session) {
       ) %>%
       arrange(date, class_num) 
     df_temp$class <- as.factor(df_temp$class)
-    df_temp$date <- as.factor(df_temp$date) 
+    # df_temp$date <- as.factor(df_temp$date) 
     return(df_temp)
   })
   
@@ -122,10 +122,13 @@ server_tab3 <- function(input, output, session) {
   df_combo <- reactive({
     req(df_idx(), df_water())
     
+    water_data <- df_water()
+    water_data$date <- as.factor(water_data$date)
+    
     df_idx_summ <- df_idx() %>%
       group_by(date) %>%
       summarise(mean = mean(index))
-    df_idx_summ_temp <- left_join(df_idx_summ, df_water(), by = "date")
+    df_idx_summ_temp <- left_join(df_idx_summ, water_data, by = "date")
     return(df_idx_summ_temp)
   })
   
@@ -192,6 +195,9 @@ server_tab3 <- function(input, output, session) {
   df_heatmap <- reactive({
     req(unique_classes(), unique_classes_numeric(), df_idx_big(), df_water())
     
+    water_data <- df_water()
+    water_data$date <- as.factor(water_data$date)
+    
     df_temp <- setNames(
       data.frame(
         matrix(ncol = length(unique_classes()), 
@@ -202,7 +208,7 @@ server_tab3 <- function(input, output, session) {
     # Populate the dataframe
     for (index in index_columns) {
       for (class in unique_classes_numeric()) {
-        cor_value <- get_cor_value(df_idx_big(), df_water(), class, index)
+        cor_value <- get_cor_value(df_idx_big(), water_data, class, index)
         
         df_temp[index, as.character(class)] <- cor_value
         
@@ -212,7 +218,11 @@ server_tab3 <- function(input, output, session) {
     return(df_temp)
   })
   
-  output$t3_plot_heatmap = renderPlot({
+  #######################################################################
+  ##### PLOTS
+
+  # Heatmap
+  output$t3_plot_heatmap <- renderPlot({
     req(df_heatmap(), df_idx_big(), selected_dataset(), df_water())
     
     pheatmap(df_heatmap(),
@@ -222,5 +232,20 @@ server_tab3 <- function(input, output, session) {
              display_numbers = FALSE,
              main = "Correlations: index vs water class")
   })
-  
+
+  # Water classes
+  output$t3_plot_waterclasses <- renderPlot({
+    req(df_water())
+    
+    p <- ggplot(df_water(), aes(x = date, y=pct, fill=class)) +
+      geom_area(alpha = 0.5) +
+      geom_area(aes(color = class), fill = NA, linewidth = .7) +
+      theme_minimal() +
+      labs(
+        y="Water class percentage",
+        x=NULL)
+    
+    return(p)
+  })
+    
 }
