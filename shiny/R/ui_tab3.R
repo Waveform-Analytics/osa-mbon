@@ -24,7 +24,7 @@ ui_tab3 <- function() {
       
       layout_column_wrap(
         width = 1/2,
-        height = 350,
+        height = 500,
          
         layout_column_wrap(
           width = 1,
@@ -38,7 +38,7 @@ ui_tab3 <- function() {
         ),
         
         card(
-          h4("The other card on the side"),
+          plotOutput("t3_plot_corr"),
         ),
 
       )

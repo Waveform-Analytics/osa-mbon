@@ -116,7 +116,7 @@ server_tab2 <- function(input, output, session) {
     
     p <- p %>% add_markers(data=present_data, name=~species,
                            x=~start_time, y=~index, 
-                           color=~species,
+                           color=~species, size=5,
                            showlegend=TRUE)
     
     return(p)

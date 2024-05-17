@@ -7,7 +7,7 @@ server_tab3 <- function(input, output, session) {
   selected_index <- server_indexPicker("t3_indexPick")
   
   # # Class drop down selector
-  # selected_class <- server_classPicker("t3_classPick", df_combo)
+  selected_class <- server_classPicker("t3_classPick", df_combo)
 
   # Selected sample rate (not a user choice)
   selected_sr <- reactive({
@@ -132,6 +132,18 @@ server_tab3 <- function(input, output, session) {
     return(df_idx_summ_temp)
   })
   
+  this_df_combo <- reactive({
+    req(df_combo(), selected_class())
+    
+    this_combo <- this_df_combo()
+    this_class <- selected
+    
+    temp_combo <-  this_combo %>%
+      filter(class == this_class)
+    
+    return(temp_combo)
+  })
+  
   # Class drop down selector
   selected_class <- server_classPicker("t3_classPick", df_combo)
   
@@ -246,6 +258,43 @@ server_tab3 <- function(input, output, session) {
         x=NULL)
     
     return(p)
+  })
+  
+  # Boxplot
+  output$t3_plot_boxplot <- renderPlot({
+    req(df_idx())
+    
+    index_data <- df_idx()
+    
+    p2 <- ggplot(index_data, aes(x=date, y=index)) +
+      geom_boxplot() +
+      theme_minimal()
+    
+    return(p2)
+  })
+  
+  # Corr plot
+  output$t3_plot_corr <- renderPlot({
+    req(this_df_combo())
+    
+    this_combo <- this_df_combo()
+    
+    model <- lm(pct ~ mean, data = this_combo)
+    
+    p3 <- ggplot(this_combo, aes(x=mean, y=pct, color=class)) + 
+      geom_smooth(method = "lm", se = TRUE) +
+      geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
+      theme_minimal() + 
+      labs(y="Water class percentage", x="Mean index value") +    
+      theme(legend.position = "none") +
+      annotate("text", x = Inf, y = Inf, 
+               label = sprintf("y = %.1fx + %.1f\nR² = %.2f",
+                               coef(model)[2], coef(model)[1], 
+                               summary(model)$r.squared),
+               hjust = 1.1, vjust = 1.1, size = 5)
+    
+    return(p3)
+    
   })
     
 }
