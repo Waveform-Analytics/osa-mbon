@@ -2,6 +2,7 @@ deprecated/
 .DS_Store
 *.wal
 *.duckdb
+*.zip
 
 # Miscellaneous folders to ignore
 /shiny/shinydata/fromLiz

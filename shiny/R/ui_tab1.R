@@ -31,6 +31,22 @@ ui_tab1 <- function() {
         h4("Gray's Reef"),
         dygraphOutput("p1_plot_ts_graysreef"),
       ),
+      card(
+        h4("ONC"),
+        dygraphOutput("p1_plot_ts_onc"),
+      ),
+      card(
+        h4("Chuckchi Sea"),
+        dygraphOutput("p1_plot_ts_chuckchi"),
+      ),
+      card(
+        h4("OOI"),
+        dygraphOutput("p1_plot_ts_ooi"),
+      ),
+      card(
+        h4("SanctSound"),
+        dygraphOutput("p1_plot_ts_sanctsound"),
+      ),
     ),
   )
 }

@@ -18,7 +18,6 @@ ui <- page_navbar(
       nav_panel(title = "All Datasets", ui_tab1()),
       nav_panel(title = "Annotations",ui_tab2(unique_datasets)),
       nav_panel(title = "Water Classes", ui_tab3()),
-      
     )
   ),
 )
