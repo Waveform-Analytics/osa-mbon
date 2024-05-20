@@ -15,6 +15,8 @@ library(dygraphs)
 library(plotly)
 library(leaflet)
 library(pheatmap)
+library(lattice)
+library(RColorBrewer)
 # Data
 library(duckdb)
 library(data.table)

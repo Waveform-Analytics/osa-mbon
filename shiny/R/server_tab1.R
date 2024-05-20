@@ -28,5 +28,4 @@ server_tab1 <- function(input, output, session) {
   create_ts_plot("p1_plot_ts_ooi", df_subset_ooi, output)
   create_ts_plot("p1_plot_ts_sanctsound", df_subset_sanctsound, output)
   
-
 }

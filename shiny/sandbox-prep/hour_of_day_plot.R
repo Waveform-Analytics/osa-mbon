@@ -73,4 +73,52 @@ p_facets <- ggplot(df_hour_grouped, aes(x = hour, y = mean, group = index, color
 # Print the plot
 print(p_facets)
 
+############################################################
+# Prep for the big overview plot
 
+selected_indices <- index_columns
+df_hour_all <-
+  subset_df %>%
+  select(hour, all_of(selected_indices))
+
+df_hour_all$hour <- factor(df_hour_all$hour)
+
+df_hour_long <- pivot_longer(df_hour_all, all_of(selected_indices), 
+                             names_to = "index")
+
+df_hour_grouped <- df_hour_long %>%
+  group_by(index, hour) %>%
+  summarise(
+    summary_val = mean(value),
+    .groups = "drop" 
+  ) 
+
+
+df_hour_med <- df_hour_grouped %>%
+  group_by(index) %>%
+  summarise(
+    min_val = min(summary_val),
+    max_val = max(summary_val),
+    range = max_val - min_val
+  ) 
+
+df_hour_norm <- df_hour_grouped %>%
+  left_join(df_hour_med, b="index") %>%
+  mutate(
+    norm = (summary_val-min_val)/range
+  ) %>%
+  select(
+    index, hour, norm
+  )
+
+diverging_colors <- colorRampPalette(brewer.pal(11, "RdBu"))(100)  
+
+# Create the plot
+plot <- levelplot(norm ~ as.factor(hour) * as.factor(index), data = df_hour_norm,
+                  xlab = "Hour of Day",  # Rename x-axis
+                  ylab = "Index",  # Rename y-axis
+                  col.regions = diverging_colors,  # Use the diverging color scale
+                  colorkey = TRUE)  # Enable color key
+
+# Print the plot
+print(plot)
