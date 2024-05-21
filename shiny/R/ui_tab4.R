@@ -18,7 +18,7 @@ ui_tab4 <- function() {
       ),
       
       card(
-        plotOutput("t4_plot_hour_heatmap", height = 600),
+        plotOutput("p4_plot_hour_heatmap", height = 600),
       )
       
       

@@ -5,8 +5,9 @@ df_selected <- function(location_name, get_dataset, selected_indices) {
   reactive({
     req(get_dataset(), selected_indices())
     dataset <- get_dataset()
-    sr <- get_first_sr(location_name, dataset)
-    duration <- get_first_duration(location_name, dataset, sr)
+    # sr <- get_first_sr(location_name, dataset)
+    sr <- 16
+    duration <- get_max_duration(location_name, dataset, sr)
     filtered_data <- fcn_filterAco(dataset, location_name, sr, duration)
     
     # Select specific columns based on indices
@@ -24,13 +25,14 @@ get_first_sr <- function(dataset_name, df) {
 }
 
 # Get first duration based on dataset and sample rate
-get_first_duration <- function (dataset_name, df, sr) {
+get_max_duration <- function (dataset_name, df, sr) {
   duration_subset <- df %>%
     filter(Dataset == dataset_name,
            Sampling_Rate_kHz == sr) %>%
     distinct(Duration_sec) %>%
     pull(Duration_sec)
-  duration_subset[1]
+
+  max(duration_subset)
 }
 
 # Function to filter the acoustic indices dataset
