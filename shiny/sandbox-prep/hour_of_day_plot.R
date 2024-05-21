@@ -1,6 +1,6 @@
 # Filtered Data Subset
 subset_df <-
-  fcn_filterAco(df_aco_norm, "Key West",48, 30)
+  fcn_filterAco(df_aco_norm, "Key West",16, 30)
 
 # Add hour of day column, make it a factor
 subset_df$hour <- hour(subset_df$start_time)
@@ -26,13 +26,6 @@ p_hour <- ggplot(df_hour_long, aes(x=hour, y=value, fill=index)) +
         panel.grid.minor.y = element_blank())
 
 print(p_hour)
-
-# Try out ggridges to make a ridge plot
-p_ridge <- ggplot(df_hour_long, aes(x=value, y=hour, fill=hour)) +
-  geom_density_ridges()
-
-print(p_ridge)
-
 
 ## Try multiple indices - facet_grid
 selected_indices2 <- c("ZCR", "ACI", "AEI", "ECV")
@@ -111,9 +104,8 @@ df_hour_norm <- df_hour_grouped %>%
     index, hour, norm
   )
 
-diverging_colors <- colorRampPalette(brewer.pal(11, "RdBu"))(100)  
-
 # Create the plot
+diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)  
 plot <- levelplot(norm ~ as.factor(hour) * as.factor(index), data = df_hour_norm,
                   xlab = "Hour of Day",  # Rename x-axis
                   ylab = "Index",  # Rename y-axis

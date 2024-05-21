@@ -67,37 +67,6 @@ server_tab2 <- function(input, output, session) {
   
   # PLOTTING
   
-  # PLOT 1
-  # output$p2_plot_ts <- renderPlotly({
-  #   req(df_indexPicks(), df_present(), selected_index())
-  #   
-  #   # Extract the necessary data
-  #   index_data <- df_indexPicks()
-  #   present_data <- df_present()
-  #   
-  #   # Create a basic plotly object with line
-  #   p <- plot_ly(index_data, x = ~start_time, y = ~index, 
-  #                type = 'scatter', mode = 'lines',
-  #                # line = list(color = 'blue'), 
-  #                name = 'Index') %>%
-  #     layout(title = paste0(selected_index(), " over Time with Species Presence"),
-  #            xaxis = list(title = "Time"),
-  #            yaxis = list(title = "Index"))
-  #   
-  #   # Add points for presence data
-  #   p <- add_trace(p, data = present_data, x = ~start_time, y = ~index,
-  #                  type = 'scatter', mode = 'markers',
-  #                  marker = list(color = ~species, symbol = ~species, size = 10),
-  #                  name = 'Species Presence')
-  #   
-  #   # Customize the layout and return the plot
-  #   p <- layout(p, title = paste0(selected_index(), " over Time with Species Presence"),
-  #               xaxis = list(title = "Time"),
-  #               yaxis = list(title = "Index"))
-  #   
-  #   return(p)
-  # })
-  
   output$p2_plot_ts <- renderPlotly({
     req(df_indexPicks(), df_present(), selected_index())
     
