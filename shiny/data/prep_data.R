@@ -46,6 +46,7 @@ fish_codes <- read_csv("data/fish_codes.csv", show_col_types = FALSE)
 # Get all of the unique datasets
 unique_datasets <- df_aco %>%
   distinct(Dataset) %>%
+  arrange(Dataset) %>%
   pull(Dataset)
 
 # Get all of the unique sample rates for the selected dataset
