@@ -3,8 +3,12 @@ ui_tab1 <- function() {
     br(),
     h2("Overview of all datasets"),
     p(
-      "This tab presents an overview of the acoustic indices
-          and water class data for all datasets."
+      "This series of datasets provides insights into the relationship between 
+      acoustic indices at each site, and the distribution of values across the 
+      dataset timeseries. Select one or more index variables in the “Select 
+      Indices” section below, with the option to turn off normalization. 
+      Displayed data are in native duration and native sampling rate (see 
+      “Overview” tab for this information). "
     ),
     
     layout_sidebar(

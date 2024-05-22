@@ -5,14 +5,31 @@ ui_tab3 <- function() {
     br(),
     h2("Water Classes"),
     p(
-      "The plots on this tab present acoustic index and water class data together."
+      "Water class data were obtained using the MBON SeascapeR tool and custom 
+      shapefiles for each site. For information on the underlying remotely 
+      sensed environmental data contributing to each class, visit the ",
+      tags$a("Seascapes site",
+             href="https://shiny.marinebon.app/seascapes/classes.html",
+             target="_blank"),
+       ". Select a dataset and water class data will automatically update in the 
+      correlation matrix. To further evaluate the relationships, select and 
+      index and water class to observe the relationship between mean index value 
+      and water class percentage. The plots below the matrix consist of the 
+      distribution of water class percentages for each 8-day composite of 
+      remotely sensed data (null values excluded), 8-days distribution summaries 
+      for the selected index, and a regression plot between the two variables."
     ),
     
     layout_sidebar(
       fillable=FALSE,
       sidebar = sidebar(
         title = "Options",
+        
         ui_datasetPicker("t3_datasetPick", unique_datasets, FALSE),
+        
+        br(),
+        
+        strong("Lower figures:"),
         ui_indexPicker("t3_indexPick", FALSE),
         ui_classPicker("t3_classPick", FALSE)
         
