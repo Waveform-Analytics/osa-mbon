@@ -4,6 +4,6 @@ Chuckchi Sea,Chuckchi Sea,Oregon State University,Kate Stafford,16,16,25 minutes
 Gray's Reef (GR01),Gray's Reef,NEFSC-SanctSound,Tim Rowell,48,16,Continuous five hour files,31.396,-80.89,16,Offshore,Jan - Feb 2019,GraysReef_SeascapeR_20190101_to_20190401.csv
 Key West (WDR_grouper),Key West,Florida Fish & Wildlife,Jess Keller,48,16,30 seconds every five minutes,24.442,-81.934,23,Coral Reef,Feb - Mar 2020,KeyWest_SeascapeR_20200101_to_20200401.csv
 May River,May River,University of S. Carolina Beaufort,Alyssa Marian/Eric Montie,80,16,2 minutes every hour,32.195,-80.792,4.5,Estuary,Jan - Mar 2019,MayRiver_SeascapeR_20190101_to_20190401.csv
-ONC (MEF Hydrophone),ONC,Ocean Networks Canada,Jasper Kanes,64,24,Continuous 5 min,47.949,-129.098,2189,Offshore,Jan - Feb 2019,ONC_MEF_SeascapeR_20190101_to_20190401.csv
-OOI (HYDBBA 106),OOI,Ocean Observatories Initiative,Liz Ferguson,64,16,Continuous 5 min,44.637,-124.306,80,Oregon Shelf,Jan - Feb 2019,HYDBBA106_SeascapeR_20190101_to_20190401.csv
-SanctSound (HI01),SanctSound,SanctSound - Hawaiian Islands Humpback NMS,Eden Zang,48,16,Continuous five hour files,20.807,-156.655,59.7,Island/ Nearshore,Jan - Feb 2019,HI01_NMS_SeascapeR_20190101_to_20190401.csv
+ONC (MEF Hydrophone),ONC-MEF,Ocean Networks Canada,Jasper Kanes,64,24,Continuous 5 min,47.949,-129.098,2189,Offshore,Jan - Feb 2019,ONC_MEF_SeascapeR_20190101_to_20190401.csv
+OOI (HYDBBA 106),OOI-HYDBBA106,Ocean Observatories Initiative,Liz Ferguson,64,16,Continuous 5 min,44.637,-124.306,80,Oregon Shelf,Jan - Feb 2019,HYDBBA106_SeascapeR_20190101_to_20190401.csv
+SanctSound (HI01),SanctSound-HI01,SanctSound - Hawaiian Islands Humpback NMS,Eden Zang,48,16,Continuous five hour files,20.807,-156.655,59.7,Island/ Nearshore,Jan - Feb 2019,HI01_NMS_SeascapeR_20190101_to_20190401.csv

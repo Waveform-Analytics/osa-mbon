@@ -5,7 +5,12 @@ ui_tab4 <- function() {
     br(),
     h2("Indices vs Hour of day"),
     p(
-      "The heatmap on this tab illustrates how indices vary with time of day"
+      "Heatmap displaying the diel trends within each dataset and the 
+      relationship of those trends between 16 kHz and full bandwidth sampling 
+      rates. Each acoustic index is summarized by hour of day across the month 
+      of February at the native duration (or 5-min maximum duration for larger 
+      audio files). Select the dataset and sampling rate to evaluate from the 
+      drop-down menu to the left."
     ),
     
     layout_sidebar(

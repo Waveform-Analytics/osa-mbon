@@ -12,6 +12,9 @@ ui_tab2 <- function(unq_datasets_ann) {
       place your cursor ahead of the annotation value and press the backspace 
       button."
     ),
+    p("Data are reported at their native sampling rate (Key West = 48 kHz, May 
+      River = 80 kHz) and native duration (Key West = 30 second, May River = 
+      2-min)."),
     
     layout_sidebar(
       fillable=FALSE,

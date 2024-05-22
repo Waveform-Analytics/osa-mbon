@@ -19,6 +19,7 @@ ui_tab3 <- function() {
       remotely sensed data (null values excluded), 8-days distribution summaries 
       for the selected index, and a regression plot between the two variables."
     ),
+    p("Data are reported at their native sampling rate and duration."),
     
     layout_sidebar(
       fillable=FALSE,

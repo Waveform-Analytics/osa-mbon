@@ -10,6 +10,7 @@ ui_tab1 <- function() {
       Displayed data are in native duration and native sampling rate (see 
       “Overview” tab for this information). "
     ),
+    p("Data are reported at 16 kHz sampling rate and native duration."),
     
     layout_sidebar(
       fillable = FALSE,

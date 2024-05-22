@@ -17,7 +17,8 @@ server_tab3 <- function(input, output, session) {
       filter(Dataset == selected_dataset()) %>%
       distinct(Sampling_Rate_kHz) %>%
       pull(Sampling_Rate_kHz)
-    sr_subset[1]
+    max(sr_subset)
+    # sr_subset[1]
   })
   
   # Selected duration (not a user choice)
@@ -29,7 +30,8 @@ server_tab3 <- function(input, output, session) {
              Sampling_Rate_kHz == selected_sr()) %>%
       distinct(Duration_sec) %>%
       pull(Duration_sec)
-    duration_subset[1]
+    # duration_subset[1]
+    max(duration_subset)
   })
   
   # Get the selected water class dataframe
