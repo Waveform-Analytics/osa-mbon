@@ -12,7 +12,15 @@ ui_tab4 <- function() {
       audio files). Select the dataset and sampling rate to evaluate from the 
       drop-down menu to the left."
     ),
-    
+    withMathJax(),
+    p(
+      "Note that the heatmap values are scaled so that they all range from 0 to 
+      1. Scaled indices \\(s_i\\) are calculated using the following equation: "
+    ),
+    p("$$s_i=\\frac{x_i - min(\\bar{x})}{max(\\bar{x}) - min(\\bar{x})},$$"),
+    p("where \\(x_i\\) is the \\(i^{th}\\) index value and \\(\\bar{x}\\) is the vector of
+      all values recorded for the current index."),
+
     layout_sidebar(
       fillable=FALSE,
       sidebar = sidebar(

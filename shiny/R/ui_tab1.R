@@ -2,6 +2,7 @@ ui_tab1 <- function() {
   tagList(
     br(),
     h2("Overview of all datasets"),
+    withMathJax(),
     p(
       "This series of datasets provides insights into the relationship between 
       acoustic indices at each site, and the distribution of values across the 
@@ -11,6 +12,11 @@ ui_tab1 <- function() {
       “Overview” tab for this information). "
     ),
     p("Data are reported at 16 kHz sampling rate and native duration."),
+    p("The plots can optionally show normalized data, in which case index 
+    values \\(s_i\\) are computed using:"),
+    p("$$s_i = \\frac{ x_i - mean(\\bar{x}) }{ \\max | x_i - median ( \\bar{x} ) | } $$"),
+    p("where \\(x_i\\) is the \\(i^{th}\\) index value and \\(\\bar{x}\\) is the vector of
+      all values recorded for the current index."),
     
     layout_sidebar(
       fillable = FALSE,

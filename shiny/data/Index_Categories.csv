@@ -1,0 +1,61 @@
+Prefix,Category,Subcategory,Description
+ACI,Temporal Indices,Amplitude Variation,"Quantifies the complexity of sound by evaluating the variation in amplitude among frequency bands, providing insights into the richness and diversity of the acoustic environment."
+ACTspCount,Temporal Indices,Spatial Activity,"Measures spatial areas showing significant sound activity, including count, fraction, and average level of activity, reflecting spatial patterns of sound distribution and activity."
+ACTspFract,Temporal Indices,Spatial Activity,"Measures spatial areas showing significant sound activity, including count, fraction, and average level of activity, reflecting spatial patterns of sound distribution and activity."
+ACTspMean,Temporal Indices,Spatial Activity,"Measures spatial areas showing significant sound activity, including count, fraction, and average level of activity, reflecting spatial patterns of sound distribution and activity."
+ACTtCount,Temporal Indices,Temporal Activity,"Evaluates temporal sound activity, including count, fraction, and average sound level during active times, providing insights into the frequency, duration, and intensity of acoustic events over time."
+ACTtFraction,Temporal Indices,Temporal Activity,"Evaluates temporal sound activity, including count, fraction, and average sound level during active times, providing insights into the frequency, duration, and intensity of acoustic events over time."
+ACTtMean,Temporal Indices,Temporal Activity,"Evaluates temporal sound activity, including count, fraction, and average sound level during active times, providing insights into the frequency, duration, and intensity of acoustic events over time."
+ADI,Alpha Acoustic Indices,Diversity,"Measures the variety of sound frequencies present, indicative of biodiversity, and provides valuable information about the ecological integrity and health of the acoustic environment."
+AEI,Alpha Acoustic Indices,Evenness,"Evaluates the evenness of the distribution of sound energy across frequencies, reflecting the balance and uniformity of acoustic energy within the environment."
+AGI,Alpha Acoustic Indices,Gap Analysis,"Measures the gaps or silent intervals within the acoustic signal, indicative of disturbance or interruptions in natural soundscapes, offering insights into ecosystem health and integrity."
+AnthroEnergy,Alpha Acoustic Indices,Energy,"Measure of energy associated with human-made sounds, providing information about anthropogenic influences on the acoustic environment."
+BGNf,Alpha Acoustic Indices,Background Noise,"Level of background noise in the frequency domain, indicating the level of ambient noise pollution in the environment."
+BGNt,Alpha Acoustic Indices,Background Noise,"Level of background noise in the time domain, indicating the level of ambient noise pollution over time."
+BI,Alpha Acoustic Indices,Biotic Index,Index evaluating the presence of biological sounds.
+BioEnergy,Alpha Acoustic Indices,Energy,"Measure of energy associated with natural sounds, reflecting the presence and intensity of biological activities within the environment."
+EAS,Environmental Indices,Energy Spectrum,"Total acoustic energy measured across the spectrum, providing an overview of the overall energy distribution and composition of the acoustic environment."
+ECU,Environmental Indices,Frequency Channel,"Evenness with which different frequency channels are utilized, reflecting the efficient utilization of frequency resources within the acoustic spectrum."
+ECV,Environmental Indices,Energy Variation,"Coefficient of variation of the energy across different frequency bands, providing insights into the variability and distribution of acoustic energy within the environment."
+ENRf,Environmental Indices,Energy Ratio,"Ratio of energy within certain frequency bands compared to the total energy, offering information about the distribution and allocation of energy across the frequency spectrum."
+EPS,Environmental Indices,Energy Spectrum,"Measure of the peak energy in the spectrum, indicating the presence and intensity of dominant acoustic events or phenomena."
+EPS_KURT,Environmental Indices,Energy Spectrum,"Kurtosis of the energy peak spectrum, indicating the shape of the peak distribution and providing insights into the distributional characteristics of dominant energy sources."
+EPS_SKEW,Environmental Indices,Energy Spectrum,"Skewness of the energy peak spectrum, indicating the asymmetry of the peak distribution and providing information about the uniformity of energy distribution within the spectrum."
+EVNspCount,Environmental Indices,Spatial Event,"Count of sound events in spatial areas, including count, fraction, and average level of events, offering insights into spatial patterns of sound activity and distribution."
+EVNspFract,Environmental Indices,Spatial Event,"Fraction of the spatial domain where sound events occur, providing insights into spatial patterns of sound activity and distribution."
+EVNspMean,Environmental Indices,Spatial Event,"Average level of sound events across spatial areas, providing insights into spatial patterns of sound activity and distribution."
+EVNtCount,Environmental Indices,Temporal Event,"Number of distinct sound events detected, providing insights into the frequency and occurrence of sound events over time."
+EVNtFraction,Environmental Indices,Temporal Event,"Fraction of time that 'events' (heightened sound activity) occur, providing insights into the frequency and occurrence of sound events over time."
+EVNtMean,Environmental Indices,Temporal Event,"Average sound level during event times, providing insights into the intensity and characteristics of sound events over time."
+H_gamma,Environmental Indices,Entropy,"Entropy measure based on the gamma distribution, used for sound diversity."
+H_GiniSimpson,Environmental Indices,Entropy,"Entropy based on the Gini-Simpson index, reflecting diversity and probability."
+H_Havrda,Environmental Indices,Entropy,"Entropy measure based on Havrda-Charvat entropy, reflecting diversity."
+H_pairedShannon,Environmental Indices,Entropy,Shannon entropy calculated from paired data sets for comparing diversity.
+H_Renyi,Environmental Indices,Entropy,Generalized entropy measure capturing diversity and richness of the soundscape.
+Hf,Environmental Indices,Frequency,Extent to which high frequencies are present in the soundscape.
+HFC,Environmental Indices,Frequency,Reiterates the presence and extent of high frequencies in the soundscape.
+Ht,Environmental Indices,Time,"Median frequency of the acoustic signal, providing insights into the central tendency of frequency distribution within the environment."
+KURTf,Environmental Indices,Frequency Distribution,"'Tailedness' of the frequency distribution, indicating infrequent extreme frequency deviations."
+KURTt,Environmental Indices,Time Distribution,"'Tailedness' of the amplitude distribution in the time domain, indicating infrequent extreme deviations."
+LEQf,Environmental Indices,Frequency,Equivalent constant sound level in the frequency domain that conveys the same sound energy.
+LEQt,Environmental Indices,Time,Constant sound level that delivers the same sound energy as the varying sound level over a specified period.
+LFC,Environmental Indices,Frequency,Extent to which low frequencies are present in the soundscape.
+MEANf,Environmental Indices,Frequency,"Average frequency of sounds, weighted by their amplitude."
+MEANt,Environmental Indices,Time,"The average amplitude of the audio signal over time, reflecting the overall loudness."
+MFC,Environmental Indices,Frequency,Extent to which mid-range frequencies are present in the soundscape.
+MED,Environmental Indices,Energy Distribution,"Median frequency of the acoustic signal, providing insights into the central tendency of frequency distribution within the environment."
+NBPEAKS,Environmental Indices,Frequency,Total number of prominent peaks in the frequency spectrum.
+NDSI,Environmental Indices,Balance,Index of the balance between biological sounds and anthropogenic noise.
+RAOQ,Environmental Indices,Entropy,Entropy measure that considers both abundance and dissimilarity among categories.
+rBA,Environmental Indices,Balance,Relative levels of biophony (natural sounds) and anthrophony (human-made sounds).
+ROIcover,Environmental Indices,Spatial Coverage,Extent to which regions of interest cover the acoustic space.
+ROItotal,Environmental Indices,Spatial Count,Total measure or count of regions of interest identified within the soundscape.
+ROU,Environmental Indices,Texture,Measure of the texture or roughness of the sound profile.
+SKEWf,Environmental Indices,Frequency Distribution,Asymmetry of the frequency distribution of the sound.
+SKEWt,Environmental Indices,Time Distribution,Asymmetry of the amplitude distribution of the audio signal in the time domain.
+SNRf,Environmental Indices,Noise,Ratio of signal level to noise level in the frequency domain.
+SNRt,Environmental Indices,Noise,Ratio of the audio signal level to the level of background noise.
+TFSD,Environmental Indices,Frequency,"Diversity of frequencies over time, reflecting temporal variation."
+VARf,Environmental Indices,Frequency,"Variance in the frequency of sounds, indicating dispersion around the mean frequency."
+VARt,Environmental Indices,Time,"Variance of the time-domain audio signal amplitude, indicating amplitude fluctuations over time."
+ZCR,Environmental Indices,Frequency,"Measures the rate at which the signal changes from positive to negative or back, indicating the frequency content of the sound."

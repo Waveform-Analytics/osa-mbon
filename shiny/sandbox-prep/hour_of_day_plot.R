@@ -104,7 +104,9 @@ df_hour_norm <- df_hour_grouped %>%
     index, hour, norm
   )
 
-# Create the plot
+########################################################################
+# Plot hour of day heatmap (index vs hour of day)
+
 diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)  
 plot <- levelplot(norm ~ as.factor(hour) * as.factor(index), data = df_hour_norm,
                   xlab = "Hour of Day",  # Rename x-axis
@@ -114,3 +116,14 @@ plot <- levelplot(norm ~ as.factor(hour) * as.factor(index), data = df_hour_norm
 
 # Print the plot
 print(plot)
+
+########################################################################
+# Plot hour of day heatmap but with separate plots for each index 
+# type/category
+
+# Join the index type dataframe with the df_hour_norm dataframe
+result <- left_join(df_hour_norm, df_index_cats, by = "index")
+
+
+
+

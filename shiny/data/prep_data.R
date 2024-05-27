@@ -10,10 +10,11 @@ con <- dbConnect(duckdb::duckdb(), "data/mbon.duckdb")
 # Key West Annotations
 df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
   select(start_time, end_time, species)
+df_fish_keywest$is_present <- 1
 
 # May River Annotations
 df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
-  select(start_time, end_time, species)
+  select(start_time, end_time, species, is_present)
 
 # Grays Reef Ship Data
 df_ships_graysreef <- dbReadTable(con, "t_ships_grays") %>%
@@ -27,6 +28,18 @@ df_aco_norm <- dbReadTable(con, "t_aco_norm")
 df_seascaper <- dbReadTable(con, "t_seascaper")
 
 dbDisconnect(con)
+
+# Get the index categories
+df_index_cats <- 
+  read_csv("data/Index_Categories.csv", 
+           show_col_types = FALSE) %>%
+  rename(
+    index = Prefix
+  )
+
+unique_index_types <- df_index_cats %>%
+  distinct(category) %>%
+  pull()
 
 # #################################################################
 # #################################################################
@@ -108,3 +121,18 @@ df_site_info <-
     "name" = "short name"
   )
 df_site_info$site_id <- seq_len(nrow(df_site_info))
+
+# #################################################################
+# #################################################################
+# DURATION COMPARISON TAB
+
+unique_durations_all <- df_aco %>%
+  distinct(Duration_sec) %>%
+  pull()
+
+test <- df_aco %>%
+  group_by(Duration_sec, Sampling_Rate_kHz, Dataset) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  select(Duration_sec, Sampling_Rate_kHz, Dataset)
+

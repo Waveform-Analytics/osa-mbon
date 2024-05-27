@@ -76,6 +76,9 @@ server_tab2 <- function(input, output, session) {
     index_data <- df_indexPicks() %>% arrange(start_time)
     present_data <- df_present() %>% arrange(start_time)
     
+    print("present_data cols")
+    print(names(present_data))
+    
     # Start by plotting present data with species color
     p <- plot_ly()
     
