@@ -38,7 +38,7 @@ df_index_cats <-
   )
 
 unique_index_types <- df_index_cats %>%
-  distinct(category) %>%
+  distinct(Category) %>%
   pull()
 
 # #################################################################
