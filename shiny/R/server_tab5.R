@@ -13,6 +13,9 @@ server_tab5 <- function(input, output, session) {
   # Sample rate set to 16kHz for all
   sr <- 16
   
+  # FFT length set to 512 for all
+  fft <- 512
+  
   
   # Get the required data subset 
   df_dat <- reactive({
@@ -21,7 +24,7 @@ server_tab5 <- function(input, output, session) {
     the_dataset() %>%
       filter(Dataset == selected_dataset(),
              Sampling_Rate_kHz == sr,
-             FFT == 512) 
+             FFT == fft) 
   })
   
   # Prep the data for dygraphs

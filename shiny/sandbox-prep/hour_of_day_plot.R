@@ -70,6 +70,7 @@ print(p_facets)
 # Prep for the big overview plot
 
 selected_indices <- index_columns
+
 df_hour_all <-
   subset_df %>%
   select(hour, all_of(selected_indices))
@@ -124,6 +125,58 @@ print(plot)
 # Join the index type dataframe with the df_hour_norm dataframe
 result <- left_join(df_hour_norm, df_index_cats, by = "index")
 
+########################################################################
+# Plot heatmap showing hour of day vs date (to see longer term trends)
+
+this_index <- "Hf"
+
+df_hour_date <-
+  subset_df %>%
+  filter(
+    month(start_time) == 2
+  ) %>%
+  mutate(
+    day = as.Date(start_time)
+  ) %>%
+  select(day, hour, all_of(this_index))
 
 
+df_hour_date$hour <- factor(df_hour_date$hour)
+
+df_hour_long <- pivot_longer(df_hour_date, all_of(this_index), 
+                             names_to = "index")
+
+df_hour_grouped <- df_hour_long %>%
+  group_by(day, hour) %>%
+  summarise(
+    summary_val = mean(value),
+    .groups = "drop" 
+  ) 
+
+df_hour_med <- df_hour_grouped %>%
+  group_by(day) %>%
+  summarise(
+    min_val = min(summary_val),
+    max_val = max(summary_val),
+    range = max_val - min_val
+  )
+
+df_hour_norm <- df_hour_grouped %>%
+  left_join(df_hour_med, b="day") %>%
+  mutate(
+    norm = (summary_val-min_val)/range
+  ) %>%
+  select(
+    day, hour, norm
+  )
+
+diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)  
+plot <- levelplot(norm ~ as.factor(hour) * as.factor(day), data = df_hour_norm,
+                  xlab = "Hour of Day",  # Rename x-axis
+                  ylab = "Date",  # Rename y-axis
+                  col.regions = diverging_colors,  # Use the diverging color scale
+                  colorkey = TRUE)  # Enable color key
+
+# Print the plot
+print(plot)
 
