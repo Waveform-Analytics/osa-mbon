@@ -35,6 +35,9 @@ ui_tab4 <- function() {
         h4("Select an index for the lower plot:"),
         ui_indexPicker("t4_indexPick", FALSE),
         
+        ui_catPicker("t4_catPick"),
+        ui_subIndexPicker("t4_subIndexPick"),
+        
       ),
       
       card(

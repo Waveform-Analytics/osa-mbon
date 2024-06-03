@@ -9,7 +9,12 @@ server_tab4 <- function(input, output, session) {
   selected_sr <- server_srPicker("t4_srPick", get_dataset, selected_dataset)
   
   # Index drop down selector
-  selected_index <- server_indexPicker("t4_indexPick")
+  # selected_index <- server_indexPicker("t4_indexPick")
+  
+  # Index category selector
+  selected_cat <- server_catPicker("t4_catPick", unique_index_types)
+  
+  selected_index <- server_subIndexPicker("t4_subIndexPick", selected_cat)
   
   #### Get initial subset
   subset_df <- reactive({

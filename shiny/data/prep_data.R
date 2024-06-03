@@ -41,6 +41,10 @@ unique_index_types <- df_index_cats %>%
   distinct(Category) %>%
   pull()
 
+unique_subIndex_types_init <- df_index_cats %>% 
+  filter(Category == unique_index_types[1]) %>% 
+  pull(index)
+
 # #################################################################
 # #################################################################
 
