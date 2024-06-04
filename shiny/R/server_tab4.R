@@ -132,6 +132,21 @@ server_tab4 <- function(input, output, session) {
   
   
   ##########################################################
+  # Text descriptions
+  output$text_output <- renderUI({
+    req({selected_cat()})
+    
+    this_selected_cat <- selected_cat()
+    
+    df_index_cats_subset <- df_index_cats %>%
+      filter(Category == this_selected_cat) %>%
+      pull()
+      
+    generate_text_from_df(df_index_cats_subset)
+  })
+  
+  
+  ##########################################################
   # PLOTTING
   
   # HEATMAP 1

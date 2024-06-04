@@ -1,11 +1,8 @@
 # Get a subset of acoustic indices based on location and indices
-# Assume we will just grab the first SR and first duration for each subset
-# for now. 
 df_selected <- function(location_name, get_dataset, selected_indices) {
   reactive({
     req(get_dataset(), selected_indices())
     dataset <- get_dataset()
-    # sr <- get_first_sr(location_name, dataset)
     sr <- 16
     duration <- get_max_duration(location_name, dataset, sr)
     filtered_data <- fcn_filterAco(dataset, location_name, sr, duration)
@@ -86,5 +83,25 @@ get_species_presence <- function(df_A, df_spp) {
   # Return the final data frame
   return(final_A)
 }
+
+
+# Generate text descriptions of selected indices
+index_description_text <- function(df) {
+  # Ensure the dataframe has the required columns
+  if (!all(c("index", "Description") %in% colnames(df))) {
+    stop("The dataframe must contain 'index' and 'description' columns.")
+  }
+  
+  # Create the tagList
+  text_list <- tagList(
+    lapply(1:nrow(df), function(i) {
+      p(tags$strong(df$index[i]), ": ", df$Description[i])
+    })
+  )
+  
+  return(text_list)
+}
+
+
 
 

@@ -33,10 +33,13 @@ ui_tab4 <- function() {
         ui_srPicker("t4_srPick"),
         
         h4("Select an index for the lower plot:"),
-        ui_indexPicker("t4_indexPick", FALSE),
+        # ui_indexPicker("t4_indexPick", FALSE),
         
         ui_catPicker("t4_catPick"),
         ui_subIndexPicker("t4_subIndexPick"),
+        
+        # Add text descriptions for selected subset
+        uiOutput("text_output")
         
       ),
       
