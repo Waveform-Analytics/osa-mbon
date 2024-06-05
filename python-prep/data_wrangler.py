@@ -65,22 +65,22 @@ def prep_seascaper_data(input_file):
     return df_sea
 
 
-if __name__ == "__main__":
+def combine_annotation_txt_files(input_folder: str, output_file_path: str):
+    """
+    Combine annotation txt files into one txt fish_file. This is the Key West-style annotations data.
+    The output fish_file should go with the other annotations data
 
-    DATA_FOLDER = "shiny/shinydata/fromLiz"
-    OUT_FOLDER = "shiny/shinydata/prepped_tables"
+    Args:
+        input_folder: Path to folder containing annotation txt files
+        output_file_path: Path to output csv fish_file
 
-    # ###
-    # Data Summary File
-    SUMMARY_FILE = "shiny/data/BioSound_Datasets.csv"
-    df_summary = pd.read_csv(SUMMARY_FILE)
-    # ################################################################################## #
-    # KEY WEST ANNOTATIONS
-    # Set up the fish annotations table - this is specifically from key west data
-    fish_file_list = glob.glob(f"{DATA_FOLDER}/**/*.txt", recursive=True)
+    Returns: None
+
+    """
+    fish_file_list = glob.glob(f"{input_folder}/**/*.txt", recursive=True)
     df_fish = pd.DataFrame()
-    for file in fish_file_list:
-        df = pd.read_csv(file, delimiter="\t")
+    for fish_file in fish_file_list:
+        df = pd.read_csv(fish_file, delimiter="\t")
         if "Begin File" in df.columns:
             df["start_time"] = pd.to_datetime(df['Begin File'].str[:-4], format='%Y%m%dT%H%M%S')
         elif "Begin Path" in df.columns:
@@ -92,13 +92,43 @@ if __name__ == "__main__":
     df_fish_keywest = df_fish[["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
                                'species', 'call variant', 'level']]
 
+    df_fish_keywest.to_csv(output_file_path, index=False)
+
+
+if __name__ == "__main__":
+
+    DATA_FOLDER = "../shiny/shinydata/fromLiz"
+    OUT_FOLDER = "../shiny/shinydata/prepped_tables"
+
+    # ###
+    # Data Summary File
+    SUMMARY_FILE = "../shiny/data/BioSound_Datasets.csv"
+    df_summary = pd.read_csv(SUMMARY_FILE)
+    # ################################################################################## #
+    # KEY WEST ANNOTATIONS
+    # Set up the fish annotations table - this is specifically from key west data
+    # fish_file_list = glob.glob(f"{DATA_FOLDER}/**/*.txt", recursive=True)
+    # df_fish = pd.DataFrame()
+    # for file in fish_file_list:
+    #     df = pd.read_csv(file, delimiter="\t")
+    #     if "Begin File" in df.columns:
+    #         df["start_time"] = pd.to_datetime(df['Begin File'].str[:-4], format='%Y%m%dT%H%M%S')
+    #     elif "Begin Path" in df.columns:
+    #         df["start_time"] = pd.to_datetime(df["Begin Path"].str[-19:-4], format='%Y%m%dT%H%M%S')
+    #     df["end_time"] = df["start_time"] + pd.to_timedelta(df["Delta Time (s)"], unit="s")
+    #     df_fish = pd.concat([df_fish, df])
+    #
+    # # Reduce columns
+    # df_fish_keywest = df_fish[["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
+    #                            'species', 'call variant', 'level']]
+
     # KEY WEST: Load the fish codes info file
-    FISH_CODES_FILE = "shiny/data/fish_codes.csv"
+    FISH_CODES_FILE = "../shiny/data/fish_codes.csv"
     df_fish_codes = pd.read_csv(FISH_CODES_FILE)
 
     # ################################################################################## #
     # MAY RIVER ANNOTATIONS
-    MAY_RIVER_DATA_FILE = ("shiny/shinydata/fromLiz/MayRiver/Annotations/Master_Manual_14M_2h_" +
+    MAY_RIVER_DATA_FILE = ("../shiny/shinydata/fromLiz/MayRiver_SC/Annotations/Master_Manual_14M_2h_" +
                            "011119_071619.xlsx")
     df_mayriver = pd.read_excel(MAY_RIVER_DATA_FILE, sheet_name="Data")
     df_mayriver.rename(columns={"Date": "start_time"}, inplace=True)
@@ -122,7 +152,7 @@ if __name__ == "__main__":
 
     # ################################################################################## #
     # GRAY'S REEF ANNOTATIONS (VESSELS)
-    GRAYS_REEF_DATA_FILE = ("shiny/shinydata/fromLiz/GraysReef_GR01/sanctsound_products_detections_"
+    GRAYS_REEF_DATA_FILE = ("../shiny/shinydata/fromLiz/GraysReef_GR01/sanctsound_products_detections_"
                             "gr01_sanctsound_gr01_01_ships_data_SanctSound_GR01_01_ships.csv")
     df_ships_grays = pd.read_csv(GRAYS_REEF_DATA_FILE)
     df_ships_grays.columns = ["start_time", "end_time", "type"]
@@ -170,7 +200,7 @@ if __name__ == "__main__":
 
     # ################################################################################## #
     # SATELLITE WATER CLASS DATA
-    SEASCAPER_FOLDER = Path("shiny/shinydata/fromLiz/All_SeascapeR")
+    SEASCAPER_FOLDER = Path("../shiny/shinydata/fromLiz/All_SeascapeR")
     seascaper_files = list(SEASCAPER_FOLDER.glob("*.csv"))
 
     s_list = []
@@ -212,7 +242,7 @@ if __name__ == "__main__":
 
     # ################################################################################## #
     # SAVE PARQUET TABLES TO DUCKDB DATABASE FILE`
-    DB_FILE = 'shiny/data/mbon.duckdb'
+    DB_FILE = '../shiny/data/mbon.duckdb'
     if os.path.exists(DB_FILE):
         os.remove(DB_FILE)
 
