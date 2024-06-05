@@ -1,4 +1,4 @@
-code,species,short_name,Dataset
+code,name,short_name,Dataset
 Em,red grouper,red grouper,Key West
 Es,Nassau grouper,Nassau grouper,Key West
 Mb,black grouper,black grouper,Key West
@@ -12,7 +12,7 @@ Oy,Oyster toadfish interruption,Oyster,May River
 Bd,Black drum,Black drum,May River
 Bd,Black drum interruption,Black drum,May River
 Ss,Spotted seatrout,Spotted seatrout,May River
-Ss,Spotted seatrout interrpution,Spotted seatrout,May River
+Ss,Spotted seatrout interruption,Spotted seatrout,May River
 Rd,Red drum,Red drum,May River
 Rd,Red drum interruption,Red drum,May River
 Ac,Atlantic croaker,Atlantic croaker,May River
@@ -21,3 +21,4 @@ Bo,Bottlenose dolphin echolocation,Bottlenose dolphin,May River
 Bo,Bottlenose dolphin burst pulses,Bottlenose dolphin,May River
 Bo,Bottlenose dolphin whistles,Bottlenose dolphin,May River
 Vs,Vessel,vessel,May River
+Vs,Ship,vessel,Multiple

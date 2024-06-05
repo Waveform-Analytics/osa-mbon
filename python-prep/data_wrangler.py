@@ -95,6 +95,57 @@ def combine_annotation_txt_files(input_folder: str, output_file_path: str):
     df_fish_keywest.to_csv(output_file_path, index=False)
 
 
+def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
+    """
+    Load index data files, combine into one big dataframe, and
+
+    Args:
+        input_folder:
+        normalize: Normalize the index values for each index
+
+    Returns:
+        dataframe: Dataframe containing index data
+
+    """
+    file_list = glob.glob(f"{input_folder}/**/*.csv", recursive=True)
+    acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
+
+    # Loop through acoustic index files and concatenate them to build one dataframe
+    df_aco = pd.DataFrame()
+    for idx, file in enumerate(acoustic_index_files):
+        df = pd.read_csv(file)
+        df["file_id"] = idx
+        df_aco = pd.concat([df_aco, df])
+    # The date strings in "Date" column are not consistently formatted, so we use "mixed"
+    df_aco['start_time'] = pd.to_datetime(df_aco['Date'], format="mixed")
+    # Drop duplicate rows
+    df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
+                                            'Thresholds_Hz', 'Filename', "file_id"], keep="first")
+
+    # # Generate an "end_time" column in df_aco_norm
+    # Sort by start_time and file_id
+    df_aco = df_aco.sort_values(by=['file_id', 'start_time'])
+    # Calculate differences within each file/dataset and convert to seconds
+    df_aco['time_diff'] = df_aco.groupby(['file_id'])['start_time'].diff().dt.total_seconds()
+    # Calculate the median difference for each file/dataset
+    medians = df_aco.groupby('file_id')['time_diff'].median().reset_index()
+    medians.columns = ['file_id', 'median_diff']
+    # Merge the median differences back into the original DataFrame
+    df_aco = df_aco.merge(medians, on='file_id', how='left')
+    # Get the end time by adding median diff to start_time
+    df_aco['end_time'] = df_aco['start_time'] + pd.to_timedelta(df_aco['median_diff'], unit='s')
+    # Tidy up the dataframe
+    df_aco = df_aco.drop(columns=['file_id', 'time_diff', 'median_diff'])
+
+    # Fix: Correct typo
+    df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
+
+    if normalize:
+        return normalize_df(df_aco, df_aco.columns[7:-2])
+    else:
+        return df_aco
+
+
 if __name__ == "__main__":
 
     DATA_FOLDER = "../shiny/shinydata/fromLiz"
@@ -161,42 +212,42 @@ if __name__ == "__main__":
 
     # ################################################################################## #
     # ACOUSTIC INDICES FILES - COMPILATION #
-    # Find the acoustic table files
-    file_list = glob.glob(f"{DATA_FOLDER}/**/*.csv", recursive=True)
-    acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
-
-    # Loop through acoustic index files and concatenate them to build one dataframe
-    df_aco = pd.DataFrame()
-    for idx, file in enumerate(acoustic_index_files):
-        df = pd.read_csv(file)
-        df["file_id"] = idx
-        df_aco = pd.concat([df_aco, df])
-    # The date strings in "Date" column are not consistently formatted, so we use "mixed"
-    df_aco['start_time'] = pd.to_datetime(df_aco['Date'], format="mixed")
-    # Drop duplicate rows 
-    df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
-                                            'Thresholds_Hz', 'Filename', "file_id"], keep="first")
-
-    # # Generate an "end_time" column in df_aco_norm
-    # Sort by start_time and file_id
-    df_aco = df_aco.sort_values(by=['file_id', 'start_time'])
-    # Calculate differences within each file/dataset and convert to seconds
-    df_aco['time_diff'] = df_aco.groupby(['file_id'])['start_time'].diff().dt.total_seconds()
-    # Calculate the median difference for each file/dataset
-    medians = df_aco.groupby('file_id')['time_diff'].median().reset_index()
-    medians.columns = ['file_id', 'median_diff']
-    # Merge the median differences back into the original DataFrame
-    df_aco = df_aco.merge(medians, on='file_id', how='left')
-    # Get the end time by adding median diff to start_time
-    df_aco['end_time'] = df_aco['start_time'] + pd.to_timedelta(df_aco['median_diff'], unit='s')
-    # Tidy up the dataframe
-    df_aco = df_aco.drop(columns=['file_id', 'time_diff', 'median_diff'])
-
-    # Fix: Correct typo
-    df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
-
-    # Normalize the indices
-    df_aco_norm = normalize_df(df_aco, df_aco.columns[7:-2])
+    # # Find the acoustic table files
+    # file_list = glob.glob(f"{DATA_FOLDER}/**/*.csv", recursive=True)
+    # acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
+    #
+    # # Loop through acoustic index files and concatenate them to build one dataframe
+    # df_aco = pd.DataFrame()
+    # for idx, file in enumerate(acoustic_index_files):
+    #     df = pd.read_csv(file)
+    #     df["file_id"] = idx
+    #     df_aco = pd.concat([df_aco, df])
+    # # The date strings in "Date" column are not consistently formatted, so we use "mixed"
+    # df_aco['start_time'] = pd.to_datetime(df_aco['Date'], format="mixed")
+    # # Drop duplicate rows
+    # df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
+    #                                         'Thresholds_Hz', 'Filename', "file_id"], keep="first")
+    #
+    # # # Generate an "end_time" column in df_aco_norm
+    # # Sort by start_time and file_id
+    # df_aco = df_aco.sort_values(by=['file_id', 'start_time'])
+    # # Calculate differences within each file/dataset and convert to seconds
+    # df_aco['time_diff'] = df_aco.groupby(['file_id'])['start_time'].diff().dt.total_seconds()
+    # # Calculate the median difference for each file/dataset
+    # medians = df_aco.groupby('file_id')['time_diff'].median().reset_index()
+    # medians.columns = ['file_id', 'median_diff']
+    # # Merge the median differences back into the original DataFrame
+    # df_aco = df_aco.merge(medians, on='file_id', how='left')
+    # # Get the end time by adding median diff to start_time
+    # df_aco['end_time'] = df_aco['start_time'] + pd.to_timedelta(df_aco['median_diff'], unit='s')
+    # # Tidy up the dataframe
+    # df_aco = df_aco.drop(columns=['file_id', 'time_diff', 'median_diff'])
+    #
+    # # Fix: Correct typo
+    # df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
+    #
+    # # Normalize the indices
+    # df_aco_norm = normalize_df(df_aco, df_aco.columns[7:-2])
 
     # ################################################################################## #
     # SATELLITE WATER CLASS DATA
