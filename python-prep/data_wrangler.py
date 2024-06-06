@@ -9,13 +9,13 @@ import duckdb
 from pathlib import Path
 
 
-def normalize_df(df_in, col_names):
+def normalize_df(df_in: pd.DataFrame, col_names: list[str]) -> pd.DataFrame:
     """Normalize requested acoustic indices
     The requested acoustic indices are normalized such that they are between -1 and 1.
 
     Args:
-        df_in (dataframe): Pandas dataframe containing acoustic index information
-        col_names (list): List of column names specifying which acoustic indices in df_in \
+        df_in: Pandas dataframe containing acoustic index information
+        col_names: List of column names specifying which acoustic indices in df_in \
             should be normalized
 
     Returns:
@@ -95,6 +95,39 @@ def combine_annotation_txt_files(input_folder: str, output_file_path: str):
     df_fish_keywest.to_csv(output_file_path, index=False)
 
 
+def extract_mayriver_annotations_to_file(file_name: str, output_file_path: str) -> None:
+    """
+    Extract the data sheet from the May River-style main annotations file.
+    Args:
+        file_name: Path and file name of the May River main annotations file (xlsx file)
+        output_file_path: Path and file name of the desired output annotations file
+
+    Returns:
+        None
+
+    """
+    df_mayriver = pd.read_excel(file_name, sheet_name="Data")
+    df_mayriver.rename(columns={"Date": "start_time"}, inplace=True)
+    df_mayriver["end_time"] = df_mayriver["start_time"] + pd.to_timedelta(2, unit="h")
+
+    # Arrange the mayriver dataframe, so it looks more like the keywest annotations
+    df_long = df_mayriver.melt(id_vars=['start_time', 'end_time'],
+                               value_vars=['Silver perch',
+                                           'Silver perch interruption', 'Oyster toadfish boat whistle',
+                                           'Oyster toadfish grunt', 'Oyster toadfish interruption', 'Black drum',
+                                           'Black drum interruption', 'Spotted seatrout',
+                                           'Spotted seatrout interruption', 'Red drum', 'Red drum interruption',
+                                           'Atlantic croaker', 'Weakfish', 'Fish interruption cause',
+                                           'Bottlenose dolphin echolocation', 'Bottlenose dolphin burst pulses',
+                                           'Bottlenose dolphin whistles', 'Vessel'],
+                               var_name='species', value_name='is_present')
+    df_final = df_long[df_long['is_present'] != 0].copy()
+    mr_codes = df_fish_codes[df_fish_codes["Dataset"] == "May River"]
+    df_final["species"] = df_final["species"].map(dict(zip(mr_codes["species"], mr_codes["code"]))).copy()
+
+    df_final.to_csv(output_file_path, index=False)
+
+
 def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
     """
     Load index data files, combine into one big dataframe, and
@@ -107,7 +140,7 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         dataframe: Dataframe containing index data
 
     """
-    file_list = glob.glob(f"{input_folder}/**/*.csv", recursive=True)
+    file_list = glob.glob(f"{input_folder}/Revised_Indices_AllData_v2/*.csv")
     acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
 
     # Loop through acoustic index files and concatenate them to build one dataframe
@@ -116,13 +149,15 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         df = pd.read_csv(file)
         df["file_id"] = idx
         df_aco = pd.concat([df_aco, df])
+        # for debugging:
+        # print("Dataset: " + np.unique(df["Dataset"]) + ", file: " + os.path.basename(file))
     # The date strings in "Date" column are not consistently formatted, so we use "mixed"
     df_aco['start_time'] = pd.to_datetime(df_aco['Date'], format="mixed")
     # Drop duplicate rows
     df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
                                             'Thresholds_Hz', 'Filename', "file_id"], keep="first")
 
-    # # Generate an "end_time" column in df_aco_norm
+    # Generate an "end_time" column in df_aco_norm
     # Sort by start_time and file_id
     df_aco = df_aco.sort_values(by=['file_id', 'start_time'])
     # Calculate differences within each file/dataset and convert to seconds
@@ -144,6 +179,60 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         return normalize_df(df_aco, df_aco.columns[7:-2])
     else:
         return df_aco
+
+
+def add_new_columns(df_in: pd.DataFrame, columns: list[str]) -> None:
+    """
+    Add new columns to a dataframe. The original dataframe is edited.
+    Args:
+        df_in: input dataframe
+        columns: list of column names
+
+    Returns:
+        None
+
+    """
+    # First check if any of the requested columns already exists in the dataframe
+    current_columns = df_in.columns
+    new_columns = [item for item in columns if item not in current_columns]
+
+    [df_in.__setitem__(col, 0) for col in new_columns]
+
+
+def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame, df_codes: pd.DataFrame) -> pd.DataFrame:
+    """
+    Fill in the annotations columns of an acoustic indices dataframe.
+    Args:
+        df_in: Acoustic index dataframe with extra index columns to be filled (might be better to add cols as needed)
+        df_config: Config file that includes paths to the annotations files
+        df_codes: Codes file that includes the full list of possible codes for all datasets
+
+    Returns:
+        dataframe:
+
+    """
+    # Create a new empty dataframe with the same columns as df_in
+    df_new = pd.DataFrame(columns=df_in.columns)
+
+    # Loop through each of the datasets and add annotations if applicable
+    unique_locations = np.unique(df_in["Dataset"])
+
+    for location in unique_locations:
+        # Get the index subset for this location
+        df_sub = df_in[df_in["Dataset"] == location]
+
+        # Get the appropriate annotations file
+        anno_file = df_config[df_config["Dataset"]==location]["Annotations File"][0]
+        if anno_file is not np.nan:
+
+
+        # get_fish_presence(df_in, df_fishes, unq_codes)
+
+        print('pause')
+
+
+    return df_new
+
 
 
 if __name__ == "__main__":
@@ -182,24 +271,24 @@ if __name__ == "__main__":
     MAY_RIVER_DATA_FILE = ("../shiny/shinydata/fromLiz/MayRiver_SC/Annotations/Master_Manual_14M_2h_" +
                            "011119_071619.xlsx")
     df_mayriver = pd.read_excel(MAY_RIVER_DATA_FILE, sheet_name="Data")
-    df_mayriver.rename(columns={"Date": "start_time"}, inplace=True)
-    df_mayriver["end_time"] = df_mayriver["start_time"] + pd.to_timedelta(2, unit="h")
-
-    # Arrange the mayriver dataframe, so it looks more like the keywest annotations
-    df_long = df_mayriver.melt(id_vars=['start_time', 'end_time'],
-                               value_vars=['Silver perch',
-                                           'Silver perch interruption', 'Oyster toadfish boat whistle',
-                                           'Oyster toadfish grunt', 'Oyster toadfish interruption', 'Black drum',
-                                           'Black drum interruption', 'Spotted seatrout',
-                                           'Spotted seatrout interruption', 'Red drum', 'Red drum interruption',
-                                           'Atlantic croaker', 'Weakfish', 'Fish interruption cause',
-                                           'Bottlenose dolphin echolocation', 'Bottlenose dolphin burst pulses',
-                                           'Bottlenose dolphin whistles', 'Vessel'],
-                               var_name='species', value_name='is_present')
-    df_final = df_long[df_long['is_present'] != 0].copy()
-    mr_codes = df_fish_codes[df_fish_codes["Dataset"] == "May River"]
-    df_final["species"] = df_final["species"].map(dict(zip(mr_codes["species"], mr_codes["code"]))).copy()
-    df_fish_mayriver = df_final.copy()
+    # df_mayriver.rename(columns={"Date": "start_time"}, inplace=True)
+    # df_mayriver["end_time"] = df_mayriver["start_time"] + pd.to_timedelta(2, unit="h")
+    #
+    # # Arrange the mayriver dataframe, so it looks more like the keywest annotations
+    # df_long = df_mayriver.melt(id_vars=['start_time', 'end_time'],
+    #                            value_vars=['Silver perch',
+    #                                        'Silver perch interruption', 'Oyster toadfish boat whistle',
+    #                                        'Oyster toadfish grunt', 'Oyster toadfish interruption', 'Black drum',
+    #                                        'Black drum interruption', 'Spotted seatrout',
+    #                                        'Spotted seatrout interruption', 'Red drum', 'Red drum interruption',
+    #                                        'Atlantic croaker', 'Weakfish', 'Fish interruption cause',
+    #                                        'Bottlenose dolphin echolocation', 'Bottlenose dolphin burst pulses',
+    #                                        'Bottlenose dolphin whistles', 'Vessel'],
+    #                            var_name='species', value_name='is_present')
+    # df_final = df_long[df_long['is_present'] != 0].copy()
+    # mr_codes = df_fish_codes[df_fish_codes["Dataset"] == "May River"]
+    # df_final["species"] = df_final["species"].map(dict(zip(mr_codes["species"], mr_codes["code"]))).copy()
+    # df_fish_mayriver = df_final.copy()
 
     # ################################################################################## #
     # GRAY'S REEF ANNOTATIONS (VESSELS)
