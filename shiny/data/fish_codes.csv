@@ -5,20 +5,21 @@ Mb,black grouper,black grouper,Key West
 Uk,unknown,unknown,Key West
 Vs,vessel,vessel,Key West
 Sp,Silver perch,Silver perch,May River
-Sp,Silver perch interruption,Silver perch,May River
-Oy,Oyster toadfish boat whistle,Oyster,May River
-Oy,Oyster toadfish grunt,Oyster,May River
-Oy,Oyster toadfish interruption,Oyster,May River
+SpInt,Silver perch interruption,Silver perch interruption,May River
+OyBw,Oyster toadfish boat whistle,Oyster toadfish boat whistle,May River
+OyTg,Oyster toadfish grunt,Oyster toadfish grunt,May River
+OyInt,Oyster toadfish interruption,Oyster toadfish interruption,May River
 Bd,Black drum,Black drum,May River
-Bd,Black drum interruption,Black drum,May River
+BdInt,Black drum interruption,Black drum interruption,May River
 Ss,Spotted seatrout,Spotted seatrout,May River
-Ss,Spotted seatrout interruption,Spotted seatrout,May River
+SsInt,Spotted seatrout interruption,Spotted seatrout interruption,May River
 Rd,Red drum,Red drum,May River
-Rd,Red drum interruption,Red drum,May River
+RdInt,Red drum interruption,Red drum interruption,May River
 Ac,Atlantic croaker,Atlantic croaker,May River
 Wf,Weakfish,Weakfish,May River
-Bo,Bottlenose dolphin echolocation,Bottlenose dolphin,May River
-Bo,Bottlenose dolphin burst pulses,Bottlenose dolphin,May River
-Bo,Bottlenose dolphin whistles,Bottlenose dolphin,May River
+BoEcho,Bottlenose dolphin echolocation,Bottlenose dolphin echolocation,May River
+BoBP,Bottlenose dolphin burst pulses,Bottlenose dolphin burst pulses,May River
+BoWh,Bottlenose dolphin whistles,Bottlenose dolphin whistles,May River
 Vs,Vessel,vessel,May River
 Vs,Ship,vessel,Multiple
+Vs,ship,vessel,Multiple

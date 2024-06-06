@@ -29,24 +29,26 @@ def normalize_df(df_in: pd.DataFrame, col_names: list[str]) -> pd.DataFrame:
     return df_new
 
 
-def get_fish_presence(df_in, df_fishes, unq_codes):
+def get_fish_presence(df_in, df_fishes, df_codes):
     """Generate columns for fish/annotations presence/absence
     Append columns for each of the unique fish codes, with a tally of how many 
     were logged at each time step. 
 
     """
+    unq_codes = np.unique(df_codes["code"])
+
     df_out = df_in.copy()
     for code in unq_codes:
         n_fishes = []
         is_present = []
         for _, row in df_in.iterrows():
-            df_this_species = df_fishes[df_fishes["species"] == code]
+            df_this_species = df_fishes[df_fishes["Labels"] == code]
             overlap = df_this_species[(df_this_species["start_time"] <= row["end_time"]) &
                                       (row['start_time'] <= df_this_species["end_time"])]
             n_fishes.append(len(overlap))
             is_present.append(len(overlap) > 0)
         df_out[code + "_n"] = n_fishes
-        df_out[code + "_present"] = is_present
+        df_out[code] = is_present
     return df_out
 
 
@@ -65,7 +67,7 @@ def prep_seascaper_data(input_file):
     return df_sea
 
 
-def combine_annotation_txt_files(input_folder: str, output_file_path: str):
+def annotation_prep_kw_style(input_folder: str, output_file_path: str):
     """
     Combine annotation txt files into one txt fish_file. This is the Key West-style annotations data.
     The output fish_file should go with the other annotations data
@@ -92,15 +94,20 @@ def combine_annotation_txt_files(input_folder: str, output_file_path: str):
     df_fish_keywest = df_fish[["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
                                'species', 'call variant', 'level']]
 
+    # Rename columns
+    df_fish_keywest.columns = ["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
+                               'Labels', 'call variant', 'level']
+
     df_fish_keywest.to_csv(output_file_path, index=False)
 
 
-def extract_mayriver_annotations_to_file(file_name: str, output_file_path: str) -> None:
+def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd.DataFrame) -> None:
     """
     Extract the data sheet from the May River-style main annotations file.
     Args:
         file_name: Path and file name of the May River main annotations file (xlsx file)
         output_file_path: Path and file name of the desired output annotations file
+        df_codes: dataframe summarizing all the possible annotation codes
 
     Returns:
         None
@@ -122,8 +129,12 @@ def extract_mayriver_annotations_to_file(file_name: str, output_file_path: str) 
                                            'Bottlenose dolphin whistles', 'Vessel'],
                                var_name='species', value_name='is_present')
     df_final = df_long[df_long['is_present'] != 0].copy()
-    mr_codes = df_fish_codes[df_fish_codes["Dataset"] == "May River"]
-    df_final["species"] = df_final["species"].map(dict(zip(mr_codes["species"], mr_codes["code"]))).copy()
+    mr_codes = df_codes[df_codes["Dataset"] == "May River"]
+    df_final["species"] = df_final["species"].map(dict(zip(mr_codes["name"], mr_codes["code"]))).copy()
+    df_final.dropna(subset=["species"], inplace=True)
+
+    # Rename columns using rename method
+    df_final = df_final.rename(columns={'species': 'Labels'})
 
     df_final.to_csv(output_file_path, index=False)
 
@@ -140,7 +151,7 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         dataframe: Dataframe containing index data
 
     """
-    file_list = glob.glob(f"{input_folder}/Revised_Indices_AllData_v2/*.csv")
+    file_list = glob.glob(f"{input_folder}/*.csv")
     acoustic_index_files = [f for f in file_list if "Acoustic_Indices" in f]
 
     # Loop through acoustic index files and concatenate them to build one dataframe
@@ -181,7 +192,7 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         return df_aco
 
 
-def add_new_columns(df_in: pd.DataFrame, columns: list[str]) -> None:
+def add_new_columns(df_in: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
     """
     Add new columns to a dataframe. The original dataframe is edited.
     Args:
@@ -189,23 +200,49 @@ def add_new_columns(df_in: pd.DataFrame, columns: list[str]) -> None:
         columns: list of column names
 
     Returns:
-        None
+        dataframe: edited dataframe
 
     """
     # First check if any of the requested columns already exists in the dataframe
     current_columns = df_in.columns
-    new_columns = [item for item in columns if item not in current_columns]
+    # Add more columns appended with "_n" for counts
+    columns_extend = [item + "_n" for item in columns]
+    extra_columns = columns + columns_extend
 
-    [df_in.__setitem__(col, 0) for col in new_columns]
+    new_columns = [item for item in extra_columns if item not in current_columns]
+
+    df_temp = pd.DataFrame(columns=new_columns)
+    return pd.concat([df_in, df_temp], axis=1)
 
 
-def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame, df_codes: pd.DataFrame) -> pd.DataFrame:
+def fix_time_column_naming(df_in: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sometimes time columns in the annotations dataframes don't follow the required naming format.
+    Fixing that here.
+    Args:
+        df_in: input dataframe
+
+    Returns:
+        dataframe: dataframe with fixed time column names
+
+    """
+    if "Start_Date_Time" in df_in.columns:
+        df_in.rename(columns={"Start_Date_Time": "start_time"}, inplace=True)
+    if "End_Date_Time" in df_in.columns:
+        df_in.rename(columns={"End_Date_Time": "end_time"}, inplace=True)
+
+    return df_in
+
+
+def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
+                          df_codes: pd.DataFrame, anno_folder: str) -> pd.DataFrame:
     """
     Fill in the annotations columns of an acoustic indices dataframe.
     Args:
         df_in: Acoustic index dataframe with extra index columns to be filled (might be better to add cols as needed)
         df_config: Config file that includes paths to the annotations files
         df_codes: Codes file that includes the full list of possible codes for all datasets
+        anno_folder: Folder where the annotations files are located
 
     Returns:
         dataframe:
@@ -222,14 +259,17 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame, df_codes
         df_sub = df_in[df_in["Dataset"] == location]
 
         # Get the appropriate annotations file
-        anno_file = df_config[df_config["Dataset"]==location]["Annotations File"][0]
+        anno_file = df_config[df_config["Dataset"]==location]["Annotations File"].iloc[0]
         if anno_file is not np.nan:
-
-
-        # get_fish_presence(df_in, df_fishes, unq_codes)
+            anno_file_full_path = os.path.join(anno_folder, anno_file)
+            # Load the annotations file
+            df_anno = pd.read_csv(anno_file_full_path)
+            # Fix the column names
+            fix_time_column_naming(df_anno)
+            # Add presence info
+            get_fish_presence(df_sub, df_anno, df_codes)
 
         print('pause')
-
 
     return df_new
 
@@ -270,7 +310,7 @@ if __name__ == "__main__":
     # MAY RIVER ANNOTATIONS
     MAY_RIVER_DATA_FILE = ("../shiny/shinydata/fromLiz/MayRiver_SC/Annotations/Master_Manual_14M_2h_" +
                            "011119_071619.xlsx")
-    df_mayriver = pd.read_excel(MAY_RIVER_DATA_FILE, sheet_name="Data")
+    # df_mayriver = pd.read_excel(MAY_RIVER_DATA_FILE, sheet_name="Data")
     # df_mayriver.rename(columns={"Date": "start_time"}, inplace=True)
     # df_mayriver["end_time"] = df_mayriver["start_time"] + pd.to_timedelta(2, unit="h")
     #
