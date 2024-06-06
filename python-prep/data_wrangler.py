@@ -29,56 +29,6 @@ def normalize_df(df_in: pd.DataFrame, col_names: list[str]) -> pd.DataFrame:
     return df_new
 
 
-# def get_fish_presence(df_in, df_fishes, df_codes):
-#     """Generate columns for fish/annotations presence/absence
-#     Append columns for each of the unique fish codes, with a tally of how many
-#     were logged at each time step.
-#
-#     """
-#     unq_codes = np.unique(df_codes["code"])
-#
-#     df_out = df_in.copy()
-#     for code in unq_codes:
-#         n_fishes = []
-#         is_present = []
-#         for _, row in df_in.iterrows():
-#             df_this_species = df_fishes[df_fishes["Labels"] == code]
-#             overlap = df_this_species[(df_this_species["start_time"] <= row["end_time"]) &
-#                                       (row['start_time'] <= df_this_species["end_time"])]
-#             n_fishes.append(len(overlap))
-#             is_present.append(len(overlap) > 0)
-#         df_out[code + "_n"] = n_fishes
-#         df_out[code] = is_present
-#     return df_out
-
-
-# def get_fish_presence(df_in, df_fishes, df_codes):
-#     """Generate columns for fish/annotations presence/absence
-#     Append columns for each of the unique codes, with a tally of how many
-#     were logged at each time step.
-#     """
-#     unq_codes = np.unique(df_codes["code"])
-#
-#     df_out = df_in.copy()
-#     for cidx, code in enumerate(unq_codes):
-#         print("Code #" + str(cidx) + " of " + str(len(unq_codes)))
-#         df_this_species = df_fishes[df_fishes["Labels"] == code]
-#
-#         # Use vectorized operations to determine overlaps
-#         start_time_in = df_in["start_time"].values
-#         end_time_in = df_in["end_time"].values
-#         start_time_species = df_this_species["start_time"].values
-#         end_time_species = df_this_species["end_time"].values
-#
-#         # Create a boolean mask for overlaps
-#         for i in range(len(start_time_in)):
-#             mask = (start_time_species <= end_time_in[i]) & (end_time_species >= start_time_in[i])
-#             df_out.at[i, code + "_n"] = np.sum(mask)
-#             df_out.at[i, code] = np.any(mask)
-#
-#     return df_out
-
-
 def get_fish_presence(df_in, df_fishes, df_codes):
     """Generate columns for fish/annotations presence/absence
     Append columns for each of the unique fish codes, with a tally of how many
@@ -91,27 +41,24 @@ def get_fish_presence(df_in, df_fishes, df_codes):
 
     df_out = df_in.copy()
     for cidx, code in enumerate(unq_codes):
-        print("Code #" + str(cidx+1) + " of " + str(len(unq_codes)))
+        # print("Code #" + str(cidx+1) + " of " + str(len(unq_codes)))
         df_this_species = df_fishes_sorted[df_fishes_sorted["code"] == code]
 
-        # Initialize columns for presence and count
-        df_out[code + "_n"] = 0
-        df_out[code] = False
-
-        # Use numpy broadcasting for overlaps
-        start_time_in = df_in["start_time"].values
-        end_time_in = df_in["end_time"].values
-        start_time_species = df_this_species["start_time"].values
-        end_time_species = df_this_species["end_time"].values
+        # Convert to numpy.datetime64 for consistent comparison
+        start_time_in = df_in["start_time"].values.astype('datetime64[ns]')
+        end_time_in = df_in["end_time"].values.astype('datetime64[ns]')
+        start_time_species = df_this_species["start_time"].values.astype('datetime64[ns]')
+        end_time_species = df_this_species["end_time"].values.astype('datetime64[ns]')
 
         overlap_matrix = (start_time_species[:, None] <= end_time_in) & (end_time_species[:, None] >= start_time_in)
         n_fishes = overlap_matrix.sum(axis=0)
-        is_present = n_fishes > 0
+        is_present = (n_fishes > 0).astype(int)
 
         df_out[code + "_n"] = n_fishes
         df_out[code] = is_present
 
     return df_out
+
 
 def prep_seascaper_data(input_file):
     """Prepare seascaper data
@@ -287,10 +234,14 @@ def fix_time_column_naming(df_in: pd.DataFrame) -> pd.DataFrame:
         dataframe: dataframe with fixed time column names
 
     """
-    if ("Start_Date_Time" in df_in.columns) | ("ISOStartTime" in df_in.columns):
+    if "Start_Date_Time" in df_in.columns:
         df_in.rename(columns={"Start_Date_Time": "start_time"}, inplace=True)
-    if ("End_Date_Time" in df_in.columns) | ("ISOEndTime" in df_in.columns):
+    if "ISOStartTime" in df_in.columns:
+        df_in.rename(columns={"ISOStartTime": "start_time"}, inplace=True)
+    if "End_Date_Time" in df_in.columns:
         df_in.rename(columns={"End_Date_Time": "end_time"}, inplace=True)
+    if "ISOEndTime" in df_in.columns:
+        df_in.rename(columns={"ISOEndTime": "end_time"}, inplace=True)
 
     return df_in
 
@@ -324,11 +275,15 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
         if anno_file is not np.nan:
             anno_file_full_path = os.path.join(anno_folder, anno_file)
             # Load the annotations file
-            df_anno = pd.read_csv(anno_file_full_path)
+            df_anno0 = pd.read_csv(anno_file_full_path)
             # Fix the column names
-            fix_time_column_naming(df_anno)
+            df_anno = fix_time_column_naming(df_anno0)
             # Add presence info
-            get_fish_presence(df_sub, df_anno, df_codes)
+            df_sub_with_presence = get_fish_presence(df_sub, df_anno, df_codes)
+            # Exclude columns with all NAs
+            df_sub_with_presence.dropna(axis=1, how='all')
+            # Append the new subset onto the new dataframe
+            df_new = pd.concat([df_new, df_sub_with_presence], axis=1)
 
     return df_new
 
