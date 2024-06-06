@@ -29,28 +29,88 @@ def normalize_df(df_in: pd.DataFrame, col_names: list[str]) -> pd.DataFrame:
     return df_new
 
 
+# def get_fish_presence(df_in, df_fishes, df_codes):
+#     """Generate columns for fish/annotations presence/absence
+#     Append columns for each of the unique fish codes, with a tally of how many
+#     were logged at each time step.
+#
+#     """
+#     unq_codes = np.unique(df_codes["code"])
+#
+#     df_out = df_in.copy()
+#     for code in unq_codes:
+#         n_fishes = []
+#         is_present = []
+#         for _, row in df_in.iterrows():
+#             df_this_species = df_fishes[df_fishes["Labels"] == code]
+#             overlap = df_this_species[(df_this_species["start_time"] <= row["end_time"]) &
+#                                       (row['start_time'] <= df_this_species["end_time"])]
+#             n_fishes.append(len(overlap))
+#             is_present.append(len(overlap) > 0)
+#         df_out[code + "_n"] = n_fishes
+#         df_out[code] = is_present
+#     return df_out
+
+
+# def get_fish_presence(df_in, df_fishes, df_codes):
+#     """Generate columns for fish/annotations presence/absence
+#     Append columns for each of the unique codes, with a tally of how many
+#     were logged at each time step.
+#     """
+#     unq_codes = np.unique(df_codes["code"])
+#
+#     df_out = df_in.copy()
+#     for cidx, code in enumerate(unq_codes):
+#         print("Code #" + str(cidx) + " of " + str(len(unq_codes)))
+#         df_this_species = df_fishes[df_fishes["Labels"] == code]
+#
+#         # Use vectorized operations to determine overlaps
+#         start_time_in = df_in["start_time"].values
+#         end_time_in = df_in["end_time"].values
+#         start_time_species = df_this_species["start_time"].values
+#         end_time_species = df_this_species["end_time"].values
+#
+#         # Create a boolean mask for overlaps
+#         for i in range(len(start_time_in)):
+#             mask = (start_time_species <= end_time_in[i]) & (end_time_species >= start_time_in[i])
+#             df_out.at[i, code + "_n"] = np.sum(mask)
+#             df_out.at[i, code] = np.any(mask)
+#
+#     return df_out
+
+
 def get_fish_presence(df_in, df_fishes, df_codes):
     """Generate columns for fish/annotations presence/absence
-    Append columns for each of the unique fish codes, with a tally of how many 
-    were logged at each time step. 
-
+    Append columns for each of the unique fish codes, with a tally of how many
+    were logged at each time step.
     """
-    unq_codes = np.unique(df_codes["code"])
+    unq_codes = df_codes["code"].unique()
+
+    df_fishes_sorted = df_fishes.sort_values("start_time").reset_index(drop=True)
 
     df_out = df_in.copy()
-    for code in unq_codes:
-        n_fishes = []
-        is_present = []
-        for _, row in df_in.iterrows():
-            df_this_species = df_fishes[df_fishes["Labels"] == code]
-            overlap = df_this_species[(df_this_species["start_time"] <= row["end_time"]) &
-                                      (row['start_time'] <= df_this_species["end_time"])]
-            n_fishes.append(len(overlap))
-            is_present.append(len(overlap) > 0)
+    for cidx, code in enumerate(unq_codes):
+        print("Code #" + str(cidx) + " of " + str(len(unq_codes)))
+        df_this_species = df_fishes_sorted[df_fishes_sorted["Labels"] == code]
+
+        # Initialize columns for presence and count
+        df_out[code + "_n"] = 0
+        df_out[code] = False
+
+        # Use numpy broadcasting for overlaps
+        start_time_in = df_in["start_time"].values
+        end_time_in = df_in["end_time"].values
+        start_time_species = df_this_species["start_time"].values
+        end_time_species = df_this_species["end_time"].values
+
+        overlap_matrix = (start_time_species[:, None] <= end_time_in) & (end_time_species[:, None] >= start_time_in)
+        n_fishes = overlap_matrix.sum(axis=0)
+        is_present = n_fishes > 0
+
         df_out[code + "_n"] = n_fishes
         df_out[code] = is_present
-    return df_out
 
+    return df_out
 
 def prep_seascaper_data(input_file):
     """Prepare seascaper data
