@@ -87,11 +87,12 @@ def get_fish_presence(df_in, df_fishes, df_codes):
     unq_codes = df_codes["code"].unique()
 
     df_fishes_sorted = df_fishes.sort_values("start_time").reset_index(drop=True)
+    df_fishes_sorted["code"] = df_fishes_sorted["Labels"].map(dict(zip(df_codes["name"], df_codes["code"])))
 
     df_out = df_in.copy()
     for cidx, code in enumerate(unq_codes):
-        print("Code #" + str(cidx) + " of " + str(len(unq_codes)))
-        df_this_species = df_fishes_sorted[df_fishes_sorted["Labels"] == code]
+        print("Code #" + str(cidx+1) + " of " + str(len(unq_codes)))
+        df_this_species = df_fishes_sorted[df_fishes_sorted["code"] == code]
 
         # Initialize columns for presence and count
         df_out[code + "_n"] = 0
@@ -286,9 +287,9 @@ def fix_time_column_naming(df_in: pd.DataFrame) -> pd.DataFrame:
         dataframe: dataframe with fixed time column names
 
     """
-    if "Start_Date_Time" in df_in.columns:
+    if ("Start_Date_Time" in df_in.columns) | ("ISOStartTime" in df_in.columns):
         df_in.rename(columns={"Start_Date_Time": "start_time"}, inplace=True)
-    if "End_Date_Time" in df_in.columns:
+    if ("End_Date_Time" in df_in.columns) | ("ISOEndTime" in df_in.columns):
         df_in.rename(columns={"End_Date_Time": "end_time"}, inplace=True)
 
     return df_in
@@ -328,8 +329,6 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
             fix_time_column_naming(df_anno)
             # Add presence info
             get_fish_presence(df_sub, df_anno, df_codes)
-
-        print('pause')
 
     return df_new
 
