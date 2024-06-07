@@ -2,10 +2,9 @@
 
 import glob
 import os
-
 import numpy as np
-import pandas as pd
 import duckdb
+import pandas as pd
 from pathlib import Path
 
 
@@ -297,7 +296,36 @@ def prep_seascaper_data(data_folder: str, df_config: pd.DataFrame) -> pd.DataFra
     return pd.concat(s_list)
 
 
+def duckdb_export(db_name: str, dataframes: dict) -> None:
+    """
+    Take a list of dataframes, add them each as a table to a duckdb database, and save the duckdb locally.
+    Args:
+        db_name: name of the output duckdb database
+        dataframes: dictionary containing dataframes to be exported. keys are the dataframe names and values are
+            the dataframes.
 
+    Returns:
+        None
+    """
+    db_file = db_name
+    if os.path.exists(db_file):
+        os.remove(db_file)
+    # Initiate a duckdb connection
+    conn = duckdb.connect(db_name)
+
+    for table_name, df in dataframes.items():
+        # Register the DataFrame as a view
+        view_name = table_name + "_view"
+        conn.register(view_name, df)
+
+        # Create a persistent table from the view
+        conn.execute('CREATE TABLE ' + table_name + ' AS SELECT * FROM ' + view_name)
+
+        # Don't forget to clear the view after it's no longer needed
+        conn.unregister(view_name)
+
+        # Close the connection
+    con.close()
 
 
 if __name__ == "__main__":
