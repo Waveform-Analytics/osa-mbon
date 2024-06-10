@@ -56,7 +56,7 @@ get_species_presence <- function(df_A, df_spp) {
 
   # Local function to process each species
   process_species <- function(spec, A, B) {
-    B_subset <- B[B$species == spec, ]
+    B_subset <- B[B$Labels == spec, ]
 
     # Apply condition and create a data frame marking each overlap
     overlaps <- sapply(1:nrow(A), function(i) {
@@ -66,11 +66,11 @@ get_species_presence <- function(df_A, df_spp) {
     })
 
     # Return a dataframe marking overlaps with species and A's row index
-    data.frame(row_id = 1:nrow(A), species = spec, is_present = overlaps)
+    data.frame(row_id = 1:nrow(A), Labels = spec, is_present = overlaps)
   }
 
   # Process each species and combine results
-  results <- map_df(unique(df_spp$species), ~process_species(.x, df_A, df_spp))
+  results <- map_df(unique(df_spp$Labels), ~process_species(.x, df_A, df_spp))
 
   # Add a row identifier to A for merging
   df_A$row_id <- 1:nrow(df_A)

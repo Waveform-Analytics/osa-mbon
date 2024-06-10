@@ -49,21 +49,35 @@ server_tab2 <- function(input, output, session) {
       rename("index" = all_of(selected_index()))
   })
   
-  # Reactive: Prep annotations data
+  # # Reactive: Prep annotations data
+  # df_ann_spp <- reactive({
+  #   req(selected_dataset(), selected_species(), df_indexPicks())
+  #   ann_spp <- df_fish %>%
+  #     filter(species %in% selected_species(),
+  #            Dataset == selected_dataset()) %>%
+  #     arrange(start_time)
+  #   temp <- get_species_presence(df_indexPicks(), ann_spp)
+  #   temp$is_present <- ifelse(temp$is_present, "Present", "Absent")
+  #   return(temp)
+  # })
+  
+  # Prep annotations data
   df_ann_spp <- reactive({
-    req(selected_dataset(), selected_species(), df_indexPicks())
-    ann_spp <- df_fish %>%
-      filter(species %in% selected_species(),
-             Dataset == selected_dataset()) %>%
-      arrange(start_time)
-    temp <- get_species_presence(df_indexPicks(), ann_spp)
-    temp$is_present <- ifelse(temp$is_present, "Present", "Absent")
-    return(temp)
+    req(subset_df(), selected_index(), selected_species())
+    
+    AA <- subset_df() %>%
+      select(start_time, all_of(selected_index()), all_of(selected_species())) %>%
+      rename("index" = all_of(selected_index())) %>%
+      pivot_longer(cols = all_of(selected_species()), 
+                   names_to = "Labels", 
+                   values_to = "is_present")
+    AA$is_present <- ifelse(AA$is_present == 1, "Present", "Absent")
+    return(AA)
   })
   
   # Reactive: subset of annotations data where is_present == TRUE
   df_present <- reactive({
-    req(df_ann_spp(), selected_dataset(), selected_species())
+    req(df_ann_spp())
     df_ann_spp() %>% filter(is_present == "Present")
   })
   
@@ -90,9 +104,9 @@ server_tab2 <- function(input, output, session) {
                          line = list(color = 'gray'),
                          showlegend=FALSE)
     
-    p <- p %>% add_markers(data=present_data, name=~species,
+    p <- p %>% add_markers(data=present_data, name=~Labels,
                            x=~start_time, y=~index, 
-                           color=~species, size=5,
+                           color=~Labels, size=5,
                            showlegend=TRUE)
     
     return(p)
@@ -103,7 +117,7 @@ server_tab2 <- function(input, output, session) {
     req(df_ann_spp(), selected_index())
     
     # Create the plot
-    p2 <- ggplot(df_ann_spp(), aes(x=species, y=index, fill=is_present)) +
+    p2 <- ggplot(df_ann_spp(), aes(x=Labels, y=index, fill=is_present)) +
       geom_boxplot() +
       labs(title = paste0(selected_index(), ": Species and Presence"),
            x = "Annotation", y = "Index", fill = NULL) +

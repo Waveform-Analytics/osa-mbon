@@ -36,7 +36,11 @@ def get_fish_presence(df_in, df_fishes, df_codes):
     unq_codes = df_codes["code"].unique()
 
     df_fishes_sorted = df_fishes.sort_values("start_time").reset_index(drop=True)
-    df_fishes_sorted["code"] = df_fishes_sorted["Labels"].map(dict(zip(df_codes["name"], df_codes["code"])))
+
+    if (df_in["Dataset"].iloc[0] == "Key West") | (df_in["Dataset"].iloc[0] == "May River"):
+        df_fishes_sorted["code"] = df_fishes_sorted["Labels"]
+    else:
+        df_fishes_sorted["code"] = df_fishes_sorted["Labels"].map(dict(zip(df_codes["name"], df_codes["code"])))
 
     df_out = df_in.copy()
     for cidx, code in enumerate(unq_codes):
@@ -86,6 +90,10 @@ def annotation_prep_kw_style(input_folder: str, output_file_path: str) -> pd.Dat
     df_fish_keywest = df_fish[["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
                                'species', 'call variant', 'level']]
 
+    # # Convert to strings so that it can be read into R later
+    # df_fish_keywest['start_time'] = df_fish_keywest['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    # df_fish_keywest['end_time'] = df_fish_keywest['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
     # Rename columns
     df_fish_keywest = df_fish_keywest.rename(columns={'species': 'Labels'})
 
@@ -128,6 +136,10 @@ def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd
 
     # Rename columns using rename method
     df_final = df_final.rename(columns={'species': 'Labels'})
+
+    # # Convert to strings so that it can be read into R later
+    # df_final['start_time'] = df_final['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    # df_final['end_time'] = df_final['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
     df_final.to_csv(output_file_path, index=False)
 
@@ -181,6 +193,10 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
 
     # Fix: Correct typo
     df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
+
+    # # Convert to strings so that it can be read into R later
+    # df_aco['start_time'] = df_aco['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    # df_aco['end_time'] = df_aco['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
     if normalize:
         return normalize_df(df_aco, df_aco.columns[7:-2])
@@ -300,6 +316,31 @@ def prep_seascaper_data(data_folder: str, df_config: pd.DataFrame) -> pd.DataFra
     return pd.concat(s_list)
 
 
+# def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFrame:
+#     """
+#     Convert start_time and end_time columns to local time using the df_config time zone information
+#
+#     Args:
+#         df_in: dataframe that contains start_time and end_time columns that are in pandas datetime format
+#         df_config: config file with columns for time zones: "tz in file" and "tz local"
+#
+#     Returns:
+#         dataframe: dataframe with updated time zones for start_time and end_time columns
+#
+#     """
+#     df_in["tz_file"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz in file"])))
+#     df_in["tz_local"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz local"])))
+#
+#     # Set the time zone to the zone specified in the tz_file column and then convert to local time using tz_local
+#     df_in["start_time"] = df_in.apply(
+#         lambda row: row['start_time'].tz_localize(row['tz_file'],
+#                                                   nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+#     df_in["end_time"] = df_in.apply(
+#         lambda row: row['end_time'].tz_localize(row['tz_file'],
+#                                                   nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+#
+#     return df_in
+
 def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFrame:
     """
     Convert start_time and end_time columns to local time using the df_config time zone information
@@ -317,11 +358,14 @@ def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFra
 
     # Set the time zone to the zone specified in the tz_file column and then convert to local time using tz_local
     df_in["start_time"] = df_in.apply(
-        lambda row: row['start_time'].tz_localize(row['tz_file'],
-                                                  nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+        lambda row: row['start_time'].tz_localize(row['tz_file'], nonexistent='shift_forward')
+                                        .tz_convert(row['tz_local']).tz_localize(None), axis=1)
     df_in["end_time"] = df_in.apply(
-        lambda row: row['end_time'].tz_localize(row['tz_file'],
-                                                  nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+        lambda row: row['end_time'].tz_localize(row['tz_file'], nonexistent='shift_forward')
+                                        .tz_convert(row['tz_local']).tz_localize(None), axis=1)
+
+    # Optionally, drop the temporary columns if they are no longer needed
+    df_in.drop(columns=["tz_file", "tz_local"], inplace=True)
 
     return df_in
 
@@ -356,6 +400,23 @@ def duckdb_export(db_name: str, dataframes: dict) -> None:
 
     # Close the connection
     conn.close()
+
+
+def convert_time_to_string(df_in: pd.DataFrame, column_names) -> pd.DataFrame:
+    """
+    Convert pandas datetime format to string so that it can be handled correctly in R
+    Args:
+        df_in: input dataframe
+        column_names: list of column names to convert to string
+
+    Returns:
+        dataframe: converted dataframe
+
+    """
+    for col in column_names:
+        df_in[col] = df_in[col].dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    return df_in
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon4.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon6.duckdb")
 
 # Key West Annotations
 df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
@@ -78,8 +78,8 @@ unique_durations <- df_aco %>%
   pull(Duration_sec)
 
 # Extract the column names that represent all acoustic indices
-col_names = names(df_aco)
-index_columns_all <- col_names[8:(length(col_names)-4)]
+# col_names = names(df_aco)
+index_columns_all <- df_index_cats$index
 
 # A subset of the index columns - update to pre-select a subset
 # index_columns <- index_columns_all[1:10]
