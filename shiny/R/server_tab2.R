@@ -116,15 +116,28 @@ server_tab2 <- function(input, output, session) {
   output$p2_plot_box <- renderPlot({
     req(df_ann_spp(), selected_index())
     
+    df_spp <- df_ann_spp()
+    
+    # TODO: make this a user option. 
+    # # With outliers:
+    # min_scale <- 0
+    # max_scale <- 1
+    # outlier_shape <- 19
+    
+    # No outliers:
+    outlier_shape <- NA
+    min_scale <- 0.1
+    max_scale <- 0.9
+    
     # Create the plot
-    p2 <- ggplot(df_ann_spp(), aes(x=Labels, y=index, fill=is_present)) +
-      geom_boxplot() +
+    p2 <- ggplot(df_spp, aes(x=Labels, y=index, fill=is_present)) +
+      geom_boxplot(outlier.shape = outlier_shape) +
+      scale_y_continuous(limits = quantile(df_spp$index, c(min_scale, max_scale)))
       labs(title = paste0(selected_index(), ": Species and Presence"),
            x = "Annotation", y = "Index", fill = NULL) +
       theme_minimal() +
       theme(text = element_text(size = 14))
     
-    # Convert to an interactive plotly plot
     print(p2)
   })
   
