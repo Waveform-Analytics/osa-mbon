@@ -59,7 +59,7 @@ def get_fish_presence(df_in, df_fishes, df_codes):
     return df_out
 
 
-def annotation_prep_kw_style(input_folder: str, output_file_path: str):
+def annotation_prep_kw_style(input_folder: str, output_file_path: str) -> pd.DataFrame:
     """
     Combine annotation txt files into one txt fish_file. This is the Key West-style annotations data.
     The output fish_file should go with the other annotations data
@@ -87,13 +87,14 @@ def annotation_prep_kw_style(input_folder: str, output_file_path: str):
                                'species', 'call variant', 'level']]
 
     # Rename columns
-    df_fish_keywest.columns = ["start_time", "end_time", 'Low Freq (Hz)', 'High Freq (Hz)',
-                               'Labels', 'call variant', 'level']
+    df_fish_keywest = df_fish_keywest.rename(columns={'species': 'Labels'})
 
     df_fish_keywest.to_csv(output_file_path, index=False)
 
+    return df_fish_keywest
 
-def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd.DataFrame) -> None:
+
+def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd.DataFrame) -> pd.DataFrame:
     """
     Extract the data sheet from the May River-style main annotations file.
     Args:
@@ -129,6 +130,8 @@ def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd
     df_final = df_final.rename(columns={'species': 'Labels'})
 
     df_final.to_csv(output_file_path, index=False)
+
+    return df_final
 
 
 def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:

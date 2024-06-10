@@ -10,7 +10,7 @@ df_indexPicks <-
   rename("index" = all_of(selected_index))
 
 # Annotations - Testing
-# Extract just one species from the key west annotations
+# Select species
 spp <- c("Mb", "Em")
 # spp <- c("Em")
 ann_spp <- df_fish %>%

@@ -67,6 +67,8 @@ server_tab2 <- function(input, output, session) {
     df_ann_spp() %>% filter(is_present == "Present")
   })
   
+  ########################################################################
+  ########################################################################
   # PLOTTING
   
   output$p2_plot_ts <- renderPlotly({

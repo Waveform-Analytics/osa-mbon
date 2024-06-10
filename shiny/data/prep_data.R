@@ -5,20 +5,20 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon2.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon4.duckdb")
 
-# # Key West Annotations
-# df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
-#   select(start_time, end_time, species)
-# df_fish_keywest$is_present <- 1
+# Key West Annotations
+df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
+  select(start_time, end_time, Labels)
+df_fish_keywest$is_present <- 1
 
-# # May River Annotations
-# df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
-#   select(start_time, end_time, species, is_present)
+# May River Annotations
+df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
+  select(start_time, end_time, Labels, is_present)
 
 # Acoustic indices.
-df_aco <- dbReadTable(con, "t_aco")
-df_aco_norm <- dbReadTable(con, "t_aco_norm")
+df_aco <- dbReadTable(con, "t_aco2")
+df_aco_norm <- dbReadTable(con, "t_aco_norm2")
 
 # Seascaper
 df_seascaper <- dbReadTable(con, "t_seascaper")
@@ -49,9 +49,9 @@ df_fish_keywest$Dataset <- "Key West"
 df_fish_mayriver$Dataset <- "May River"
 df_fish <- rbind(df_fish_keywest, df_fish_mayriver)
 
-# Combine ship data (only have one for now)
-df_ships_graysreef$Dataset <- "Gray's Reef"
-df_ships <- df_ships_graysreef
+# # Combine ship data (only have one for now)
+# df_ships_graysreef$Dataset <- "Gray's Reef"
+# df_ships <- df_ships_graysreef
 
 # Annotations lookup table
 fish_codes <- read_csv("data/fish_codes.csv", show_col_types = FALSE)
