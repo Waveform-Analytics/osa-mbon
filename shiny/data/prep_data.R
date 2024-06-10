@@ -5,20 +5,16 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon2.duckdb")
 
-# Key West Annotations
-df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
-  select(start_time, end_time, species)
-df_fish_keywest$is_present <- 1
+# # Key West Annotations
+# df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
+#   select(start_time, end_time, species)
+# df_fish_keywest$is_present <- 1
 
-# May River Annotations
-df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
-  select(start_time, end_time, species, is_present)
-
-# Grays Reef Ship Data
-df_ships_graysreef <- dbReadTable(con, "t_ships_grays") %>%
-  select(start_time, end_time, type)
+# # May River Annotations
+# df_fish_mayriver <- dbReadTable(con, "t_fish_mayriver") %>%
+#   select(start_time, end_time, species, is_present)
 
 # Acoustic indices.
 df_aco <- dbReadTable(con, "t_aco")

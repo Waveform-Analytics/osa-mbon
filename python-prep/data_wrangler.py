@@ -154,8 +154,9 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
         df_aco = pd.concat([df_aco, df])
         # for debugging:
         # print("Dataset: " + np.unique(df["Dataset"]) + ", file: " + os.path.basename(file))
-    # The date strings in "Date" column are not consistently formatted, so we use "mixed"
-    df_aco['start_time'] = pd.to_datetime(df_aco['Date'], format="mixed")
+
+    # Convert to pandas datetime
+    df_aco['start_time'] = pd.to_datetime(df_aco['Date'])
     # Drop duplicate rows
     df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
                                             'Thresholds_Hz', 'Filename', "file_id"], keep="first")
@@ -265,9 +266,9 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
             # Add presence info
             df_sub_with_presence = get_fish_presence(df_sub, df_anno, df_codes)
             # Exclude columns with all NAs
-            df_sub_with_presence.dropna(axis=1, how='all')
+            df_sub_with_presence.dropna(axis=0, how='all')
             # Append the new subset onto the new dataframe
-            df_new = pd.concat([df_new, df_sub_with_presence], axis=1)
+            df_new = pd.concat([df_new, df_sub_with_presence], axis=0)
 
     return df_new
 
@@ -294,6 +295,32 @@ def prep_seascaper_data(data_folder: str, df_config: pd.DataFrame) -> pd.DataFra
         s_list.append(df_temp)
 
     return pd.concat(s_list)
+
+
+def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert start_time and end_time columns to local time using the df_config time zone information
+
+    Args:
+        df_in: dataframe that contains start_time and end_time columns that are in pandas datetime format
+        df_config: config file with columns for time zones: "tz in file" and "tz local"
+
+    Returns:
+        dataframe: dataframe with updated time zones for start_time and end_time columns
+
+    """
+    df_in["tz_file"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz in file"])))
+    df_in["tz_local"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz local"])))
+
+    # Set the time zone to the zone specified in the tz_file column and then convert to local time using tz_local
+    df_in["start_time"] = df_in.apply(
+        lambda row: row['start_time'].tz_localize(row['tz_file'],
+                                                  nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+    df_in["end_time"] = df_in.apply(
+        lambda row: row['end_time'].tz_localize(row['tz_file'],
+                                                  nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
+
+    return df_in
 
 
 def duckdb_export(db_name: str, dataframes: dict) -> None:
@@ -324,8 +351,8 @@ def duckdb_export(db_name: str, dataframes: dict) -> None:
         # Don't forget to clear the view after it's no longer needed
         conn.unregister(view_name)
 
-        # Close the connection
-    con.close()
+    # Close the connection
+    conn.close()
 
 
 if __name__ == "__main__":
