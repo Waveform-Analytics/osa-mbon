@@ -37,7 +37,7 @@ def get_fish_presence(df_in, df_fishes, df_codes):
 
     df_fishes_sorted = df_fishes.sort_values("start_time").reset_index(drop=True)
 
-    if (df_in["Dataset"].iloc[0] == "Key West") | (df_in["Dataset"].iloc[0] == "May River"):
+    if (df_in["Dataset"].iloc[0] == "Key West, FL") | (df_in["Dataset"].iloc[0] == "May River, SC"):
         df_fishes_sorted["code"] = df_fishes_sorted["Labels"]
     else:
         df_fishes_sorted["code"] = df_fishes_sorted["Labels"].map(dict(zip(df_codes["name"], df_codes["code"])))

@@ -12,29 +12,33 @@ df_indexPicks <-
 
 # Annotations - Testing
 # Select species
-spp <- c("Mb", "Em")
-# spp <- c("Em")
-ann_spp <- df_fish %>%
-  filter(Labels %in% spp, Dataset == "Key West, FL") %>%
-  arrange(start_time)
-
-A <- get_species_presence(df_indexPicks, ann_spp)
-A$is_present <- ifelse(A$is_present, "Present", "Absent")
-
-present_only <- A %>% filter(is_present == "Present")
+#spp <- c("Mb", "Em")
+spp <- c("Em")
+# ann_spp <- df_fish %>%
+#   filter(Labels %in% spp, Dataset == "Key West, FL") %>%
+#   arrange(start_time)
+# 
+# A <- get_species_presence(df_indexPicks, ann_spp)
+# A$is_present <- ifelse(A$is_present, "Present", "Absent")
+# 
+# present_only <- A %>% filter(is_present == "Present")
 
 ######
 # getting A and is_present without using get_species_presence
-AA <- subset_df %>%
-  select(start_time, all_of(selected_index), all_of(spp)) %>%
-  rename("index" = all_of(selected_index)) %>%
-  pivot_longer(cols = all_of(spp), names_to = "Labels", values_to = "is_present")
-
-AA$is_present <- ifelse(AA$is_present == 1, "Present", "Absent")
-
-
-
-
+# AA <- subset_df %>%
+#   select(start_time, all_of(selected_index), all_of(spp)) %>%
+#   rename("index" = all_of(selected_index)) %>%
+#   pivot_longer(cols = all_of(spp), names_to = "Labels", values_to = "is_present")
+# 
+# AA$is_present <- ifelse(AA$is_present == 1, "Present", "Absent")
+# 
+# # get counts
+# spp_n <- paste0(spp, "_n")
+# AB <- subset_df %>%
+#   select(start_time, all_of(selected_index), all_of(spp_n)) %>%
+#   pivot_longer(cols = all_of(spp_n), names_to = "Labels", values_to = "count" )
+# 
+# AA$count <- AB$count
 
 # Plotting
 ## Time series and species presence

@@ -269,8 +269,18 @@ server_tab3 <- function(input, output, session) {
     
     index_data <- df_idx()
     
+    # # With outliers:
+    # min_scale <- 0
+    # max_scale <- 1
+    # outlier_shape <- 19
+    # No outliers:
+    outlier_shape <- NA
+    min_scale <- 0.1
+    max_scale <- 0.9
+    
     p2 <- ggplot(index_data, aes(x=date, y=index)) +
-      geom_boxplot() +
+      geom_boxplot(outlier.shape = outlier_shape) +
+      scale_y_continuous(limits = quantile(index_data$index, c(min_scale, max_scale))) +
       theme_minimal()
     
     return(p2)

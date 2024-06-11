@@ -55,6 +55,8 @@ server_tab2 <- function(input, output, session) {
   df_ann_spp <- reactive({
     req(subset_df(), selected_index(), selected_species())
     
+    spp <- selected_species()
+    
     AA <- subset_df() %>%
       select(start_time, all_of(selected_index()), all_of(selected_species())) %>%
       rename("index" = all_of(selected_index())) %>%
@@ -62,6 +64,16 @@ server_tab2 <- function(input, output, session) {
                    names_to = "Labels", 
                    values_to = "is_present")
     AA$is_present <- ifelse(AA$is_present == 1, "Present", "Absent")
+    
+    spp_n <- paste0(selected_species(), "_n")
+
+    AB <- subset_df() %>%
+      select(start_time, all_of(selected_index()), all_of(spp_n)) %>%
+      pivot_longer(cols = all_of(spp_n),
+                   names_to = "Labels",
+                   values_to = "count")
+    AA$count <- AB$count
+    
     return(AA)
   })
   
@@ -82,9 +94,6 @@ server_tab2 <- function(input, output, session) {
     index_data <- df_indexPicks() %>% arrange(start_time)
     present_data <- df_present() %>% arrange(start_time)
     
-    print("present_data cols")
-    print(names(present_data))
-    
     # Start by plotting present data with species color
     p <- plot_ly()
     
@@ -96,7 +105,7 @@ server_tab2 <- function(input, output, session) {
     
     p <- p %>% add_markers(data=present_data, name=~Labels,
                            x=~start_time, y=~index, 
-                           color=~Labels, size=5,
+                           color=~Labels, size=~count,
                            showlegend=TRUE)
     
     return(p)

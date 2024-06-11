@@ -57,7 +57,7 @@ server_tab4 <- function(input, output, session) {
       select(hour, all_of(selected_indices))
     df_hour_all$hour <- factor(df_hour_all$hour)
     
-    print(selected_indices)
+    # print(selected_indices)
     
     df_hour_long <- pivot_longer(df_hour_all, all_of(selected_indices), names_to = "index")
     df_hour_grouped <- df_hour_long %>%
