@@ -4,16 +4,18 @@ ui_subCatPicker <- function(id) {
   selectInput(
     ns("subCatPick"),
     "Select Index Sub-Cateogry:",
-    choices = unique_index_types
+    choices = unique_subindex_types
   )
 }
 
 
 # Server logic for dataset picker
-server_subCatPicker <- function(id, unique_index_types) {
+server_subCatPicker <- function(id, unique_subindex_types) {
   moduleServer(id, function(input, output, session) {
     observe({
-      current_unique_indices <- unique_index_types
+      current_unique_indices <- unique_subindex_types
+      
+      print(unique_subindex_types)
       
       updateSelectInput(session, "subCatPick",
                         choices = current_unique_indices,
@@ -22,6 +24,6 @@ server_subCatPicker <- function(id, unique_index_types) {
       
     })
     
-    return(reactive({ input$catPick }))
+    return(reactive({ input$subCatPick }))
   })
 }

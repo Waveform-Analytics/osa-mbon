@@ -37,8 +37,16 @@ unique_index_types <- df_index_cats %>%
   distinct(Category) %>%
   pull()
 
-unique_subIndex_types_init <- df_index_cats %>% 
-  filter(Category == unique_index_types[1]) %>% 
+unique_subIndex_types_init <- df_index_cats %>%
+  filter(Category == unique_index_types[1]) %>%
+  pull(index)
+
+unique_subindex_types <- df_index_cats %>%
+  distinct(Subcategory) %>%
+  pull()
+
+unique_subIndex_subCats <- df_index_cats %>%
+  filter(Subcategory == unique_subindex_types[1]) %>%
   pull(index)
 
 # #################################################################
@@ -86,7 +94,8 @@ index_columns_all <- df_index_cats$index
 index_columns <- index_columns_all
 
 # Unique datasets with annotations
-unique_datasets_ann <- c("Key West", "May River")
+unique_datasets_ann <- c("Chuckchi Sea", "Gray's Reef", "Key West", "May River", 
+                         "SanctSound-HI01", "ONC-MEF", "OOI-HYDBBA106")
 unique_species <- fish_codes %>%
   filter(Dataset == unique_datasets_ann[1]) %>%
   distinct(code) %>% pull(code)

@@ -10,9 +10,12 @@ server_tab4 <- function(input, output, session) {
   selected_sr <- server_srPicker("t4_srPick", get_dataset, selected_dataset)
   
   # Index category selector
-  selected_cat <- server_catPicker("t4_catPick", unique_index_types)
+  # selected_cat <- server_catPicker("t4_catPick", unique_index_types)
+  # selected_index <- server_subIndexPicker("t4_subIndexPick", selected_cat)
   
-  selected_index <- server_subIndexPicker("t4_subIndexPick", selected_cat)
+  # Index sub-category selector
+  selected_subCat <- server_subCatPicker("t4_subCatPick", unique_subindex_types)
+  selected_index <- server_subIndexSubCatPicker("t4_subIndexSubCatPick", selected_subCat)
   
   #### Get initial subset
   subset_df <- reactive({
@@ -136,12 +139,12 @@ server_tab4 <- function(input, output, session) {
   ##########################################################
   # Text descriptions
   output$text_output <- renderUI({
-    req({selected_cat()})
+    req({selected_subCat()})
     
-    this_selected_cat <- selected_cat()
+    this_selected_cat <- selected_subCat()
     
     df_index_cats_subset <- df_index_cats %>%
-      filter(Category == this_selected_cat) 
+      filter(Subcategory == this_selected_cat) 
     
     # print(str(df_index_cats_subset))
     

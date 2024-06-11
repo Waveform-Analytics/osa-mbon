@@ -34,8 +34,14 @@ ui_tab4 <- function() {
         
         h4("Select an index for the lower plot:"),
 
-        ui_catPicker("t4_catPick"),
-        ui_subIndexPicker("t4_subIndexPick"),
+        # ui_catPicker("t4_catPick"),
+        # ui_subIndexPicker("t4_subIndexPick"),
+        
+        ui_subCatPicker("t4_subCatPick"),
+        ui_subIndexSubCatPicker("t4_subIndexSubCatPick"),
+        
+        # Add text descriptions for selected subset
+        uiOutput("text_output")
         
       ),
       
@@ -47,10 +53,10 @@ ui_tab4 <- function() {
         plotOutput("p4_plot_hour_day_heatmap")
       ),
       
-      card(
-        # Add text descriptions for selected subset
-        uiOutput("text_output")
-      )
+      # card(
+      #   # Add text descriptions for selected subset
+      #   uiOutput("text_output")
+      # )
       
     )
   )
