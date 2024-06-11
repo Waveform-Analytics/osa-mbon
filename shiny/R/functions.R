@@ -89,7 +89,7 @@ get_species_presence <- function(df_A, df_spp) {
 index_description_text <- function(df) {
   # Ensure the dataframe has the required columns
   if (!all(c("index", "Description") %in% colnames(df))) {
-    stop("The dataframe must contain 'index' and 'description' columns.")
+    stop("The dataframe must contain 'index' and 'Description' columns.")
   }
   
   # Create the tagList

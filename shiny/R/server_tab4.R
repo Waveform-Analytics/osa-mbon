@@ -9,9 +9,6 @@ server_tab4 <- function(input, output, session) {
   
   selected_sr <- server_srPicker("t4_srPick", get_dataset, selected_dataset)
   
-  # Index drop down selector
-  # selected_index <- server_indexPicker("t4_indexPick")
-  
   # Index category selector
   selected_cat <- server_catPicker("t4_catPick", unique_index_types)
   
@@ -144,10 +141,11 @@ server_tab4 <- function(input, output, session) {
     this_selected_cat <- selected_cat()
     
     df_index_cats_subset <- df_index_cats %>%
-      filter(Category == this_selected_cat) %>%
-      pull()
-      
-    generate_text_from_df(df_index_cats_subset)
+      filter(Category == this_selected_cat) 
+    
+    # print(str(df_index_cats_subset))
+    
+    index_description_text(df_index_cats_subset)
   })
   
   
