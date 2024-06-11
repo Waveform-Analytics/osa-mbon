@@ -130,7 +130,7 @@ def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd
                                            'Bottlenose dolphin whistles', 'Vessel'],
                                var_name='species', value_name='is_present')
     df_final = df_long[df_long['is_present'] != 0].copy()
-    mr_codes = df_codes[df_codes["Dataset"] == "May River"]
+    mr_codes = df_codes[df_codes["Dataset"] == "May River, SC"]
     df_final["species"] = df_final["species"].map(dict(zip(mr_codes["name"], mr_codes["code"]))).copy()
     df_final.dropna(subset=["species"], inplace=True)
 
@@ -288,6 +288,8 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
             df_sub_with_presence.dropna(axis=0, how='all')
             # Append the new subset onto the new dataframe
             df_new = pd.concat([df_new, df_sub_with_presence], axis=0)
+        else:
+            df_new = pd.concat([df_new, df_sub], axis=0)
 
     return df_new
 

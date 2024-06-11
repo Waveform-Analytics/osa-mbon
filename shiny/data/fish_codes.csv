@@ -1,33 +1,33 @@
 code,name,short_name,Dataset
-Em,red grouper,red grouper,Key West
-Es,Nassau grouper,Nassau grouper,Key West
-Mb,black grouper,black grouper,Key West
-Uk,unknown,unknown,Key West
-Vs,vessel,vessel,Key West
-Sp,Silver perch,Silver perch,May River
-SpInt,Silver perch interruption,Silver perch interruption,May River
-OyBw,Oyster toadfish boat whistle,Oyster toadfish boat whistle,May River
-OyTg,Oyster toadfish grunt,Oyster toadfish grunt,May River
-OyInt,Oyster toadfish interruption,Oyster toadfish interruption,May River
-Bd,Black drum,Black drum,May River
-BdInt,Black drum interruption,Black drum interruption,May River
-Ss,Spotted seatrout,Spotted seatrout,May River
-SsInt,Spotted seatrout interruption,Spotted seatrout interruption,May River
-Rd,Red drum,Red drum,May River
-RdInt,Red drum interruption,Red drum interruption,May River
-Ac,Atlantic croaker,Atlantic croaker,May River
-Wf,Weakfish,Weakfish,May River
-BoEcho,Bottlenose dolphin echolocation,Bottlenose dolphin echolocation,May River
-BoBP,Bottlenose dolphin burst pulses,Bottlenose dolphin burst pulses,May River
-BoWh,Bottlenose dolphin whistles,Bottlenose dolphin whistles,May River
-Vs,Vessel,vessel,May River
+Em,red grouper,red grouper,"Key West, FL"
+Es,Nassau grouper,Nassau grouper,"Key West, FL"
+Mb,black grouper,black grouper,"Key West, FL"
+Uk,unknown,unknown,"Key West, FL"
+Vs,vessel,vessel,"Key West, FL"
+Sp,Silver perch,Silver perch,"May River, SC"
+SpInt,Silver perch interruption,Silver perch interruption,"May River, SC"
+OyBw,Oyster toadfish boat whistle,Oyster toadfish boat whistle,"May River, SC"
+OyTg,Oyster toadfish grunt,Oyster toadfish grunt,"May River, SC"
+OyInt,Oyster toadfish interruption,Oyster toadfish interruption,"May River, SC"
+Bd,Black drum,Black drum,"May River, SC"
+BdInt,Black drum interruption,Black drum interruption,"May River, SC"
+Ss,Spotted seatrout,Spotted seatrout,"May River, SC"
+SsInt,Spotted seatrout interruption,Spotted seatrout interruption,"May River, SC"
+Rd,Red drum,Red drum,"May River, SC"
+RdInt,Red drum interruption,Red drum interruption,"May River, SC"
+Ac,Atlantic croaker,Atlantic croaker,"May River, SC"
+Wf,Weakfish,Weakfish,"May River, SC"
+BoEcho,Bottlenose dolphin echolocation,Bottlenose dolphin echolocation,"May River, SC"
+BoBP,Bottlenose dolphin burst pulses,Bottlenose dolphin burst pulses,"May River, SC"
+BoWh,Bottlenose dolphin whistles,Bottlenose dolphin whistles,"May River, SC"
+Vs,Vessel,vessel,"May River, SC"
 Vs,Ship,vessel,ONC-MEF
 Vs,ship,vessel,ONC-MEF
-Vs,Ship,vessel,Chuckchi Sea
-Vs,ship,vessel,Chuckchi Sea
-Vs,Ship,vessel,Gray's Reef
-Vs,ship,vessel,Gray's Reef
-Vs,Ship,vessel,SanctSound-HI01
-Vs,ship,vessel,SanctSound-HI01
+Vs,Ship,vessel,"Chukchi Sea, Hanna Shoal"
+Vs,ship,vessel,"Chukchi Sea, Hanna Shoal"
+Vs,Ship,vessel,"Gray's Reef, GA"
+Vs,ship,vessel,"Gray's Reef, GA"
+Vs,Ship,vessel,"Olowalu (Maui, HI)"
+Vs,ship,vessel,"Olowalu (Maui, HI)"
 Vs,Ship,vessel,OOI-HYDBBA106
 Vs,ship,vessel,OOI-HYDBBA106

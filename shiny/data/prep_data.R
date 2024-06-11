@@ -5,7 +5,7 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon6.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon9.duckdb")
 
 # Key West Annotations
 df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
@@ -94,8 +94,10 @@ index_columns_all <- df_index_cats$index
 index_columns <- index_columns_all
 
 # Unique datasets with annotations
-unique_datasets_ann <- c("Chuckchi Sea", "Gray's Reef", "Key West", "May River", 
-                         "SanctSound-HI01", "ONC-MEF", "OOI-HYDBBA106")
+unique_datasets_ann <- c("Chukchi Sea, Hanna Shoal", "Gray's Reef, GA", 
+                         "Key West, FL", "May River, SC", 
+                         "Olowalu (Maui, HI)", "ONC-MEF", "OOI-HYDBBA106")
+
 unique_species <- fish_codes %>%
   filter(Dataset == unique_datasets_ann[1]) %>%
   distinct(code) %>% pull(code)

@@ -10,14 +10,14 @@ server_tab1 <- function(input, output, session) {
   # Index drop down selector
   selected_indices <- server_indexPicker("t1_indexPick")
   
-  df_subset_keywest <- df_selected("Key West", get_dataset, selected_indices)
-  df_subset_mayriver <- df_selected("May River", get_dataset, selected_indices)
-  df_subset_caesarcreek <- df_selected("Caesar Creek", get_dataset, selected_indices)
-  df_subset_graysreef <- df_selected("Gray's Reef", get_dataset, selected_indices)
+  df_subset_keywest <- df_selected("Key West, FL", get_dataset, selected_indices)
+  df_subset_mayriver <- df_selected("May River, SC", get_dataset, selected_indices)
+  df_subset_caesarcreek <- df_selected("Biscayne Bay, FL", get_dataset, selected_indices)
+  df_subset_graysreef <- df_selected("Gray's Reef, GA", get_dataset, selected_indices)
   df_subset_onc <- df_selected("ONC-MEF", get_dataset, selected_indices)
-  df_subset_chuckchi <- df_selected("Chuckchi Sea", get_dataset, selected_indices)
+  df_subset_chuckchi <- df_selected("Chukchi Sea, Hanna Shoal", get_dataset, selected_indices)
   df_subset_ooi <- df_selected("OOI-HYDBBA106", get_dataset, selected_indices)
-  df_subset_sanctsound <- df_selected("SanctSound-HI01", get_dataset, selected_indices)
+  df_subset_sanctsound <- df_selected("Olowalu (Maui, HI)", get_dataset, selected_indices)
   
   create_ts_plot("p1_plot_ts_keywest", df_subset_keywest, output)
   create_ts_plot("p1_plot_ts_mayriver", df_subset_mayriver, output)
