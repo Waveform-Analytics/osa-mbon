@@ -12,7 +12,7 @@ ui_tab5 <- function() {
       sidebar = sidebar(
         title = "Options",
         # User selections
-        ui_datasetPicker("t5_datasetPick", unique_datasets,FALSE),
+        ui_datasetPicker("t5_datasetPick", unique_duration_datasets,FALSE),
         ui_indexPicker("t5_indexPick", FALSE),
         radioButtons("normPick", "Normalize values?", c("Yes", "No")),
       ),

@@ -46,10 +46,10 @@ ui_tab2 <- function(unq_datasets_ann) {
           tags$li("Bo: Bottlenose dolphin"),
           tags$li("Vs: Vessel"),
           
-        )
-       
-        
-        
+        ),
+        strong("Vessels"),
+        tags$p("Vessels at any site are indicated by 'Vs'.")
+ 
       ),
       layout_columns(
         card(

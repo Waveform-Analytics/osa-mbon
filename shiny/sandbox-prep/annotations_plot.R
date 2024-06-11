@@ -1,6 +1,6 @@
 # Filtered Data Subset
 subset_df <-
-  fcn_filterAco(df_aco_norm, "Key West",48, 30)
+  fcn_filterAco(df_aco_norm, "Key West, FL",48, 30)
 
 # Index Picks - with start and end time
 # selected_index <- c("ZCR", "ACI")
@@ -15,7 +15,7 @@ df_indexPicks <-
 spp <- c("Mb", "Em")
 # spp <- c("Em")
 ann_spp <- df_fish %>%
-  filter(Labels %in% spp, Dataset == "Key West") %>%
+  filter(Labels %in% spp, Dataset == "Key West, FL") %>%
   arrange(start_time)
 
 A <- get_species_presence(df_indexPicks, ann_spp)

@@ -1,4 +1,5 @@
-# Acoustic indices
+# Acoustic indices + annotations
+
 server_tab2 <- function(input, output, session) {
   
   # Dataset drop down selector
@@ -49,19 +50,7 @@ server_tab2 <- function(input, output, session) {
       select(start_time, end_time, all_of(selected_index())) %>%
       rename("index" = all_of(selected_index()))
   })
-  
-  # # Reactive: Prep annotations data
-  # df_ann_spp <- reactive({
-  #   req(selected_dataset(), selected_species(), df_indexPicks())
-  #   ann_spp <- df_fish %>%
-  #     filter(species %in% selected_species(),
-  #            Dataset == selected_dataset()) %>%
-  #     arrange(start_time)
-  #   temp <- get_species_presence(df_indexPicks(), ann_spp)
-  #   temp$is_present <- ifelse(temp$is_present, "Present", "Absent")
-  #   return(temp)
-  # })
-  
+
   # Prep annotations data
   df_ann_spp <- reactive({
     req(subset_df(), selected_index(), selected_species())

@@ -5,7 +5,7 @@ server_tab6 <- function(input, output, session) {
     if (input$normPick == "No") {df_aco} else {df_aco_norm}})
   
   # Dataset drop down selector
-  selected_dataset <- server_datasetPicker("t6_datasetPick", unique_datasets)
+  selected_dataset <- server_datasetPicker("t6_datasetPick", unique_duration_datasets)
   
   # Index drop down selector
   selected_index <- server_indexPicker("t6_indexPick")

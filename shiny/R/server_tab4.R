@@ -1,11 +1,12 @@
 # INDICES VS HOUR OF DAY
 server_tab4 <- function(input, output, session) {
-  
   # Dataset drop down selector
   selected_dataset <- server_datasetPicker("t4_datasetPick", unique_datasets)
   
   # Hard coding the normalized dataset and making it reactive
-  get_dataset <- reactive({df_aco_norm})
+  get_dataset <- reactive({
+    df_aco_norm
+  })
   
   selected_sr <- server_srPicker("t4_srPick", get_dataset, selected_dataset)
   
@@ -26,8 +27,7 @@ server_tab4 <- function(input, output, session) {
     sr <- selected_sr()
     
     duration_subset <- this_dataset %>%
-      filter(Dataset == dataset,
-             Sampling_Rate_kHz == sr) %>%
+      filter(Dataset == dataset, Sampling_Rate_kHz == sr) %>%
       distinct(Duration_sec) %>%
       pull(Duration_sec)
     
@@ -47,9 +47,9 @@ server_tab4 <- function(input, output, session) {
   # Function to prep and filter the dataset for the first heatmap
   df_hours <- reactive({
     req(subset_df())
-  
+    
     sub_df <- subset_df()
-
+    
     selected_indices <- index_columns
     
     df_hour_all <-
@@ -59,29 +59,21 @@ server_tab4 <- function(input, output, session) {
     
     print(selected_indices)
     
-    df_hour_long <- pivot_longer(df_hour_all, all_of(selected_indices), 
-                                 names_to = "index")
+    df_hour_long <- pivot_longer(df_hour_all, all_of(selected_indices), names_to = "index")
     df_hour_grouped <- df_hour_long %>%
       group_by(index, hour) %>%
-      summarise(
-        summary_val = mean(value),
-        .groups = "drop" 
-      ) 
+      summarise(summary_val = mean(value), .groups = "drop")
     df_hour_med <- df_hour_grouped %>%
       group_by(index) %>%
       summarise(
         min_val = min(summary_val),
         max_val = max(summary_val),
         range = max_val - min_val
-      ) 
-    df_hour_grouped %>%
-      left_join(df_hour_med, b="index") %>%
-      mutate(
-        norm = (summary_val-min_val)/range
-      ) %>%
-      select(
-        index, hour, norm
       )
+    df_hour_grouped %>%
+      left_join(df_hour_med, b = "index") %>%
+      mutate(norm = (summary_val - min_val) / range) %>%
+      select(index, hour, norm)
   })
   
   #################################################
@@ -95,26 +87,18 @@ server_tab4 <- function(input, output, session) {
     
     df_hour_date <-
       sub_df %>%
-      filter(
-        month(start_time) == 2
-      ) %>%
-      mutate(
-        day = as.Date(start_time)
-      ) %>%
+      filter(month(start_time) == 2) %>%
+      mutate(day = as.Date(start_time)) %>%
       select(day, hour, all_of(this_index))
     
     
     df_hour_date$hour <- factor(df_hour_date$hour)
     
-    df_hour_long <- pivot_longer(df_hour_date, all_of(this_index), 
-                                 names_to = "index")
+    df_hour_long <- pivot_longer(df_hour_date, all_of(this_index), names_to = "index")
     
     df_hour_grouped <- df_hour_long %>%
       group_by(day, hour) %>%
-      summarise(
-        summary_val = mean(value),
-        .groups = "drop" 
-      ) 
+      summarise(summary_val = mean(value), .groups = "drop")
     
     df_hour_med <- df_hour_grouped %>%
       group_by(day) %>%
@@ -125,13 +109,9 @@ server_tab4 <- function(input, output, session) {
       )
     
     df_hour_grouped %>%
-      left_join(df_hour_med, b="day") %>%
-      mutate(
-        norm = (summary_val-min_val)/range
-      ) %>%
-      select(
-        day, hour, norm
-      )
+      left_join(df_hour_med, b = "day") %>%
+      mutate(norm = (summary_val - min_val) / range) %>%
+      select(day, hour, norm)
     
   })
   
@@ -139,12 +119,14 @@ server_tab4 <- function(input, output, session) {
   ##########################################################
   # Text descriptions
   output$text_output <- renderUI({
-    req({selected_subCat()})
+    req({
+      selected_subCat()
+    })
     
     this_selected_cat <- selected_subCat()
     
     df_index_cats_subset <- df_index_cats %>%
-      filter(Subcategory == this_selected_cat) 
+      filter(Subcategory == this_selected_cat)
     
     # print(str(df_index_cats_subset))
     
@@ -160,13 +142,21 @@ server_tab4 <- function(input, output, session) {
     req(df_hours())
     
     df_h <- df_hours()
+    # Sort the dataframe based on the 'index' column
+    df_h <- df_h[order(df_h$index, decreasing = TRUE), ]
     
-    diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)  
-    p1 <- levelplot(norm ~ as.factor(hour) * as.factor(index), data = df_h,
-                      xlab = "Hour of Day",  # Rename x-axis
-                      ylab = "Index",  # Rename y-axis
-                      col.regions = diverging_colors,  # Use the diverging color scale
-                      colorkey = TRUE)  # Enable color key
+    diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+    p1 <- levelplot(
+      norm ~ as.factor(hour) * factor(index, levels = unique(df_h$index)),
+      data = df_h,
+      xlab = "Hour of Day",
+      # Rename x-axis
+      ylab = "Index",
+      # Rename y-axis
+      col.regions = diverging_colors,
+      # Use the diverging color scale
+      colorkey = TRUE
+    )  # Enable color key
     return(p1)
   })
   
@@ -176,14 +166,19 @@ server_tab4 <- function(input, output, session) {
     
     df_hour_day <- df_hour_day_norm()
     
-    diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)  
-    p2 <- levelplot(norm ~ as.factor(hour) * as.factor(day), data = df_hour_day,
-                      xlab = "Hour of Day",  # Rename x-axis
-                      ylab = "Date",  # Rename y-axis
-                      col.regions = diverging_colors,  # Use the diverging color scale
-                      colorkey = TRUE)  # Enable color key
+    diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+    p2 <- levelplot(
+      norm ~ as.factor(hour) * as.factor(day),
+      data = df_hour_day,
+      xlab = "Hour of Day",
+      # Rename x-axis
+      ylab = "Date",
+      # Rename y-axis
+      col.regions = diverging_colors,
+      # Use the diverging color scale
+      colorkey = TRUE
+    )  # Enable color key
     return(p2)
   })
   
 }
-

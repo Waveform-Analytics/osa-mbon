@@ -141,6 +141,8 @@ unique_durations_all <- df_aco %>%
   distinct(Duration_sec) %>%
   pull()
 
+unique_duration_datasets <- c("Key West, FL", "Olowalu (Maui, HI)" )
+
 test <- df_aco %>%
   group_by(Duration_sec, Sampling_Rate_kHz, Dataset) %>%
   summarise(count = n()) %>%

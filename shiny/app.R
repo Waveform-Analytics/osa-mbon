@@ -18,8 +18,8 @@ ui <- page_navbar(
       nav_panel(title = "Diel relationships", ui_tab4()),
       nav_panel(title = "Annotations",ui_tab2(unique_datasets)),
       nav_panel(title = "Water Classes", ui_tab3()),
+      nav_panel(title = "Recording Durations", ui_tab5()),
       nav_panel(title = "All Datasets", ui_tab1()),
-      nav_panel(title = "Recording Durations", ui_tab5())
     )
   ),
 )
