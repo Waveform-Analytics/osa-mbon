@@ -26,27 +26,13 @@ ui_tab2 <- function(unq_datasets_ann) {
         ui_speciesPicker("t2_speciesPick", TRUE),
         br(),
         p("ANNOTATION KEY"),
+        
         strong("Key West"),
-        tags$ul(
-          tags$li("Em: red grouper (Epinephelus morio)"),
-          tags$li("Es: Nassau grouper (Epinephelus striatus)"),
-          tags$li("Mb: black grouper (Mycteroperca bonaci)"),
-          tags$li("Uk: unknown"),
-          tags$li("Vs: vessel"),
-        ),
+        uiOutput("text_output_anno_kw"),
+        
         strong("May River"),
-        tags$ul(
-          tags$li("Sp: Silver perch"),
-          tags$li("Oy: Oyster toadfish"),
-          tags$li("Bd: Black drum"),
-          tags$li("Ss: Spotted seatrout"),
-          tags$li("Rd: Red drum"),
-          tags$li("Ac: Atlantic croaker"),
-          tags$li("Wf: Weakfish"),
-          tags$li("Bo: Bottlenose dolphin"),
-          tags$li("Vs: Vessel"),
-          
-        ),
+        uiOutput("text_output_anno_mr"),
+        
         strong("Vessels"),
         tags$p("Vessels at any site are indicated by 'Vs'.")
  

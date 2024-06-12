@@ -85,6 +85,29 @@ server_tab2 <- function(input, output, session) {
   
   ########################################################################
   ########################################################################
+  # Add Annotations Text info
+  output$text_output_anno_kw <- renderUI({
+    # Need to update column names to match what is expected by 
+    # index_description_text
+    fish_codes <- fish_codes %>% 
+      filter(Dataset == "Key West, FL") %>%
+      rename(index = code, Description = name)
+    
+    index_description_text(fish_codes)
+  })
+  
+  output$text_output_anno_mr <- renderUI({
+    # Need to update column names to match what is expected by 
+    # index_description_text
+    fish_codes <- fish_codes %>% 
+      filter(Dataset == "May River, SC") %>%
+      rename(index = code, Description = name)
+    
+    index_description_text(fish_codes)
+  })
+  
+  ########################################################################
+  ########################################################################
   # PLOTTING
   
   output$p2_plot_ts <- renderPlotly({

@@ -223,7 +223,9 @@ def add_new_columns(df_in: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
 
     new_columns = [item for item in extra_columns if item not in current_columns]
 
-    df_temp = pd.DataFrame(columns=new_columns)
+    # Initialize new columns with zeros
+    df_temp = pd.DataFrame(0, index=df_in.index, columns=new_columns)
+
     return pd.concat([df_in, df_temp], axis=1)
 
 
@@ -285,11 +287,12 @@ def add_annotations_to_df(df_in: pd.DataFrame, df_config: pd.DataFrame,
             # Add presence info
             df_sub_with_presence = get_fish_presence(df_sub, df_anno, df_codes)
             # Exclude columns with all NAs
-            df_sub_with_presence.dropna(axis=0, how='all')
+            # df_sub_with_presence.dropna(axis=0, how='all')
             # Append the new subset onto the new dataframe
             df_new = pd.concat([df_new, df_sub_with_presence], axis=0)
         else:
-            df_new = pd.concat([df_new, df_sub], axis=0)
+            df_temp = df_sub.fillna(0).infer_objects(copy=False).copy()
+            df_new = pd.concat([df_new, df_temp], axis=0)
 
     return df_new
 
