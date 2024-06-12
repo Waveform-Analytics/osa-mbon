@@ -1,6 +1,6 @@
 # Filtered Data Subset
 subset_df <-
-  fcn_filterAco(df_aco_norm, "Key West",16, 30)
+  fcn_filterAco(df_aco_norm, "Key West, FL",16, 30)
 
 # Add hour of day column, make it a factor
 subset_df$hour <- hour(subset_df$start_time)

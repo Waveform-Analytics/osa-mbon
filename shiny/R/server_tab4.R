@@ -22,10 +22,6 @@ server_tab4 <- function(input, output, session) {
       pull(index)
   })
   
-  # # Index sub-category selector
-  # selected_subCat <- server_subCatPicker("t4_subCatPick", unique_subindex_types)
-  # selected_index <- server_subIndexSubCatPicker("t4_subIndexSubCatPick", selected_subCat)
-  
   #### Get initial subset
   subset_df <- reactive({
     req(selected_dataset(), get_dataset(), selected_sr())
@@ -50,6 +46,17 @@ server_tab4 <- function(input, output, session) {
     
   })
   
+  # Get a subset with all datasets
+  df_subset_all <- reactive({
+    req(get_dataset(), selected_sr())
+    
+    this_dataset <- get_dataset()
+    sr <- selected_sr()
+    
+    this_dataset
+    
+    
+  })
   
   ###############################################################
   # Function to prep and filter the dataset for the first heatmap
@@ -97,7 +104,6 @@ server_tab4 <- function(input, output, session) {
       mutate(day = as.Date(start_time)) %>%
       select(day, hour, all_of(this_index))
     
-    
     df_hour_date$hour <- factor(df_hour_date$hour)
     
     df_hour_long <- pivot_longer(df_hour_date, all_of(this_index), names_to = "index")
@@ -123,17 +129,6 @@ server_tab4 <- function(input, output, session) {
   
   
   ##########################################################
-  # Text descriptions
-  # output$text_output <- renderUI({
-  #   req({
-  #     selected_subCat()
-  #   })
-  #   this_selected_cat <- selected_subCat()
-  #   df_index_cats_subset <- df_index_cats %>%
-  #     filter(Subcategory == this_selected_cat)
-  #   # print(str(df_index_cats_subset))
-  #   index_description_text(df_index_cats_subset)
-  # })
   
   output$text_output <- renderUI({
     req({selected_cat()})
@@ -162,37 +157,56 @@ server_tab4 <- function(input, output, session) {
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     p1 <- levelplot(
-      norm ~ as.factor(hour) * factor(index, levels = unique(df_h$index)),
+      norm ~ factor(index, levels = unique(df_h$index)) * as.factor(hour),
       data = df_h,
-      xlab = "Hour of Day",
-      # Rename x-axis
-      ylab = "Index",
-      # Rename y-axis
+      ylab = "Hour of Day",
+      xlab = "Index",
       col.regions = diverging_colors,
-      # Use the diverging color scale
-      colorkey = TRUE
-    )  # Enable color key
+      colorkey = TRUE,
+      scales = list(x = list(rot = 90))  
+    )  
     return(p1)
   })
   
   # HEATMAP 2
+  output$p4_plot_hour_location_heatmap <- renderPlot({
+    req(df_hour_day_norm())
+    
+    df_hour_day <- df_hour_day_norm()
+    
+    print(names(df_hour_day))
+    
+    diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+    p2 <- levelplot(
+      norm ~ as.factor(day) * as.factor(hour),
+      data = df_hour_day,
+      ylab = "Hour of Day",
+      xlab = "Date",
+      col.regions = diverging_colors,
+      colorkey = TRUE,
+      scales = list(x = list(rot = 90)) 
+    )  
+    return(p2)
+  })
+  
+  # HEATMAP 3
   output$p4_plot_hour_day_heatmap <- renderPlot({
     req(df_hour_day_norm())
     
     df_hour_day <- df_hour_day_norm()
     
+    print(names(df_hour_day))
+    
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     p2 <- levelplot(
-      norm ~ as.factor(hour) * as.factor(day),
+      norm ~ as.factor(day) * as.factor(hour),
       data = df_hour_day,
-      xlab = "Hour of Day",
-      # Rename x-axis
-      ylab = "Date",
-      # Rename y-axis
+      ylab = "Hour of Day",
+      xlab = "Date",
       col.regions = diverging_colors,
-      # Use the diverging color scale
-      colorkey = TRUE
-    )  # Enable color key
+      colorkey = TRUE,
+      scales = list(x = list(rot = 90)) 
+    )  
     return(p2)
   })
   

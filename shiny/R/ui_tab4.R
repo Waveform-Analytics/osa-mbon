@@ -51,6 +51,11 @@ ui_tab4 <- function() {
       ),
       
       card(
+        h4("Index values: Location vs Hour of Day"),
+        plotOutput("p4_plot_hour_location_heatmap")
+      ),
+      
+      card(
         h4("Index values: Days vs Hour of Day"),
         plotOutput("p4_plot_hour_day_heatmap")
       ),
