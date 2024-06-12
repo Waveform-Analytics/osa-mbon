@@ -5,6 +5,7 @@ server_tab4 <- function(input, output, session) {
   
   # Hard coding the normalized dataset and making it reactive
   get_dataset <- reactive({
+    df_aco_norm$month = month(df_aco_norm$start_time)
     df_aco_norm
   })
   
@@ -31,7 +32,7 @@ server_tab4 <- function(input, output, session) {
     sr <- selected_sr()
     
     duration_subset <- this_dataset %>%
-      filter(Dataset == dataset, Sampling_Rate_kHz == sr) %>%
+      filter(Dataset == dataset, Sampling_Rate_kHz == sr, month == 2) %>%
       distinct(Duration_sec) %>%
       pull(Duration_sec)
     
@@ -53,8 +54,13 @@ server_tab4 <- function(input, output, session) {
     this_dataset <- get_dataset()
     sr <- selected_sr()
     
-    this_dataset
+    this_dataset$hour <- hour(this_dataset$start_time)
     
+    this_dataset %>% 
+      filter(Sampling_Rate_kHz == 16) %>%
+      group_by(Dataset) %>%
+      filter(Duration_sec == max(Duration_sec)) %>%
+      ungroup()  
     
   })
   
@@ -90,17 +96,53 @@ server_tab4 <- function(input, output, session) {
   })
   
   #################################################
-  ##### PREP data for 2nd plot (day vs hour of day)
+  ##### PREP data for 2nd plot (hour vs location)
+  
+  df_hour_location_norm <- reactive({
+    req(selected_index(), df_subset_all())
+    
+    this_index <- selected_index()
+    sub_df <- df_subset_all()
+    
+    df_hour_date <-
+      sub_df %>%
+      select(Dataset, hour, all_of(this_index))
+    
+    df_hour_date$hour <- factor(df_hour_date$hour)
+    
+    df_hour_long <- pivot_longer(df_hour_date, all_of(this_index), names_to = "index")
+    
+    df_hour_grouped <- df_hour_long %>%
+      group_by(Dataset, hour) %>%
+      summarise(summary_val = mean(value), .groups = "drop")
+    
+    df_hour_med <- df_hour_grouped %>%
+      group_by(Dataset) %>%
+      summarise(
+        min_val = min(summary_val),
+        max_val = max(summary_val),
+        range = max_val - min_val
+      )
+    
+    df_hour_grouped %>%
+      left_join(df_hour_med, b = "Dataset") %>%
+      mutate(norm = (summary_val - min_val) / range) %>%
+      select(Dataset, hour, norm)
+    
+  })
+  
+  
+  #################################################
+  ##### PREP data for 3rd plot (day vs hour of day)
   
   df_hour_day_norm <- reactive({
-    req(selected_sr(), selected_index(), subset_df())
+    req(selected_index(), subset_df())
     
     this_index <- selected_index()
     sub_df <- subset_df()
     
     df_hour_date <-
       sub_df %>%
-      filter(month(start_time) == 2) %>%
       mutate(day = as.Date(start_time)) %>%
       select(day, hour, all_of(this_index))
     
@@ -163,28 +205,28 @@ server_tab4 <- function(input, output, session) {
       xlab = "Index",
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 90))  
+      scales = list(x = list(rot = 30))  
     )  
     return(p1)
   })
   
   # HEATMAP 2
   output$p4_plot_hour_location_heatmap <- renderPlot({
-    req(df_hour_day_norm())
+    req(df_hour_location_norm())
     
-    df_hour_day <- df_hour_day_norm()
+    df_hour_location <- df_hour_location_norm()
     
-    print(names(df_hour_day))
+    print(names(df_hour_location))
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     p2 <- levelplot(
-      norm ~ as.factor(day) * as.factor(hour),
-      data = df_hour_day,
+      norm ~ as.factor(Dataset) * as.factor(hour),
+      data = df_hour_location,
       ylab = "Hour of Day",
-      xlab = "Date",
+      xlab = "Dataset",
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 90)) 
+      scales = list(x = list(rot = 30)) 
     )  
     return(p2)
   })
@@ -198,16 +240,16 @@ server_tab4 <- function(input, output, session) {
     print(names(df_hour_day))
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
-    p2 <- levelplot(
+    p3 <- levelplot(
       norm ~ as.factor(day) * as.factor(hour),
       data = df_hour_day,
       ylab = "Hour of Day",
       xlab = "Date",
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 90)) 
+      scales = list(x = list(rot = 30)) 
     )  
-    return(p2)
+    return(p3)
   })
   
 }

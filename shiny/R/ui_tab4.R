@@ -32,16 +32,10 @@ ui_tab4 <- function() {
         ui_datasetPicker("t4_datasetPick", unique_datasets, FALSE),
         ui_srPicker("t4_srPick"),
         
-        h4("Select an index for the lower plot:"),
-
+        p(tags$b("Select an index for the lower two plots:")),
+        
         ui_catPicker("t4_catPick"),
         ui_subIndexPicker("t4_subIndexPick"),
-        
-        # ui_subCatPicker("t4_subCatPick"),
-        # ui_subIndexSubCatPicker("t4_subIndexSubCatPick"),
-        
-        # Add text descriptions for selected subset
-        # uiOutput("text_output")
         
       ),
       
@@ -51,12 +45,12 @@ ui_tab4 <- function() {
       ),
       
       card(
-        h4("Index values: Location vs Hour of Day"),
+        h4("Index values: Location vs Hour of Day", height=400),
         plotOutput("p4_plot_hour_location_heatmap")
       ),
       
       card(
-        h4("Index values: Days vs Hour of Day"),
+        h4("Index values: Days vs Hour of Day", height=350),
         plotOutput("p4_plot_hour_day_heatmap")
       ),
       
