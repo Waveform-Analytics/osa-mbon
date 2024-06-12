@@ -34,29 +34,32 @@ ui_tab4 <- function() {
         
         h4("Select an index for the lower plot:"),
 
-        # ui_catPicker("t4_catPick"),
-        # ui_subIndexPicker("t4_subIndexPick"),
+        ui_catPicker("t4_catPick"),
+        ui_subIndexPicker("t4_subIndexPick"),
         
-        ui_subCatPicker("t4_subCatPick"),
-        ui_subIndexSubCatPicker("t4_subIndexSubCatPick"),
+        # ui_subCatPicker("t4_subCatPick"),
+        # ui_subIndexSubCatPicker("t4_subIndexSubCatPick"),
         
         # Add text descriptions for selected subset
-        uiOutput("text_output")
+        # uiOutput("text_output")
         
       ),
       
       card(
+        h4("Index values vs Hour of Day"),
         plotOutput("p4_plot_hour_heatmap", height = 600),
       ),
       
       card(
+        h4("Index values: Days vs Hour of Day"),
         plotOutput("p4_plot_hour_day_heatmap")
       ),
       
-      # card(
-      #   # Add text descriptions for selected subset
-      #   uiOutput("text_output")
-      # )
+      card(
+        h4("Description of indices in the selected category"),
+        # Add text descriptions for selected subset
+        uiOutput("text_output")
+      )
       
     )
   )

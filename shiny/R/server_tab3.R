@@ -4,8 +4,20 @@ server_tab3 <- function(input, output, session) {
   # Dataset drop down selector
   selected_dataset <- server_datasetPicker("t3_datasetPick", unique_datasets)
   
-  # Index drop down selector
-  selected_index <- server_indexPicker("t3_indexPick")
+  # # Index drop down selector
+  # selected_index <- server_indexPicker("t3_indexPick")
+  
+  # Index category selector
+  selected_cat <- server_catPicker("t3_catPick", unique_index_types)
+  selected_index <- server_subIndexPicker("t3_subIndexPick", selected_cat)
+  
+  index_cats_subset <- reactive({
+    req({selected_cat()})
+    this_selected_cat <- selected_cat()
+    df_index_cats %>%
+      filter(Category == this_selected_cat) %>%
+      pull(index)
+  })
   
   # # Class drop down selector
   selected_class <- server_classPicker("t3_classPick", df_combo)

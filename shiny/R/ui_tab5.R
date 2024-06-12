@@ -4,7 +4,12 @@ ui_tab5 <- function() {
     h2("Duration comparisons"),
     withMathJax(),
     p(
-      "Replace with text from Liz."
+      "Comparisons of index calculations at varied durations to evaluate how 
+      measurements are impacted by time interval. Available comparisons are the 
+      Key West, FL dataset at 30-second and 10-second measurement intervals, and 
+      the Olowalu (Maui, HI) dataset at 300-second and 150-second measurement 
+      intervals. Both datasets are compared at the 16 kHz sampling rate, and 
+      results are displayed per user-defined index."
     ),
     
     layout_sidebar(
@@ -14,7 +19,8 @@ ui_tab5 <- function() {
         # User selections
         ui_datasetPicker("t5_datasetPick", unique_duration_datasets,FALSE),
         ui_indexPicker("t5_indexPick", FALSE),
-        radioButtons("normPick", "Normalize values?", c("Yes", "No")),
+        radioButtons("normPick", "Normalize values?", 
+                     choices = c("Yes", "No"), selected = "No"),
       ),
       card(
         # A comparison of different durations for a single selected dataset

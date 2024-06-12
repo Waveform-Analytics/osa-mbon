@@ -5,7 +5,7 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon9.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon10.duckdb")
 
 # Key West Annotations
 df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%
@@ -27,7 +27,7 @@ dbDisconnect(con)
 
 # Get the index categories
 df_index_cats <- 
-  read_csv("data/Index_Categories.csv", 
+  read_csv("data/Updated_Index_Categories_v2.csv", 
            show_col_types = FALSE) %>%
   rename(
     index = Prefix

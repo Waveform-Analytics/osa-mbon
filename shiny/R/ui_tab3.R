@@ -31,7 +31,12 @@ ui_tab3 <- function() {
         br(),
         
         strong("Lower figures:"),
-        ui_indexPicker("t3_indexPick", FALSE),
+        
+        # ui_indexPicker("t3_indexPick", FALSE),
+        
+        ui_catPicker("t3_catPick"),
+        ui_subIndexPicker("t3_subIndexPick"),
+        
         ui_classPicker("t3_classPick", FALSE)
         
       ),

@@ -11,12 +11,20 @@ server_tab4 <- function(input, output, session) {
   selected_sr <- server_srPicker("t4_srPick", get_dataset, selected_dataset)
   
   # Index category selector
-  # selected_cat <- server_catPicker("t4_catPick", unique_index_types)
-  # selected_index <- server_subIndexPicker("t4_subIndexPick", selected_cat)
+  selected_cat <- server_catPicker("t4_catPick", unique_index_types)
+  selected_index <- server_subIndexPicker("t4_subIndexPick", selected_cat)
   
-  # Index sub-category selector
-  selected_subCat <- server_subCatPicker("t4_subCatPick", unique_subindex_types)
-  selected_index <- server_subIndexSubCatPicker("t4_subIndexSubCatPick", selected_subCat)
+  index_cats_subset <- reactive({
+    req({selected_cat()})
+    this_selected_cat <- selected_cat()
+    df_index_cats %>%
+      filter(Category == this_selected_cat) %>%
+      pull(index)
+  })
+  
+  # # Index sub-category selector
+  # selected_subCat <- server_subCatPicker("t4_subCatPick", unique_subindex_types)
+  # selected_index <- server_subIndexSubCatPicker("t4_subIndexSubCatPick", selected_subCat)
   
   #### Get initial subset
   subset_df <- reactive({
@@ -56,8 +64,6 @@ server_tab4 <- function(input, output, session) {
       sub_df %>%
       select(hour, all_of(selected_indices))
     df_hour_all$hour <- factor(df_hour_all$hour)
-    
-    # print(selected_indices)
     
     df_hour_long <- pivot_longer(df_hour_all, all_of(selected_indices), names_to = "index")
     df_hour_grouped <- df_hour_long %>%
@@ -118,18 +124,22 @@ server_tab4 <- function(input, output, session) {
   
   ##########################################################
   # Text descriptions
+  # output$text_output <- renderUI({
+  #   req({
+  #     selected_subCat()
+  #   })
+  #   this_selected_cat <- selected_subCat()
+  #   df_index_cats_subset <- df_index_cats %>%
+  #     filter(Subcategory == this_selected_cat)
+  #   # print(str(df_index_cats_subset))
+  #   index_description_text(df_index_cats_subset)
+  # })
+  
   output$text_output <- renderUI({
-    req({
-      selected_subCat()
-    })
-    
-    this_selected_cat <- selected_subCat()
-    
+    req({selected_cat()})
+    this_selected_cat <- selected_cat()
     df_index_cats_subset <- df_index_cats %>%
-      filter(Subcategory == this_selected_cat)
-    
-    # print(str(df_index_cats_subset))
-    
+      filter(Category == this_selected_cat)
     index_description_text(df_index_cats_subset)
   })
   
@@ -139,9 +149,14 @@ server_tab4 <- function(input, output, session) {
   
   # HEATMAP 1
   output$p4_plot_hour_heatmap <- renderPlot({
-    req(df_hours())
+    req(df_hours(), index_cats_subset())
     
     df_h <- df_hours()
+    index_subset <- index_cats_subset()
+    
+    # Filter the dataframe to include only the subset of index values
+    df_h <- df_h %>% filter(index %in% index_subset)
+    
     # Sort the dataframe based on the 'index' column
     df_h <- df_h[order(df_h$index, decreasing = TRUE), ]
     
