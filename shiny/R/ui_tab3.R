@@ -42,7 +42,7 @@ ui_tab3 <- function() {
       ),
       
       card(
-        plotOutput("t3_plot_heatmap", height = 600),
+        plotOutput("t3_plot_heatmap", height = 300),
       ),
       
       layout_column_wrap(

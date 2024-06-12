@@ -220,20 +220,25 @@ server_tab3 <- function(input, output, session) {
   
   # Initialize and populate heatmap dataframe
   df_heatmap <- reactive({
-    req(unique_classes(), unique_classes_numeric(), df_idx_big(), df_water())
+    req(unique_classes(), 
+        unique_classes_numeric(), 
+        df_idx_big(), 
+        df_water(),
+        index_cats_subset())
     
     water_data <- df_water()
     water_data$date <- as.factor(water_data$date)
+    index_subset <- index_cats_subset()
     
     df_temp <- setNames(
       data.frame(
         matrix(ncol = length(unique_classes()), 
-               nrow = length(index_columns))), 
+               nrow = length(index_subset))), 
       unique_classes_numeric())
-    rownames(df_temp) <- index_columns
+    rownames(df_temp) <- index_subset
     
     # Populate the dataframe
-    for (index in index_columns) {
+    for (index in index_subset) {
       for (class in unique_classes_numeric()) {
         cor_value <- get_cor_value(df_idx_big(), water_data, class, index)
         
@@ -250,7 +255,7 @@ server_tab3 <- function(input, output, session) {
 
   # Heatmap
   output$t3_plot_heatmap <- renderPlot({
-    req(df_heatmap(), df_idx_big(), selected_dataset(), df_water())
+    req(df_heatmap())
     
     pheatmap(df_heatmap(),
              cluster_rows = FALSE,
