@@ -59,8 +59,8 @@ ui_overview <- fluidPage(
              target="_blank")
     ),
     
-    index_description_text(df_index_cats)
-    
+    uiOutput("text_output_overviewtab")
+
   )
   
 )

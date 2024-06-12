@@ -41,5 +41,12 @@ server_overview <- function(input, output, session) {
     }
   })
   
+  output$text_output_overviewtab <- renderUI({
+    # req({selected_cat()})
+    # this_selected_cat <- selected_cat()
+    # df_index_cats_subset <- df_index_cats %>%
+    #   filter(Category == this_selected_cat)
+    index_description_text(df_index_cats)
+  })
   
 }

@@ -27,15 +27,15 @@ ui_tab1 <- function() {
         radioButtons("normPick", "Normalize values?", c("Yes", "No")),
       ),
       card(
-        h4("Key West"),
+        h4("Key West, FL"),
         dygraphOutput("p1_plot_ts_keywest"),
       ),
       card(
-        h4("May River"),
+        h4("May River, SC"),
         dygraphOutput("p1_plot_ts_mayriver"),
       ),
       card(
-        h4("Caesar Creek"),
+        h4("Biscayne Bay, FL"),
         dygraphOutput("p1_plot_ts_caesarcreek"),
       ),
       card(
@@ -43,19 +43,19 @@ ui_tab1 <- function() {
         dygraphOutput("p1_plot_ts_graysreef"),
       ),
       card(
-        h4("ONC"),
+        h4("ONC-MEF"),
         dygraphOutput("p1_plot_ts_onc"),
       ),
       card(
-        h4("Chuckchi Sea"),
+        h4("Chukchi Sea, Hanna Shoal"),
         dygraphOutput("p1_plot_ts_chuckchi"),
       ),
       card(
-        h4("OOI"),
+        h4("OOI-HYDBBA106"),
         dygraphOutput("p1_plot_ts_ooi"),
       ),
       card(
-        h4("SanctSound"),
+        h4("Olowalu (Maui, HI)"),
         dygraphOutput("p1_plot_ts_sanctsound"),
       ),
     ),
