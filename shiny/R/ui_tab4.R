@@ -32,6 +32,11 @@ ui_tab4 <- function() {
         ui_datasetPicker("t4_datasetPick", unique_datasets, FALSE),
         ui_srPicker("t4_srPick"),
         
+        br(),
+        br(),
+        br(),
+        br(),
+        
         p(tags$b("Select an index for the lower two plots:")),
         
         ui_catPicker("t4_catPick"),
@@ -45,13 +50,13 @@ ui_tab4 <- function() {
       ),
       
       card(
-        h4("Index values: Location vs Hour of Day", height=400),
-        plotOutput("p4_plot_hour_location_heatmap")
+        h4("Index values: Location vs Hour of Day"),
+        plotOutput("p4_plot_hour_location_heatmap", height = 600)
       ),
       
       card(
-        h4("Index values: Days vs Hour of Day", height=350),
-        plotOutput("p4_plot_hour_day_heatmap")
+        h4("Index values: Days vs Hour of Day"),
+        plotOutput("p4_plot_hour_day_heatmap", height = 550)
       ),
       
       card(

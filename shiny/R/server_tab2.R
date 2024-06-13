@@ -131,7 +131,7 @@ server_tab2 <- function(input, output, session) {
                            color=~Labels, size=~count,
                            showlegend=TRUE)
     
-    return(p)
+    custom_plotly(p)
   })
   
   # PLOT 2
@@ -157,9 +157,7 @@ server_tab2 <- function(input, output, session) {
       scale_y_continuous(limits = quantile(df_spp$index, c(min_scale, max_scale)))
       labs(title = paste0(selected_index(), ": Species and Presence"),
            x = "Annotation", y = "Index", fill = NULL) +
-      theme_minimal() +
-      theme(text = element_text(size = 14))
-    
+
     print(p2)
   })
   

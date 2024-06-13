@@ -19,6 +19,15 @@ ui_tab3 <- function() {
       remotely sensed data (null values excluded), 8-days distribution summaries 
       for the selected index, and a regression plot between the two variables."
     ),
+    p("Buffers of 0.55 squared degrees were created surrounding each 
+      hydrophone’s location resulting in approximately 60 km by 60 km 
+      shapefiles. Additional information regarding the remotely sensed data is 
+      available on the ",
+      tags$a("Data Processing and Management",
+             href="https://ocean-science-analytics.github.io/biosound-explorato
+             ry-project/data.html#environmental-data-using-seascaper",
+             target="_blank"),
+      " page of documentation."),
     p("Data are reported at their native sampling rate and duration."),
     
     layout_sidebar(
@@ -42,7 +51,7 @@ ui_tab3 <- function() {
       ),
       
       card(
-        plotOutput("t3_plot_heatmap", height = 300),
+        plotOutput("t3_plot_heatmap", height = 600),
       ),
       
       layout_column_wrap(

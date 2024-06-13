@@ -254,16 +254,54 @@ server_tab3 <- function(input, output, session) {
   ##### PLOTS
 
   # Heatmap
+
+  # output$t3_plot_heatmap <- renderPlot({
+  #   req(df_heatmap())
+  #   
+  #   print(df_heatmap())
+  #   
+  #   df_heat <- df_heatmap()
+  # 
+  #   pheatmap(df_heat,
+  #            cluster_rows = FALSE,
+  #            cluster_cols = FALSE,
+  #            na_col = "grey",
+  #            display_numbers = FALSE,
+  #            main = "Correlations: index vs water class",
+  #            fontsize = 14,         # Main text font size
+  #            fontsize_row = 13,     # Row names font size
+  #            fontsize_col = 13      # Column names font size
+  #   )
+  # })
+
   output$t3_plot_heatmap <- renderPlot({
     req(df_heatmap())
     
-    pheatmap(df_heatmap(),
-             cluster_rows = FALSE,
-             cluster_cols = FALSE,
-             na_col = "grey",
-             display_numbers = FALSE,
-             main = "Correlations: index vs water class")
+    df_heat <- df_heatmap()
+    
+    # Convert data frame to long format using reshape2::melt
+    df_heat_long <- reshape2::melt(as.matrix(df_heat))
+    
+    diverging_colors <- colorRampPalette(c("blue", "white", "red"))
+    
+    
+    # Create levelplot
+    levelplot(
+      value ~ Var2 * Var1, 
+      data = df_heat_long,
+      col.regions = diverging_colors,
+      at = seq(min(df_heat_long$value, na.rm = TRUE), max(df_heat_long$value, na.rm = TRUE), length = 100),
+      ylab = list(label = "Index", cex = 1.4),
+      xlab = list(label = "Water Class", cex = 1.4),
+      main = "Correlations: index vs water class",
+      scales = list(x = list(cex = 1.3), y = list(cex = 1.3)), # Font sizes for axis labels
+      colorkey = list(labels = list(cex = 1.3)), # Font size for color key
+      panel = function(...) {
+        panel.levelplot(...)
+      }
+    )
   })
+  
 
   # Water classes
   output$t3_plot_waterclasses <- renderPlot({
@@ -272,7 +310,7 @@ server_tab3 <- function(input, output, session) {
     p <- ggplot(df_water(), aes(x = date, y=pct, fill=class)) +
       geom_area(alpha = 0.5) +
       geom_area(aes(color = class), fill = NA, linewidth = .7) +
-      theme_minimal() +
+      # theme_minimal() +
       labs(
         y="Water class percentage",
         x=NULL)
@@ -297,9 +335,17 @@ server_tab3 <- function(input, output, session) {
     
     p2 <- ggplot(index_data, aes(x=date, y=index)) +
       geom_boxplot(outlier.shape = outlier_shape) +
-      scale_y_continuous(limits = quantile(index_data$index, c(min_scale, max_scale))) +
-      theme_minimal()
-    
+      scale_y_continuous(
+        limits = quantile(
+          index_data$index, 
+          c(min_scale, max_scale)
+          )
+        ) +
+      labs(
+        y="Index",
+        x="Date")
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
     return(p2)
   })
   
@@ -314,7 +360,6 @@ server_tab3 <- function(input, output, session) {
     p3 <- ggplot(this_combo, aes(x=mean, y=pct, color=class)) + 
       geom_smooth(method = "lm", se = TRUE) +
       geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
-      theme_minimal() + 
       labs(y="Water class percentage", x="Mean index value") +    
       theme(legend.position = "none") +
       annotate("text", x = Inf, y = Inf, 

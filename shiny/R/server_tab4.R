@@ -183,6 +183,9 @@ server_tab4 <- function(input, output, session) {
   
   ##########################################################
   # PLOTTING
+  # # Set the theme for the lattice plot (not working)
+  # trellis.par.set(custom_lattice_font_theme)
+  
   
   # HEATMAP 1
   output$p4_plot_hour_heatmap <- renderPlot({
@@ -195,18 +198,28 @@ server_tab4 <- function(input, output, session) {
     df_h <- df_h %>% filter(index %in% index_subset)
     
     # Sort the dataframe based on the 'index' column
-    df_h <- df_h[order(df_h$index, decreasing = TRUE), ]
-    
+    df_h <- df_h[order(df_h$index, decreasing = FALSE), ]
+
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+    
     p1 <- levelplot(
-      norm ~ factor(index, levels = unique(df_h$index)) * as.factor(hour),
+      norm ~ factor(index, levels = unique(df_h$index)) * 
+        factor(hour, levels = rev(unique(df_h$hour))),
       data = df_h,
-      ylab = "Hour of Day",
-      xlab = "Index",
+      ylab = list(label = "Hour of Day", cex = 1.4),
+      xlab = list(label = "Index", cex = 1.4),
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 30))  
-    )  
+      scales = list(
+        x = list(rot = 25, cex = 1.3),
+        y = list(cex = 1.3)
+      ),
+      par.settings = list(
+        strip.background = list(col = "white"),
+        strip.shingle = list(col = "white"),
+        par.strip.text = list(cex = 1.3)
+      )
+    )
     return(p1)
   })
   
@@ -220,14 +233,23 @@ server_tab4 <- function(input, output, session) {
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     p2 <- levelplot(
-      norm ~ as.factor(Dataset) * as.factor(hour),
+      norm ~ as.factor(Dataset) * 
+        factor(hour, levels = rev(unique(df_hour_location$hour))),
       data = df_hour_location,
-      ylab = "Hour of Day",
-      xlab = "Dataset",
+      ylab = list(label = "Hour of Day", cex = 1.4),
+      xlab = list(label = "Dataset", cex = 1.4),
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 30)) 
-    )  
+      scales = list(
+        x = list(rot = 25, cex = 1.3),
+        y = list(cex = 1.3)
+      ),
+      par.settings = list(
+        strip.background = list(col = "white"),
+        strip.shingle = list(col = "white"),
+        par.strip.text = list(cex = 1.3)
+      )
+    )
     return(p2)
   })
   
@@ -240,15 +262,25 @@ server_tab4 <- function(input, output, session) {
     print(names(df_hour_day))
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+    
     p3 <- levelplot(
-      norm ~ as.factor(day) * as.factor(hour),
+      norm ~ as.factor(day) * 
+        factor(hour, levels = rev(unique(df_hour_day$hour))),
       data = df_hour_day,
-      ylab = "Hour of Day",
-      xlab = "Date",
+      ylab = list(label = "Hour of Day", cex = 1.4),
+      xlab = list(label = "Date", cex = 1.4),
       col.regions = diverging_colors,
       colorkey = TRUE,
-      scales = list(x = list(rot = 30)) 
-    )  
+      scales = list(
+        x = list(rot = 45, cex = 1.3),
+        y = list(cex = 1.3)
+      ),
+      par.settings = list(
+        strip.background = list(col = "white"),
+        strip.shingle = list(col = "white"),
+        par.strip.text = list(cex = 1.3)
+      )
+    )
     return(p3)
   })
   
