@@ -1,5 +1,10 @@
+library(ggplot2)
+library(lattice)
+library(dygraphs)
+library(plotly)
+
 # Set ggplot2 theme globally
-custom_theme <- theme_minimal(base_size = 16) + 
+custom_theme <- theme_minimal(base_size = 16) +
   theme(
     text = element_text(size = 16),
     axis.title = element_text(size = 18),
