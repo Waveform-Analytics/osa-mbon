@@ -5,7 +5,7 @@
 # READ FROM DATABASE
 
 # Establish connection to DuckDB
-con <- dbConnect(duckdb::duckdb(), "data/mbon10.duckdb")
+con <- dbConnect(duckdb::duckdb(), "data/mbon11.duckdb")
 
 # Key West Annotations
 df_fish_keywest <- dbReadTable(con, "t_fish_keywest") %>%

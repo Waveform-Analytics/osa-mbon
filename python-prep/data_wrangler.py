@@ -321,31 +321,6 @@ def prep_seascaper_data(data_folder: str, df_config: pd.DataFrame) -> pd.DataFra
     return pd.concat(s_list)
 
 
-# def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFrame:
-#     """
-#     Convert start_time and end_time columns to local time using the df_config time zone information
-#
-#     Args:
-#         df_in: dataframe that contains start_time and end_time columns that are in pandas datetime format
-#         df_config: config file with columns for time zones: "tz in file" and "tz local"
-#
-#     Returns:
-#         dataframe: dataframe with updated time zones for start_time and end_time columns
-#
-#     """
-#     df_in["tz_file"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz in file"])))
-#     df_in["tz_local"] = df_in["Dataset"].map(dict(zip(df_config["Dataset"], df_config["tz local"])))
-#
-#     # Set the time zone to the zone specified in the tz_file column and then convert to local time using tz_local
-#     df_in["start_time"] = df_in.apply(
-#         lambda row: row['start_time'].tz_localize(row['tz_file'],
-#                                                   nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
-#     df_in["end_time"] = df_in.apply(
-#         lambda row: row['end_time'].tz_localize(row['tz_file'],
-#                                                   nonexistent='shift_forward').tz_convert(row['tz_local']), axis=1)
-#
-#     return df_in
-
 def update_time_zone(df_in: pd.DataFrame, df_config: pd.DataFrame) -> pd.DataFrame:
     """
     Convert start_time and end_time columns to local time using the df_config time zone information

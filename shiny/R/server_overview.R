@@ -33,7 +33,8 @@ server_overview <- function(input, output, session) {
           "<p><strong>Contact:</strong> ", clicked_marker$Contact, "</p>",
           "<p><strong>Sample rate (kHz):</strong> ", clicked_marker$`Sampling Rate (kHz)`, "</p>",
           "<p><strong>Recording Cycle:</strong> ", clicked_marker$`Recording Cycle`, "</p>",
-          "<p><strong>Ecosystem Type:</strong> ", clicked_marker$`Ecosystem Type`, "</p>"
+          "<p><strong>Ecosystem Type:</strong> ", clicked_marker$`Ecosystem Type`, "</p>",
+          "<p><strong>Instrument depth:</strong> ", clicked_marker$`Instrument Depth (m)`, " m</p>"
 
         ))
         
