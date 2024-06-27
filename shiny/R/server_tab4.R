@@ -28,17 +28,17 @@ server_tab4 <- function(input, output, session) {
     req(selected_dataset(), get_dataset(), selected_sr())
     
     dataset <- selected_dataset()
-    this_dataset <- get_dataset()
+    this_dataset <- get_dataset() %>% filter(month == 2)
     sr <- selected_sr()
     
     duration_subset <- this_dataset %>%
-      filter(Dataset == dataset, Sampling_Rate_kHz == sr, month == 2) %>%
+      filter(Dataset == dataset, Sampling_Rate_kHz == sr) %>%
       distinct(Duration_sec) %>%
       pull(Duration_sec)
     
     # Filtered Data Subset
     this_subset_df <-
-      fcn_filterAco(get_dataset(), dataset, sr, duration_subset[1])
+      fcn_filterAco(this_dataset, dataset, sr, duration_subset[1])
     
     # Add hour of day column, make it a factor
     this_subset_df$hour <- hour(this_subset_df$start_time)
@@ -49,15 +49,16 @@ server_tab4 <- function(input, output, session) {
   
   # Get a subset with all datasets
   df_subset_all <- reactive({
-    req(get_dataset(), selected_sr())
+    req(get_dataset())
     
     this_dataset <- get_dataset()
-    sr <- selected_sr()
     
     this_dataset$hour <- hour(this_dataset$start_time)
+    this_dataset$month <- month(this_dataset$start_time)
     
     this_dataset %>% 
-      filter(Sampling_Rate_kHz == 16) %>%
+      filter(Sampling_Rate_kHz == 16,
+             month == 2) %>% 
       group_by(Dataset) %>%
       filter(Duration_sec == max(Duration_sec)) %>%
       ungroup()  
@@ -140,6 +141,12 @@ server_tab4 <- function(input, output, session) {
     
     this_index <- selected_index()
     sub_df <- subset_df()
+    
+    unique_months <- sub_df %>%
+      distinct(month) %>%
+      pull(month)
+    
+    print(unique_months)
     
     df_hour_date <-
       sub_df %>%
