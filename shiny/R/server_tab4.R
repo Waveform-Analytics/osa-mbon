@@ -142,11 +142,6 @@ server_tab4 <- function(input, output, session) {
     this_index <- selected_index()
     sub_df <- subset_df()
     
-    unique_months <- sub_df %>%
-      distinct(month) %>%
-      pull(month)
-    
-    print(unique_months)
     
     df_hour_date <-
       sub_df %>%
@@ -236,8 +231,6 @@ server_tab4 <- function(input, output, session) {
     
     df_hour_location <- df_hour_location_norm()
     
-    print(names(df_hour_location))
-    
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     p2 <- levelplot(
       norm ~ as.factor(Dataset) * 
@@ -265,8 +258,6 @@ server_tab4 <- function(input, output, session) {
     req(df_hour_day_norm())
     
     df_hour_day <- df_hour_day_norm()
-    
-    print(names(df_hour_day))
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     

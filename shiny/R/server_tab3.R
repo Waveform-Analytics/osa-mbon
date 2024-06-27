@@ -129,7 +129,9 @@ server_tab3 <- function(input, output, session) {
                         right = FALSE),
              date = as.POSIXct(date)) %>%
       rename(index = all_of(selected_index()))
+    df_idx_temp$date_plain <- df_idx_temp$date
     df_idx_temp$date <- as.factor(df_idx_temp$date)
+    
     return(df_idx_temp)
   })
   
@@ -255,25 +257,6 @@ server_tab3 <- function(input, output, session) {
 
   # Heatmap
 
-  # output$t3_plot_heatmap <- renderPlot({
-  #   req(df_heatmap())
-  #   
-  #   print(df_heatmap())
-  #   
-  #   df_heat <- df_heatmap()
-  # 
-  #   pheatmap(df_heat,
-  #            cluster_rows = FALSE,
-  #            cluster_cols = FALSE,
-  #            na_col = "grey",
-  #            display_numbers = FALSE,
-  #            main = "Correlations: index vs water class",
-  #            fontsize = 14,         # Main text font size
-  #            fontsize_row = 13,     # Row names font size
-  #            fontsize_col = 13      # Column names font size
-  #   )
-  # })
-
   output$t3_plot_heatmap <- renderPlot({
     req(df_heatmap())
     
@@ -287,13 +270,12 @@ server_tab3 <- function(input, output, session) {
     
     # Create levelplot
     levelplot(
-      value ~ Var2 * Var1, 
+      value ~ factor(Var2) * factor(Var1), 
       data = df_heat_long,
       col.regions = diverging_colors,
       at = seq(min(df_heat_long$value, na.rm = TRUE), max(df_heat_long$value, na.rm = TRUE), length = 100),
       ylab = list(label = "Index", cex = 1.4),
       xlab = list(label = "Water Class", cex = 1.4),
-      main = "Correlations: index vs water class",
       scales = list(x = list(cex = 1.3), y = list(cex = 1.3)), # Font sizes for axis labels
       colorkey = list(labels = list(cex = 1.3)), # Font size for color key
       panel = function(...) {
@@ -310,9 +292,8 @@ server_tab3 <- function(input, output, session) {
     p <- ggplot(df_water(), aes(x = date, y=pct, fill=class)) +
       geom_area(alpha = 0.5) +
       geom_area(aes(color = class), fill = NA, linewidth = .7) +
-      # theme_minimal() +
       labs(
-        y="Water class percentage",
+        y="Percentage (%)",
         x=NULL)
     
     return(p)
@@ -323,6 +304,8 @@ server_tab3 <- function(input, output, session) {
     req(df_idx())
     
     index_data <- df_idx()
+    
+    str(index_data)
     
     # # With outliers:
     # min_scale <- 0
@@ -343,8 +326,8 @@ server_tab3 <- function(input, output, session) {
         ) +
       labs(
         y="Index",
-        x="Date")
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+        x=NULL) +
+      theme(axis.text.x = element_text(angle = 25, hjust = 1)) 
 
     return(p2)
   })

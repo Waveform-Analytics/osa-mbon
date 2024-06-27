@@ -51,25 +51,29 @@ ui_tab3 <- function() {
       ),
       
       card(
+        p(tags$b("Plot 1: Correlations - Index vs Water Class")),
         plotOutput("t3_plot_heatmap", height = 600),
       ),
       
       layout_column_wrap(
         width = 1/2,
-        height = 500,
+        height = 550,
          
         layout_column_wrap(
           width = 1,
           heights_equal = "row",
           card(
+            p(tags$b("Plot 2: Water class proportions over time")),
             plotOutput("t3_plot_waterclasses")
           ),
           card(
+            p(tags$b("Plot 3: Boxplot - selected indices over time")),
             plotOutput("t3_plot_boxplot")
           )
         ),
         
         card(
+          p(tags$b("Plot 4: Water class % vs mean index value")),
           plotOutput("t3_plot_corr"),
         ),
 
