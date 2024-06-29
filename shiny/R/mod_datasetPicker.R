@@ -2,7 +2,7 @@
 ui_datasetPicker <- function(id, unique_datasets_sub, multiselect) {
   selectInput(
     NS(id, "datasetPick"),
-    "Select Dataset",
+    "Select Dataset:",
     choices = unique_datasets_sub,
     selected = unique_datasets_sub[1],
     multiple = multiselect

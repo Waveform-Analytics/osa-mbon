@@ -33,7 +33,7 @@ ui_tab4 <- function() {
         title = "Options",
 
         p(tags$b("Step 1")),
-        p("Select a dataset. This will update Plots 1 and 3"),
+        p("Select a dataset. This will update Plots 1 and 3."),
         ui_datasetPicker("t4_datasetPick", unique_datasets, FALSE),
         
         br(),

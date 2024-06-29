@@ -5,6 +5,11 @@ ui_tab3 <- function() {
     br(),
     h2("Water Classes"),
     p(
+      "The objective of this analysis is to relate acoustic indices to 
+      available, remotely sensed environmental data from each region to evaluate 
+      any relationships with indices"
+      ),
+    p(
       "Water class data were obtained using the MBON SeascapeR tool and custom 
       shapefiles for each site. For information on the underlying remotely 
       sensed environmental data contributing to each class, visit the ",
@@ -35,17 +40,24 @@ ui_tab3 <- function() {
       sidebar = sidebar(
         title = "Options",
         
+        p(tags$b("Step 1")),
+        p("Select a dataset. This will update all plots."),
         ui_datasetPicker("t3_datasetPick", unique_datasets, FALSE),
         
         br(),
-        
-        strong("Lower figures:"),
-        
-        # ui_indexPicker("t3_indexPick", FALSE),
-        
+        p(tags$b("Step 2")),
+        p("Select an index category. You'll see Plot 1 update to show the 
+          selected subset."), 
         ui_catPicker("t3_catPick"),
+        
+        br(),
+        p(tags$b("Step 3")),
+        p("Choose a single index to focus on. This will update Plots 3 and 4."),
         ui_subIndexPicker("t3_subIndexPick"),
         
+        br(),
+        p(tags$b("Step 4")),
+        p("Select a water class option. This will update Plot 4."),
         ui_classPicker("t3_classPick", FALSE)
         
       ),

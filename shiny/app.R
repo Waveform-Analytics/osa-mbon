@@ -1,4 +1,5 @@
 # Data Prep
+source("R/required_packages.R")
 source("data/prep_data.R")
 
 

@@ -3,7 +3,7 @@ ui_catPicker <- function(id) {
   ns <- NS(id)
   selectInput(
     ns("catPick"),
-    "Select Index Cateogry:",
+    "Select Index Category:",
     choices = unique_index_types
   )
 }
