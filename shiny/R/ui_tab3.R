@@ -33,7 +33,11 @@ ui_tab3 <- function() {
              ry-project/data.html#environmental-data-using-seascaper",
              target="_blank"),
       " page of documentation."),
-    p("Data are reported at their native sampling rate and duration."),
+    p("Data are reported at their native sampling rate and duration. Data for 
+      the correlation Plot 1 correspond to all data processed (1-3 months)  
+      NOTE: If correlation values are blank, this is because data from that 
+      water class do not occur during the period that overlaps with index 
+      information."),
     
     layout_sidebar(
       fillable=FALSE,
