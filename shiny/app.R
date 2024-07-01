@@ -10,6 +10,9 @@ ui <- page_navbar(
   theme = bs_theme(bootswatch = "minty"),
   fillable = FALSE,
   
+  # Include the custom CSS file globally
+  includeCSS("www/styles.css"),
+  
   nav_panel(title = "Overview", ui_overview),
   
   nav_panel(

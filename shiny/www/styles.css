@@ -1,0 +1,10 @@
+/* www/styles.css */
+.sidebar {
+  background-color: #e9ecef !important;
+  opacity: 1 !important;
+}
+
+.navbar-brand {
+  white-space: normal;
+  word-wrap: break-word;
+}
