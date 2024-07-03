@@ -22,6 +22,8 @@ ui_tab2 <- function(unq_datasets_ann) {
         title = "Options",
         # User selections
         ui_datasetPicker("t2_datasetPick", unq_datasets_ann, FALSE),
+        ui_srPicker("t2_srPick"),
+        
         ui_indexPicker("t2_indexPick", FALSE),
         ui_speciesPicker("t2_speciesPick", TRUE),
         br(),

@@ -11,16 +11,26 @@ server_tab2 <- function(input, output, session) {
   # Species drop down selector
   selected_species <- server_speciesPicker("t2_speciesPick", selected_dataset)
   
-  # Sample Rate list
-  selected_sr <- reactive({
-    req(selected_dataset())
-    sr_subset <- df_aco_norm %>%
-      filter(Dataset == selected_dataset()) %>%
-      distinct(Sampling_Rate_kHz) %>%
-      pull(Sampling_Rate_kHz)
-    # sr_subset[1]
-    max(sr_subset)
+  # Hard coding the normalized dataset and making it reactive
+  get_dataset <- reactive({
+    df_aco_norm$month = month(df_aco_norm$start_time)
+    df_aco_norm
   })
+  
+  # Sample rate selector
+  selected_sr <- server_srPicker("t2_srPick", get_dataset, selected_dataset)
+  
+  
+  # # Sample Rate list
+  # selected_sr <- reactive({
+  #   req(selected_dataset())
+  #   sr_subset <- df_aco_norm %>%
+  #     filter(Dataset == selected_dataset()) %>%
+  #     distinct(Sampling_Rate_kHz) %>%
+  #     pull(Sampling_Rate_kHz)
+  #   # sr_subset[1]
+  #   max(sr_subset)
+  # })
   
   # Duration list
   selected_duration <- reactive({
