@@ -8,3 +8,25 @@
   white-space: normal;
   word-wrap: break-word;
 }
+
+.responsive-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap; /* This ensures the content wraps on small screens */
+}
+
+.responsive-container img {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.responsive-container em {
+  flex: 1;
+  color: #828181; 
+  margin-bottom: 10px;
+  margin-left: 10px;
+  
+}
+
+

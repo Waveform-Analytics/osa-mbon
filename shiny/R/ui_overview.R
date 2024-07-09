@@ -1,4 +1,29 @@
 ui_overview <- fluidPage(
+  
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+  
+  tags$div(
+    
+    class = "responsive-container",
+    
+    style = "display: flex; align-items: center; margin-bottom: 10px;",
+    # Logo to the left
+    tags$img(src = "MBON-logo.png", height = "30px", style = "margin-right: 10px;"),
+    # Info text in italic
+    tags$em(
+      "This work was supported by the U.S. Marine Biodiversity Observation Network 
+    (MBON) co-organized by NOAA, NASA, BOEM, and ONR through the National 
+    Oceanographic Partnership Program (NOPP)."
+    )
+  ),
+
+  # Light horizontal line
+  tags$hr(style = "border-color: gray;"),
+  
+  br(),
+  
   h1("Project overview"),
   p(
     "The passive acoustic data used for this exploratory project are derived 
