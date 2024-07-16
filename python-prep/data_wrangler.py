@@ -35,7 +35,8 @@ def get_fish_presence(df_in, df_fishes, df_codes):
     """
     unq_codes = df_codes["code"].unique()
 
-    df_fishes_sorted = df_fishes.sort_values("start_time").reset_index(drop=True)
+    df_fishes_sorted = (df_fishes.sort_values("start_time").
+                        reset_index(drop=True))
 
     if (df_in["Dataset"].iloc[0] == "Key West, FL") | (df_in["Dataset"].iloc[0] == "May River, SC"):
         df_fishes_sorted["code"] = df_fishes_sorted["Labels"]
@@ -44,7 +45,6 @@ def get_fish_presence(df_in, df_fishes, df_codes):
 
     df_out = df_in.copy()
     for cidx, code in enumerate(unq_codes):
-        # print("Code #" + str(cidx+1) + " of " + str(len(unq_codes)))
         df_this_species = df_fishes_sorted[df_fishes_sorted["code"] == code]
 
         # Convert to numpy.datetime64 for consistent comparison
@@ -121,13 +121,21 @@ def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd
     # Arrange the mayriver dataframe, so it looks more like the keywest annotations
     df_long = df_mayriver.melt(id_vars=['start_time', 'end_time'],
                                value_vars=['Silver perch',
-                                           'Silver perch interruption', 'Oyster toadfish boat whistle',
-                                           'Oyster toadfish grunt', 'Oyster toadfish interruption', 'Black drum',
-                                           'Black drum interruption', 'Spotted seatrout',
-                                           'Spotted seatrout interruption', 'Red drum', 'Red drum interruption',
-                                           'Atlantic croaker', 'Weakfish', 'Fish interruption cause',
-                                           'Bottlenose dolphin echolocation', 'Bottlenose dolphin burst pulses',
-                                           'Bottlenose dolphin whistles', 'Vessel'],
+                                           'Silver perch interruption',
+                                           'Oyster toadfish boat whistle',
+                                           'Oyster toadfish grunt',
+                                           'Oyster toadfish interruption',
+                                           'Black drum',
+                                           'Black drum interruption',
+                                           'Spotted seatrout',
+                                           'Spotted seatrout interruption',
+                                           'Red drum', 'Red drum interruption',
+                                           'Atlantic croaker', 'Weakfish',
+                                           'Fish interruption cause',
+                                           'Bottlenose dolphin echolocation',
+                                           'Bottlenose dolphin burst pulses',
+                                           'Bottlenose dolphin whistles',
+                                           'Vessel'],
                                var_name='species', value_name='is_present')
     df_final = df_long[df_long['is_present'] != 0].copy()
     mr_codes = df_codes[df_codes["Dataset"] == "May River, SC"]
@@ -135,11 +143,7 @@ def annotation_prep_mr_style(file_name: str, output_file_path: str, df_codes: pd
     df_final.dropna(subset=["species"], inplace=True)
 
     # Rename columns using rename method
-    df_final = df_final.rename(columns={'species': 'Labels'})
-
-    # # Convert to strings so that it can be read into R later
-    # df_final['start_time'] = df_final['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
-    # df_final['end_time'] = df_final['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    df_final = df_final.rename(columns={"species": "Labels"})
 
     df_final.to_csv(output_file_path, index=False)
 
@@ -173,8 +177,9 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
     # Convert to pandas datetime
     df_aco['start_time'] = pd.to_datetime(df_aco['Date'])
     # Drop duplicate rows
-    df_aco = df_aco.drop_duplicates(subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
-                                            'Thresholds_Hz', 'Filename', "file_id"], keep="first")
+    df_aco = df_aco.drop_duplicates(
+        subset=['Date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec',
+                'Thresholds_Hz', 'Filename', "file_id"], keep="first")
 
     # Generate an "end_time" column in df_aco_norm
     # Sort by start_time and file_id
@@ -193,10 +198,6 @@ def prep_index_data(input_folder: str, normalize: bool= False) -> pd.DataFrame:
 
     # Fix: Correct typo
     df_aco['Dataset'] = df_aco['Dataset'].replace('Caser Creek', 'Caesar Creek')
-
-    # # Convert to strings so that it can be read into R later
-    # df_aco['start_time'] = df_aco['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
-    # df_aco['end_time'] = df_aco['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
     if normalize:
         return normalize_df(df_aco, df_aco.columns[7:-2])

@@ -20,18 +20,6 @@ server_tab2 <- function(input, output, session) {
   # Sample rate selector
   selected_sr <- server_srPicker("t2_srPick", get_dataset, selected_dataset)
   
-  
-  # # Sample Rate list
-  # selected_sr <- reactive({
-  #   req(selected_dataset())
-  #   sr_subset <- df_aco_norm %>%
-  #     filter(Dataset == selected_dataset()) %>%
-  #     distinct(Sampling_Rate_kHz) %>%
-  #     pull(Sampling_Rate_kHz)
-  #   # sr_subset[1]
-  #   max(sr_subset)
-  # })
-  
   # Duration list
   selected_duration <- reactive({
     req(selected_dataset(), selected_sr())

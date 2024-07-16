@@ -4,6 +4,6 @@ jupyterlab>=3
 ipywidgets>=7.6
 dash
 jupyter-dash
-dash-bootstrap-components
 openpyxl
 duckdb
+pandas

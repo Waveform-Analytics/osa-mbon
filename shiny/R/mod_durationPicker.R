@@ -22,7 +22,8 @@ server_durationPicker <- function(id, dataset, datasetPick, srPick) {
         distinct(Duration_sec) %>%
         pull(Duration_sec)
 
-      updateSelectInput(session, "durationPick", choices = unique_duration_pick)
+      updateSelectInput(session, "durationPick", 
+                        choices = unique_duration_pick)
     })
 
     return(reactive({input$durationPick}))
