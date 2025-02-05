@@ -48,16 +48,41 @@ server_tab5 <- function(input, output, session) {
       arrange(start_time)
   })
   
-  # PLOT
+  # Plot generation function
+  generate_duration_plot <- function() {
+    req(df_durations())
+    
+    # For static version (for download), create a ggplot
+    df_plot <- df_durations()
+    
+    # Convert to long format for ggplot
+    df_long <- df_plot %>%
+      tidyr::pivot_longer(
+        cols = -start_time,
+        names_to = "Duration",
+        values_to = "Value"
+      )
+    
+    ggplot(df_long, aes(x = start_time, y = Value, color = Duration)) +
+      geom_line() +
+      labs(x = "Time", y = "Value") +
+      theme_minimal() +
+      theme(
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white"),
+        legend.position = "bottom",
+        legend.title = element_blank()
+      )
+  }
+  
+  # Interactive plot output
   output$t5_plot_duration <- renderDygraph({
     req(df_durations())
     
-    p <- dygraph(df_durations(), x = "start_time") %>%
+    dygraph(df_durations(), x = "start_time") %>%
       dyRangeSelector(height = 30)
-    
-    return(p)
   })
   
-  
-  
+  # Download handler
+  output$download_duration <- create_download_handler("ggplot", generate_duration_plot, "duration_comparison")
 }

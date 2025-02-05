@@ -255,20 +255,12 @@ server_tab3 <- function(input, output, session) {
   #######################################################################
   ##### PLOTS
 
-  # Heatmap
-
-  output$t3_plot_heatmap <- renderPlot({
+  # Plot generation functions
+  generate_heatmap <- function() {
     req(df_heatmap())
-    
     df_heat <- df_heatmap()
-    
-    # Convert data frame to long format using reshape2::melt
     df_heat_long <- reshape2::melt(as.matrix(df_heat))
-    
     diverging_colors <- colorRampPalette(c("blue", "white", "red"))
-    
-    
-    # Create levelplot
     levelplot(
       value ~ factor(Var2) * factor(Var1), 
       data = df_heat_long,
@@ -276,83 +268,66 @@ server_tab3 <- function(input, output, session) {
       at = seq(min(df_heat_long$value, na.rm = TRUE), max(df_heat_long$value, na.rm = TRUE), length = 100),
       ylab = list(label = "Index", cex = 1.4),
       xlab = list(label = "Water Class", cex = 1.4),
-      scales = list(x = list(cex = 1.3), y = list(cex = 1.3)), # Font sizes for axis labels
-      colorkey = list(labels = list(cex = 1.3)), # Font size for color key
-      panel = function(...) {
-        panel.levelplot(...)
-      }
+      scales = list(x = list(cex = 1.3), y = list(cex = 1.3)),
+      colorkey = list(labels = list(cex = 1.3))
     )
-  })
-  
+  }
 
-  # Water classes
-  output$t3_plot_waterclasses <- renderPlot({
+  generate_waterclasses <- function() {
     req(df_water())
-    
-    p <- ggplot(df_water(), aes(x = date, y=pct, fill=class)) +
+    ggplot(df_water(), aes(x = date, y=pct, fill=class)) +
       geom_area(alpha = 0.5) +
       geom_area(aes(color = class), fill = NA, linewidth = .7) +
-      labs(
-        y="Percentage (%)",
-        x=NULL)
-    
-    return(p)
-  })
-  
-  # Boxplot
-  output$t3_plot_boxplot <- renderPlot({
-    req(df_idx())
-    
-    index_data <- df_idx()
-    
-    str(index_data)
-    
-    # # With outliers:
-    # min_scale <- 0
-    # max_scale <- 1
-    # outlier_shape <- 19
-    # No outliers:
-    outlier_shape <- NA
-    min_scale <- 0.1
-    max_scale <- 0.9
-    
-    p2 <- ggplot(index_data, aes(x=date, y=index)) +
-      geom_boxplot(outlier.shape = outlier_shape) +
-      scale_y_continuous(
-        limits = quantile(
-          index_data$index, 
-          c(min_scale, max_scale)
-          )
-        ) +
-      labs(
-        y="Index",
-        x=NULL) +
-      theme(axis.text.x = element_text(angle = 25, hjust = 1)) 
+      labs(y="Percentage (%)", x=NULL)
+  }
 
-    return(p2)
-  })
-  
-  # Corr plot
-  output$t3_plot_corr <- renderPlot({
+  generate_boxplot <- function() {
+    req(df_idx())
+    ggplot(df_idx(), aes(x=date, y=index)) +
+      geom_boxplot(outlier.shape = NA) +
+      scale_y_continuous(
+        limits = quantile(df_idx()$index, c(0.1, 0.9))
+      ) +
+      labs(y="Index", x=NULL) +
+      theme(axis.text.x = element_text(angle = 25, hjust = 1))
+  }
+
+  generate_corrplot <- function() {
     req(this_df_combo())
-    
     this_combo <- this_df_combo()
-    
     model <- lm(pct ~ mean, data = this_combo)
-    
-    p3 <- ggplot(this_combo, aes(x=mean, y=pct, color=class)) + 
+    ggplot(this_combo, aes(x=mean, y=pct, color=class)) + 
       geom_smooth(method = "lm", se = TRUE) +
       geom_point(shape = 21, size = 3, fill = NA, stroke = 1.5) +  
       labs(y="Water class percentage", x="Mean index value") +    
       theme(legend.position = "none") +
       annotate("text", x = Inf, y = Inf, 
                label = sprintf("y = %.1fx + %.1f\nR² = %.2f",
-                               coef(model)[2], coef(model)[1], 
-                               summary(model)$r.squared),
+                             coef(model)[2], coef(model)[1], 
+                             summary(model)$r.squared),
                hjust = 1.1, vjust = 1.1, size = 5)
-    
-    return(p3)
-    
+  }
+
+  # Plot outputs
+  output$t3_plot_heatmap <- renderPlot({
+    generate_heatmap()
+  })
+
+  output$t3_plot_waterclasses <- renderPlot({
+    generate_waterclasses()
+  })
+
+  output$t3_plot_boxplot <- renderPlot({
+    generate_boxplot()
+  })
+
+  output$t3_plot_corr <- renderPlot({
+    generate_corrplot()
   })
     
+  # Download handlers
+  output$download_heatmap <- create_download_handler("trellis", generate_heatmap, "heatmap_plot")
+  output$download_waterclasses <- create_download_handler("ggplot", generate_waterclasses, "waterclasses_plot")
+  output$download_boxplot <- create_download_handler("ggplot", generate_boxplot, "boxplot_plot")
+  output$download_corr <- create_download_handler("ggplot", generate_corrplot, "correlation_plot")
 }

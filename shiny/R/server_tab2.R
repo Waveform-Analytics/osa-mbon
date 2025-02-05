@@ -108,6 +108,62 @@ server_tab2 <- function(input, output, session) {
   ########################################################################
   # PLOTTING
   
+  # Plot generation functions
+  generate_ts_plot <- function() {
+    req(df_indexPicks(), df_present(), selected_index())
+    
+    # Extract the necessary data
+    index_data <- df_indexPicks() %>% arrange(start_time)
+    present_data <- df_present() %>% arrange(start_time)
+    
+    # For static version (for download), create a ggplot
+    p <- ggplot() +
+      # Add the time series line
+      geom_line(data = index_data, 
+                aes(x = start_time, y = index),
+                color = 'gray') +
+      # Add the points for annotations
+      geom_point(data = present_data,
+                aes(x = start_time, y = index, 
+                    color = Labels, size = count)) +
+      labs(x = "Time", y = "Index") +
+      theme_minimal() +
+      theme(
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white"),
+        legend.position = "right",
+        legend.title = element_blank()
+      )
+    
+    return(p)
+  }
+  
+  generate_box_plot <- function() {
+    req(df_ann_spp(), selected_index())
+    
+    df_spp <- df_ann_spp()
+    
+    # No outliers
+    outlier_shape <- NA
+    min_scale <- 0.1
+    max_scale <- 0.9
+    
+    # Create the plot
+    p2 <- ggplot(df_spp, aes(x = Labels, y = index, fill = is_present)) +
+      geom_boxplot(outlier.shape = outlier_shape) +
+      scale_y_continuous(limits = quantile(df_spp$index, c(min_scale, max_scale))) +
+      labs(title = paste0(selected_index(), ": Species and Presence"),
+           x = "Annotation", y = "Index", fill = NULL) +
+      theme_minimal() +
+      theme(
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white")
+      )
+    
+    return(p2)
+  }
+
+  # Interactive plotly output
   output$p2_plot_ts <- renderPlotly({
     req(df_indexPicks(), df_present(), selected_index())
     
@@ -118,46 +174,26 @@ server_tab2 <- function(input, output, session) {
     # Start by plotting present data with species color
     p <- plot_ly()
     
-    p <- p %>% add_trace(data=index_data, 
-                         x=~start_time, y=~index,
-                         type='scatter', mode='lines', 
-                         line = list(color = 'gray'),
-                         showlegend=FALSE)
+    p <- p %>% add_trace(data = index_data, 
+                        x = ~start_time, y = ~index,
+                        type = 'scatter', mode = 'lines', 
+                        line = list(color = 'gray'),
+                        showlegend = FALSE)
     
-    p <- p %>% add_markers(data=present_data, name=~Labels,
-                           x=~start_time, y=~index, 
-                           color=~Labels, size=~count,
-                           showlegend=TRUE)
+    p <- p %>% add_markers(data = present_data, name = ~Labels,
+                          x = ~start_time, y = ~index, 
+                          color = ~Labels, size = ~count,
+                          showlegend = TRUE)
     
     custom_plotly(p)
   })
   
-  # PLOT 2
+  # Static ggplot output
   output$p2_plot_box <- renderPlot({
-    req(df_ann_spp(), selected_index())
-    
-    df_spp <- df_ann_spp()
-    
-    # TODO: make this a user option. 
-    # # With outliers:
-    # min_scale <- 0
-    # max_scale <- 1
-    # outlier_shape <- 19
-    
-    # No outliers:
-    outlier_shape <- NA
-    min_scale <- 0.1
-    max_scale <- 0.9
-    
-    # Create the plot
-    p2 <- ggplot(df_spp, aes(x=Labels, y=index, fill=is_present)) +
-      geom_boxplot(outlier.shape = outlier_shape) +
-      scale_y_continuous(limits = quantile(df_spp$index, c(min_scale, max_scale)))
-      labs(title = paste0(selected_index(), ": Species and Presence"),
-           x = "Annotation", y = "Index", fill = NULL) +
-
-    print(p2)
+    print(generate_box_plot())
   })
   
-  
+  # Download handlers
+  output$download_ts <- create_download_handler("ggplot", generate_ts_plot, "timeseries_plot")
+  output$download_box <- create_download_handler("ggplot", generate_box_plot, "boxplot_plot")
 }

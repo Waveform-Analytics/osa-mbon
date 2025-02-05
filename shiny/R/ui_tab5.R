@@ -25,6 +25,7 @@ ui_tab5 <- function() {
       card(
         # A comparison of different durations for a single selected dataset
         dygraphOutput("t5_plot_duration"),
+        downloadButton("download_duration", "Download Plot")
       ),
     ),
   )

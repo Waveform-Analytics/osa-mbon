@@ -185,12 +185,9 @@ server_tab4 <- function(input, output, session) {
   
   ##########################################################
   # PLOTTING
-  # # Set the theme for the lattice plot (not working)
-  # trellis.par.set(custom_lattice_font_theme)
   
-  
-  # HEATMAP 1
-  output$p4_plot_hour_heatmap <- renderPlot({
+  # Plot generation functions
+  generate_heatmap1 <- function() {
     req(df_hours(), index_cats_subset())
     
     df_h <- df_hours()
@@ -204,7 +201,7 @@ server_tab4 <- function(input, output, session) {
 
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     
-    p1 <- levelplot(
+    levelplot(
       norm ~ factor(index, levels = unique(df_h$index)) * 
         factor(hour, levels = rev(unique(df_h$hour))),
       data = df_h,
@@ -222,17 +219,15 @@ server_tab4 <- function(input, output, session) {
         par.strip.text = list(cex = 1.3)
       )
     )
-    return(p1)
-  })
-  
-  # HEATMAP 2
-  output$p4_plot_hour_location_heatmap <- renderPlot({
+  }
+
+  generate_heatmap2 <- function() {
     req(df_hour_location_norm())
     
     df_hour_location <- df_hour_location_norm()
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
-    p2 <- levelplot(
+    levelplot(
       norm ~ as.factor(Dataset) * 
         factor(hour, levels = rev(unique(df_hour_location$hour))),
       data = df_hour_location,
@@ -250,18 +245,16 @@ server_tab4 <- function(input, output, session) {
         par.strip.text = list(cex = 1.3)
       )
     )
-    return(p2)
-  })
-  
-  # HEATMAP 3
-  output$p4_plot_hour_day_heatmap <- renderPlot({
+  }
+
+  generate_heatmap3 <- function() {
     req(df_hour_day_norm())
     
     df_hour_day <- df_hour_day_norm()
     
     diverging_colors <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
     
-    p3 <- levelplot(
+    levelplot(
       norm ~ as.factor(day) * 
         factor(hour, levels = rev(unique(df_hour_day$hour))),
       data = df_hour_day,
@@ -279,7 +272,23 @@ server_tab4 <- function(input, output, session) {
         par.strip.text = list(cex = 1.3)
       )
     )
-    return(p3)
+  }
+
+  # Plot outputs
+  output$p4_plot_hour_heatmap <- renderPlot({
+    print(generate_heatmap1())
   })
   
+  output$p4_plot_hour_location_heatmap <- renderPlot({
+    print(generate_heatmap2())
+  })
+  
+  output$p4_plot_hour_day_heatmap <- renderPlot({
+    print(generate_heatmap3())
+  })
+  
+  # Download handlers
+  output$download_heatmap1 <- create_download_handler("trellis", generate_heatmap1, "index_hour_heatmap")
+  output$download_heatmap2 <- create_download_handler("trellis", generate_heatmap2, "location_hour_heatmap")
+  output$download_heatmap3 <- create_download_handler("trellis", generate_heatmap3, "day_hour_heatmap")
 }
