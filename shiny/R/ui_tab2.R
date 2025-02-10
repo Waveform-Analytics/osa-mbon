@@ -41,12 +41,20 @@ ui_tab2 <- function(unq_datasets_ann) {
       ),
       layout_columns(
         card(
+          p(tags$b("Plot 1: Time series with annotations")),
           plotlyOutput("p2_plot_ts"),
-          downloadButton("download_ts", "Download Time Series Plot")
+          div(style = "display: flex; gap: 10px;",
+            downloadButton("download_ts", "Plot"),
+            downloadButton("download_ts_data", "Data")
+          )
         ),
         card(
+          p(tags$b("Plot 2: Index values by species")),
           plotOutput("p2_plot_box"),
-          downloadButton("download_box", "Download Box Plot")
+          div(style = "display: flex; gap: 10px;",
+            downloadButton("download_box", "Plot"),
+            downloadButton("download_box_data", "Data")
+          )
         )
       )
     )

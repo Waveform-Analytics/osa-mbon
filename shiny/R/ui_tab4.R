@@ -58,19 +58,28 @@ ui_tab4 <- function() {
       card(
         h4("Plot 1: Index values vs Hour of Day"),
         plotOutput("p4_plot_hour_heatmap", height = 600),
-        downloadButton("download_heatmap1", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_heatmap1", "Plot"),
+          downloadButton("download_heatmap1_data", "Data")
+        )
       ),
       
       card(
         h4("Plot 2: Index values: Location vs Hour of Day"),
         plotOutput("p4_plot_hour_location_heatmap", height = 600),
-        downloadButton("download_heatmap2", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_heatmap2", "Plot"),
+          downloadButton("download_heatmap2_data", "Data")
+        )
       ),
       
       card(
         h4("Plot 3: Index values: Days vs Hour of Day"),
         plotOutput("p4_plot_hour_day_heatmap", height = 550),
-        downloadButton("download_heatmap3", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_heatmap3", "Plot"),
+          downloadButton("download_heatmap3_data", "Data")
+        )
       ),
       
       card(

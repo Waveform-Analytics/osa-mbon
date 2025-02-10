@@ -117,4 +117,77 @@ server_tab1 <- function(input, output, session) {
   output$download_chuckchi <- create_download_handler("dygraph", generate_chuckchi_plot, "chuckchi_plot")
   output$download_ooi <- create_download_handler("dygraph", generate_ooi_plot, "ooi_plot")
   output$download_sanctsound <- create_download_handler("dygraph", generate_sanctsound_plot, "sanctsound_plot")
+  
+  # Data download handlers
+  output$download_keywest_data <- downloadHandler(
+    filename = function() {
+      paste0("keywest_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_keywest(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_mayriver_data <- downloadHandler(
+    filename = function() {
+      paste0("mayriver_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_mayriver(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_caesarcreek_data <- downloadHandler(
+    filename = function() {
+      paste0("caesarcreek_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_caesarcreek(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_graysreef_data <- downloadHandler(
+    filename = function() {
+      paste0("graysreef_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_graysreef(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_onc_data <- downloadHandler(
+    filename = function() {
+      paste0("onc_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_onc(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_chuckchi_data <- downloadHandler(
+    filename = function() {
+      paste0("chuckchi_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_chuckchi(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_ooi_data <- downloadHandler(
+    filename = function() {
+      paste0("ooi_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_ooi(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_sanctsound_data <- downloadHandler(
+    filename = function() {
+      paste0("sanctsound_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_subset_sanctsound(), file, row.names = FALSE)
+    }
+  )
 }

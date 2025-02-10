@@ -291,4 +291,32 @@ server_tab4 <- function(input, output, session) {
   output$download_heatmap1 <- create_download_handler("trellis", generate_heatmap1, "index_hour_heatmap")
   output$download_heatmap2 <- create_download_handler("trellis", generate_heatmap2, "location_hour_heatmap")
   output$download_heatmap3 <- create_download_handler("trellis", generate_heatmap3, "day_hour_heatmap")
+  
+  # Data download handlers
+  output$download_heatmap1_data <- downloadHandler(
+    filename = function() {
+      paste0("index_hour_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_hour(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_heatmap2_data <- downloadHandler(
+    filename = function() {
+      paste0("location_hour_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_hour_location(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_heatmap3_data <- downloadHandler(
+    filename = function() {
+      paste0("day_hour_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      write.csv(df_hour_day(), file, row.names = FALSE)
+    }
+  )
 }

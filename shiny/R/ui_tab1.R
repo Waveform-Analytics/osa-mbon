@@ -29,42 +29,66 @@ ui_tab1 <- function() {
       card(
         h4("Key West, FL"),
         dygraphOutput("p1_plot_ts_keywest"),
-        downloadButton("download_keywest", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_keywest", "Plot"),
+          downloadButton("download_keywest_data", "Data")
+        )
       ),
       card(
         h4("May River, SC"),
         dygraphOutput("p1_plot_ts_mayriver"),
-        downloadButton("download_mayriver", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_mayriver", "Plot"),
+          downloadButton("download_mayriver_data", "Data")
+        )
       ),
       card(
         h4("Biscayne Bay, FL"),
         dygraphOutput("p1_plot_ts_caesarcreek"),
-        downloadButton("download_caesarcreek", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_caesarcreek", "Plot"),
+          downloadButton("download_caesarcreek_data", "Data")
+        )
       ),
       card(
         h4("Gray's Reef"),
         dygraphOutput("p1_plot_ts_graysreef"),
-        downloadButton("download_graysreef", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_graysreef", "Plot"),
+          downloadButton("download_graysreef_data", "Data")
+        )
       ),
       card(
         h4("ONC-MEF"),
         dygraphOutput("p1_plot_ts_onc"),
-        downloadButton("download_onc", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_onc", "Plot"),
+          downloadButton("download_onc_data", "Data")
+        )
       ),
       card(
         h4("Chukchi Sea, Hanna Shoal"),
         dygraphOutput("p1_plot_ts_chuckchi"),
-        downloadButton("download_chuckchi", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_chuckchi", "Plot"),
+          downloadButton("download_chuckchi_data", "Data")
+        )
       ),
       card(
         h4("OOI-HYDBBA106"),
         dygraphOutput("p1_plot_ts_ooi"),
-        downloadButton("download_ooi", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_ooi", "Plot"),
+          downloadButton("download_ooi_data", "Data")
+        )
       ),
       card(
         h4("Olowalu (Maui, HI)"),
         dygraphOutput("p1_plot_ts_sanctsound"),
-        downloadButton("download_sanctsound", "Download Plot")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_sanctsound", "Plot"),
+          downloadButton("download_sanctsound_data", "Data")
+        )
       )
     )
   )

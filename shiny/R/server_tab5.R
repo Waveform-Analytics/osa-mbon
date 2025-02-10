@@ -85,4 +85,21 @@ server_tab5 <- function(input, output, session) {
   
   # Download handler
   output$download_duration <- create_download_handler("ggplot", generate_duration_plot, "duration_comparison")
+  
+  # Download handler for data
+  output$download_duration_data <- downloadHandler(
+    filename = function() {
+      paste0("duration_comparison_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      # Get the data in long format for easier interpretation
+      data_to_export <- df_durations() %>%
+        tidyr::pivot_longer(
+          cols = -start_time,
+          names_to = "Duration_sec",
+          values_to = "Value"
+        )
+      write.csv(data_to_export, file, row.names = FALSE)
+    }
+  )
 }

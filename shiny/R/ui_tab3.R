@@ -75,7 +75,10 @@ ui_tab3 <- function() {
       card(
         p(tags$b("Plot 1: Correlations - Index vs Water Class")),
         plotOutput("t3_plot_heatmap", height = 600),
-        downloadButton("download_heatmap", "Download Heatmap")
+        div(style = "display: flex; gap: 10px;",
+          downloadButton("download_heatmap", "Plot"),
+          downloadButton("download_heatmap_data", "Data")
+        )
       ),
       
       layout_column_wrap(
@@ -88,19 +91,28 @@ ui_tab3 <- function() {
           card(
             p(tags$b("Plot 2: Water class proportions over time")),
             plotOutput("t3_plot_waterclasses"),
-            downloadButton("download_waterclasses", "Download Water Classes")
+            div(style = "display: flex; gap: 10px;",
+              downloadButton("download_waterclasses", "Plot"),
+              downloadButton("download_waterclasses_data", "Data")
+            )
           ),
           card(
             p(tags$b("Plot 3: Boxplot - selected indices over time")),
             plotOutput("t3_plot_boxplot"),
-            downloadButton("download_boxplot", "Download Boxplot")
+            div(style = "display: flex; gap: 10px;",
+              downloadButton("download_boxplot", "Plot"),
+              downloadButton("download_boxplot_data", "Data")
+            )
           )
         ),
         
         card(
           p(tags$b("Plot 4: Water class % vs mean index value")),
           plotOutput("t3_plot_corr"),
-          downloadButton("download_corr", "Download Correlation Plot")
+          div(style = "display: flex; gap: 10px;",
+            downloadButton("download_corr", "Plot"),
+            downloadButton("download_corr_data", "Data")
+          )
         )
       )
     )
