@@ -324,47 +324,10 @@ server_tab3 <- function(input, output, session) {
   output$t3_plot_corr <- renderPlot({
     generate_corrplot()
   })
-    
+  
   # Download handlers
   output$download_heatmap <- create_download_handler("trellis", generate_heatmap, "heatmap_plot")
   output$download_waterclasses <- create_download_handler("ggplot", generate_waterclasses, "waterclasses_plot")
   output$download_boxplot <- create_download_handler("ggplot", generate_boxplot, "boxplot_plot")
   output$download_corr <- create_download_handler("ggplot", generate_corrplot, "correlation_plot")
-  
-  # Data download handlers
-  output$download_heatmap_data <- downloadHandler(
-    filename = function() {
-      paste0("heatmap_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      write.csv(df_heatmap(), file, row.names = FALSE)
-    }
-  )
-  
-  output$download_waterclasses_data <- downloadHandler(
-    filename = function() {
-      paste0("waterclasses_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      write.csv(df_water(), file, row.names = FALSE)
-    }
-  )
-  
-  output$download_boxplot_data <- downloadHandler(
-    filename = function() {
-      paste0("boxplot_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      write.csv(df_idx(), file, row.names = FALSE)
-    }
-  )
-  
-  output$download_corr_data <- downloadHandler(
-    filename = function() {
-      paste0("correlation_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      write.csv(this_df_combo(), file, row.names = FALSE)
-    }
-  )
 }

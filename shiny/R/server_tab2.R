@@ -196,26 +196,4 @@ server_tab2 <- function(input, output, session) {
   # Download handlers
   output$download_ts <- create_download_handler("ggplot", generate_ts_plot, "timeseries_plot")
   output$download_box <- create_download_handler("ggplot", generate_box_plot, "boxplot_plot")
-  
-  # Data download handlers
-  output$download_ts_data <- downloadHandler(
-    filename = function() {
-      paste0("timeseries_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      # Combine the time series data with annotations
-      data_to_export <- df_present() %>%
-        select(start_time, index, Labels, count)
-      write.csv(data_to_export, file, row.names = FALSE)
-    }
-  )
-  
-  output$download_box_data <- downloadHandler(
-    filename = function() {
-      paste0("boxplot_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
-    },
-    content = function(file) {
-      write.csv(df_ann_spp(), file, row.names = FALSE)
-    }
-  )
 }
