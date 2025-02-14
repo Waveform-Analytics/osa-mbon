@@ -7,3 +7,4 @@ jupyter-dash
 openpyxl
 duckdb
 pandas
+marimo
