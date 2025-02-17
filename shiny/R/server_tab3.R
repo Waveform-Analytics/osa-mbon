@@ -336,4 +336,21 @@ server_tab3 <- function(input, output, session) {
   output$download_waterclasses <- create_download_handler("ggplot", generate_waterclasses, "waterclasses_plot")
   output$download_boxplot <- create_download_handler("ggplot", generate_boxplot, "boxplot_plot")
   output$download_corr <- create_download_handler("ggplot", generate_corrplot, "correlation_plot")
+  
+  # Download handler for heatmap data
+  output$download_heatmap_data <- downloadHandler(
+    filename = function() {
+      paste0("correlation_heatmap_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+    },
+    content = function(file) {
+      # Get the heatmap data and add row names as a column
+      df_out <- df_heatmap()
+      df_out$Index <- rownames(df_out)
+      
+      # Reorder columns to put Index first
+      df_out <- df_out[, c("Index", setdiff(names(df_out), "Index"))]
+      
+      write.csv(df_out, file, row.names = FALSE)
+    }
+  )
 }

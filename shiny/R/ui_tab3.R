@@ -72,7 +72,11 @@ ui_tab3 <- function() {
       card(
         p(tags$b("Plot 1: Correlations - Index vs Water Class")),
         plotOutput("t3_plot_heatmap", height = 600),
-        downloadButton("download_heatmap", "Plot")
+        div(
+          style = "display: flex; gap: 10px;",
+          downloadButton("download_heatmap", "Plot"),
+          downloadButton("download_heatmap_data", "Data")
+        )
       ),
       
       layout_column_wrap(
