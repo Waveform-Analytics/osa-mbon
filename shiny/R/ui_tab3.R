@@ -25,16 +25,13 @@ ui_tab3 <- function() {
       "for the selected index, and a regression plot between the two variables."
     ),
     p(
-      "Buffers of 0.55 squared degrees were created surrounding each ",
-      "hydrophone's location resulting in approximately 60 km by 60 km ",
-      "shapefiles. Additional information regarding the remotely sensed data is ",
-      "available on the ",
-      tags$a(
-        "Data Processing and Management",
-        href = "https://ocean-science-analytics.github.io/biosound-exploratory-project/data.html#environmental-data-using-seascaper",
-        target = "_blank"
-      ),
-      " page of documentation."
+      "Buffers of 0.55 squared degrees were created surrounding each hydrophone's ",
+      "location. The resulting study area was described by a grid of 60 km × 60 km ",
+      "spatial cells, each covering an area of 3,600 km². Shapefiles of this extent ",
+      "were generated for each area, ensuring a consistent spatial framework. Within ",
+      "each 60 km × 60 km spatial block, the tool outputs values on a finer grid ",
+      "resolution of 0.05° × 0.05° in a geographic coordinate system, producing water ", 
+      "class values in approximately 5.6 km × 5.6 km cells"
     ),
     p(
       "Data are reported at their native sampling rate and duration. Data for ",
