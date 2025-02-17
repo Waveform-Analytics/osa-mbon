@@ -8,6 +8,7 @@ library(lubridate)
 library(dplyr)
 library(readr)
 library(purrr)
+library(zoo)  # For na.approx and time series functions
 # Plotting
 library(corrplot)
 library(ggplot2)

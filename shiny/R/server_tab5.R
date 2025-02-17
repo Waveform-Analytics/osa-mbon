@@ -40,12 +40,14 @@ server_tab5 <- function(input, output, session) {
       pivot_wider(
         names_from = Duration_sec,
         values_from = all_of(selected_index()),
-        values_fill = list(value = NA) # Ensure NA is filled for missing values
+        values_fill = list(value = NA)
       ) %>%
       group_by(start_time) %>%
-      summarize(across(everything(), ~ max(.x, na.rm = TRUE))) %>%
+      summarize(across(everything(), ~ if(all(is.na(.x))) NA else max(.x, na.rm = TRUE))) %>%
       select(start_time, all_of(unq_durations)) %>%
-      arrange(start_time)
+      arrange(start_time) %>%
+      # Fill small gaps to ensure continuous lines
+      mutate(across(-start_time, ~ na.approx(.x, maxgap = 2, na.rm = FALSE)))
   })
   
   # Plot generation function

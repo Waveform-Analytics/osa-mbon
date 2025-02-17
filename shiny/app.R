@@ -3,7 +3,6 @@ source("R/required_packages.R")
 source("data/prep_data.R")
 source("R/plot_utils.R")
 
-
 # UI - Big Picture
 ui <- page_navbar(
 
