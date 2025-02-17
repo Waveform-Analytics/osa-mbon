@@ -82,9 +82,27 @@ plt.show()
 
 # 5. Explore relationships between indices and water classes
 # Convert date_formatted to just date and not date/time
-df_aco['day'] = pd.to_datetime(df_aco['date_formatted']).dt.date
+df_aco['date'] = pd.to_datetime(df_aco['date_formatted']).dt.date
+# Re-convert the 'date' column back to pandas datetime64
+df_aco['date'] = pd.to_datetime(df_aco['date'])
 # take the daily median of each index (index_columns) from df_aco.
-df_aco_daily = df_aco.groupby(['day', 'Dataset'])[index_columns].median().reset_index()
+df_aco_daily = df_aco.groupby(['date', 'Dataset'])[index_columns].median().reset_index()
 # merge df_aco with df_seascaper on the date_formatted column
-merged_df = pd.merge(df_aco, df_seascaper, on='date_formatted', how='inner')
+merged_df = pd.merge(df_aco_daily, df_seascaper, on='date')
 
+
+
+# Step 1: Filter relevant columns from merged_df
+# Assume 'cellvalue' from df_seascaper, 'location', and indices from df_aco_daily are in merged_df
+columns_to_plot = ['cellvalue'] + index_columns + ['Dataset_y']  # Replace 'location' with the actual column name if different
+df_plot = merged_df[columns_to_plot]
+
+# Step 2: Iterate and plot each acoustic index vs cellvalue
+for index in index_columns:
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df_plot, x=index, y='cellvalue', hue='Dataset_y', palette='viridis')
+    plt.title(f"{index} vs Cellvalue (Split by Location)")
+    plt.xlabel(index)
+    plt.ylabel("Cellvalue")
+    plt.legend(title="Location_y")
+    plt.show()
