@@ -2,6 +2,7 @@ import duckdb
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 # Connect to the DuckDB database
 data_file_name = "../shiny/data/mbon11.duckdb"
@@ -46,10 +47,10 @@ df_aco['date'] = pd.to_datetime(df_aco['date'])
 # take the daily median of each index (index_columns) from df_aco.
 df_aco_daily = df_aco.groupby(['date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'])[index_columns].median().reset_index()
 # merge df_aco with df_seascaper on the date_formatted column
-merged_df = pd.merge(df_aco_daily, df_seascaper, on='date')
+merged_df = pd.merge(df_aco_daily, df_seascaper, on=['date', 'Dataset'])
 
 # Clean up daily data and save
-keep_columns_daily = ['date', 'Dataset_y', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'] + prefixes + ['cellvalue', 'n_cells']
+keep_columns_daily = ['date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'] + prefixes + ['cellvalue', 'n_cells']
 df_merged_clean = merged_df[keep_columns_daily].dropna()
 #df_merged_clean.to_csv("daily_data.csv")
 
@@ -62,3 +63,50 @@ df_aco_norm_clean = df_aco_norm_clean[
 ]
 #df_aco_norm_clean.to_csv("index_data.csv")
 #df_aco_norm.to_csv("index_data_all-cols.csv")
+
+## correlating index vs water columns
+datasets = np.unique(df_merged_clean['Dataset'])
+sample_rate = 16
+
+# Create a dictionary to store correlations, then convert to DataFrame
+correlation_results = {}
+
+for dataset in datasets:
+    df_dataset = df_merged_clean[(df_merged_clean['Dataset'] == dataset)]
+    df_dataset = df_dataset[df_dataset['Sampling_Rate_kHz'] == df_dataset['Sampling_Rate_kHz'].max]
+    df_dataset.loc[:, 'pct'] = df_dataset.groupby('date')['n_cells'].transform(lambda x: x / x.sum() * 100)
+
+    water_classes = np.unique(df_dataset['cellvalue'])
+
+    # Initialize nested dictionary for this dataset
+    correlation_results[dataset] = {}
+
+    for water_class in water_classes:
+        df_class = df_dataset[df_dataset['cellvalue'] == water_class]
+        # Initialize dictionary for this water class
+        correlation_results[dataset][f'Class_{water_class}'] = {}
+
+        for idx in prefixes:
+            df_idx_sub = df_class[idx]
+            df_class_sub = df_class['pct']
+            corr = np.corrcoef(df_idx_sub.values, df_class_sub.values)[0, 1]
+            correlation_results[dataset][f'Class_{water_class}'][idx] = corr
+
+# Convert to DataFrame - one table per dataset
+correlation_tables = {}
+for dataset in correlation_results:
+    correlation_tables[dataset] = pd.DataFrame(correlation_results[dataset]).round(3)
+
+# Display tables
+for dataset, corr_table in correlation_tables.items():
+    print(f"\nCorrelations for {dataset}:")
+    print(corr_table)
+
+    # Optionally create heatmaps for visual interpretation
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_table, annot=True, cmap='RdBu_r', center=0, vmin=-1, vmax=1)
+    plt.title(f'Index-Water Class Correlations: {dataset}')
+    plt.ylabel('Acoustic Indices')
+    plt.xlabel('Water Classes')
+    plt.tight_layout()
+    plt.show()
