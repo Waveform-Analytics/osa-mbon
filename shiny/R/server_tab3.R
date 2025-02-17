@@ -56,19 +56,25 @@ server_tab3 <- function(input, output, session) {
   })
   
   unique_classes <- reactive({
-    req(df_seascaper_sub())
-    as.character(df_seascaper_sub() %>%
-                   distinct(cellvalue) %>%
-                   pull())
-  })
-  
-  unique_classes_numeric <-  reactive({
-    req(df_seascaper_sub())
+    req(df_seascaper_sub(), df_idx())
     
-    df_seascaper_sub() %>%
+    # Get dates that have index data
+    index_dates <- unique(df_idx()$date)
+    
+    # Filter water class data to only include dates with index data
+    overlapping_classes <- df_seascaper_sub() %>%
+      mutate(date = as.factor(date)) %>%
+      filter(date %in% index_dates) %>%
       distinct(cellvalue) %>%
       arrange(cellvalue) %>%
       pull()
+    
+    as.character(overlapping_classes)
+  })
+  
+  unique_classes_numeric <-  reactive({
+    req(unique_classes())
+    as.numeric(unique_classes())
   })
   
   # Prepare water class data

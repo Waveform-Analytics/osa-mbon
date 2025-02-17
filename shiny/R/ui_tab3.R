@@ -80,19 +80,19 @@ ui_tab3 <- function() {
       
       layout_column_wrap(
         width = 1/2,
-        height = 550,
+        height = 700,
         
         layout_column_wrap(
           width = 1,
           heights_equal = "row",
           card(
             p(tags$b("Plot 2: Water class proportions over time")),
-            plotOutput("t3_plot_waterclasses"),
+            plotOutput("t3_plot_waterclasses", height = "400px"),
             downloadButton("download_waterclasses", "Plot")
           ),
           card(
             p(tags$b("Plot 3: Boxplot - selected indices over time")),
-            plotOutput("t3_plot_boxplot"),
+            plotOutput("t3_plot_boxplot", height = "400px"),
             downloadButton("download_boxplot", "Plot")
           )
         ),
