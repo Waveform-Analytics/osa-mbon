@@ -147,3 +147,4 @@ cython_debug/
 /shiny/rsconnect
 
 .Rproj.user
+python-prep/index_data_all-cols.csv
