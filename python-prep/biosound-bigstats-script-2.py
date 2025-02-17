@@ -44,12 +44,12 @@ df_aco['date'] = pd.to_datetime(df_aco['date_formatted']).dt.date
 # Re-convert the 'date' column back to pandas datetime64
 df_aco['date'] = pd.to_datetime(df_aco['date'])
 # take the daily median of each index (index_columns) from df_aco.
-df_aco_daily = df_aco.groupby(['date', 'Dataset'])[index_columns].median().reset_index()
+df_aco_daily = df_aco.groupby(['date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'])[index_columns].median().reset_index()
 # merge df_aco with df_seascaper on the date_formatted column
 merged_df = pd.merge(df_aco_daily, df_seascaper, on='date')
 
 # Clean up daily data and save
-keep_columns_daily = ['date', 'Dataset_y'] + prefixes + ['cellvalue', 'n_cells']
+keep_columns_daily = ['date', 'Dataset_y', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'] + prefixes + ['cellvalue', 'n_cells']
 df_merged_clean = merged_df[keep_columns_daily].dropna()
 #df_merged_clean.to_csv("daily_data.csv")
 
@@ -61,3 +61,4 @@ df_aco_norm_clean = df_aco_norm_clean[
     (df_aco_norm_clean['Date'].dt.month == 2) & (df_aco_norm_clean['Sampling_Rate_kHz'] == 16)
 ]
 #df_aco_norm_clean.to_csv("index_data.csv")
+#df_aco_norm.to_csv("index_data_all-cols.csv")
