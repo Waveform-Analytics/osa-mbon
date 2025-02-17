@@ -332,7 +332,18 @@ server_tab3 <- function(input, output, session) {
   })
   
   # Download handlers
-  output$download_heatmap <- create_download_handler("trellis", generate_heatmap, "heatmap_plot")
+  output$download_heatmap <- downloadHandler(
+    filename = function() {
+      # Get current dataset selection and clean it for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      paste0("heatmap_plot_", dataset_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_heatmap())
+      dev.off()
+    }
+  )
   output$download_waterclasses <- create_download_handler("ggplot", generate_waterclasses, "waterclasses_plot")
   output$download_boxplot <- create_download_handler("ggplot", generate_boxplot, "boxplot_plot")
   output$download_corr <- create_download_handler("ggplot", generate_corrplot, "correlation_plot")
@@ -340,7 +351,9 @@ server_tab3 <- function(input, output, session) {
   # Download handler for heatmap data
   output$download_heatmap_data <- downloadHandler(
     filename = function() {
-      paste0("correlation_heatmap_data_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+      # Get current dataset selection and clean it for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      paste0("correlation_heatmap_", dataset_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
     },
     content = function(file) {
       # Get the heatmap data and add row names as a column
