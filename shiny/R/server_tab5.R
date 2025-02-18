@@ -86,5 +86,18 @@ server_tab5 <- function(input, output, session) {
   })
   
   # Download handler
-  output$download_duration <- create_download_handler("ggplot", generate_duration_plot, "duration_comparison")
+  output$download_duration <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("duration_comparison_", dataset_name, "_", index_name, "_",
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_duration_plot())
+      dev.off()
+    }
+  )
 }

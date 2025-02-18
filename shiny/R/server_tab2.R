@@ -194,6 +194,35 @@ server_tab2 <- function(input, output, session) {
   })
   
   # Download handlers
-  output$download_ts <- create_download_handler("ggplot", generate_ts_plot, "timeseries_plot")
-  output$download_box <- create_download_handler("ggplot", generate_box_plot, "boxplot_plot")
+  output$download_ts <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      sr_value <- gsub("[^[:alnum:]]", "_", as.character(selected_sr()))
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("timeseries_", dataset_name, "_", sr_value, "kHz_", index_name, "_",
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_ts_plot())
+      dev.off()
+    }
+  )
+
+  output$download_box <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      sr_value <- gsub("[^[:alnum:]]", "_", as.character(selected_sr()))
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("boxplot_", dataset_name, "_", sr_value, "kHz_", index_name, "_",
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_box_plot())
+      dev.off()
+    }
+  )
 }

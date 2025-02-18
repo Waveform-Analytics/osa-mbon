@@ -109,14 +109,109 @@ server_tab1 <- function(input, output, session) {
   })
 
   # Download handlers
-  output$download_keywest <- create_download_handler("dygraph", generate_keywest_plot, "keywest_plot")
-  output$download_mayriver <- create_download_handler("dygraph", generate_mayriver_plot, "mayriver_plot")
-  output$download_caesarcreek <- create_download_handler("dygraph", generate_caesarcreek_plot, "caesarcreek_plot")
-  output$download_graysreef <- create_download_handler("dygraph", generate_graysreef_plot, "graysreef_plot")
-  output$download_onc <- create_download_handler("dygraph", generate_onc_plot, "onc_plot")
-  output$download_chuckchi <- create_download_handler("dygraph", generate_chuckchi_plot, "chuckchi_plot")
-  output$download_ooi <- create_download_handler("dygraph", generate_ooi_plot, "ooi_plot")
-  output$download_sanctsound <- create_download_handler("dygraph", generate_sanctsound_plot, "sanctsound_plot")
+  output$download_keywest <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_Key_West_FL_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_keywest_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_mayriver <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_May_River_SC_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_mayriver_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_caesarcreek <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_Biscayne_Bay_FL_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_caesarcreek_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_graysreef <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_Grays_Reef_GA_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_graysreef_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_onc <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_ONC_MEF_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_onc_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_chuckchi <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_Chukchi_Sea_Hanna_Shoal_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_chuckchi_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_ooi <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_OOI_HYDBBA106_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_ooi_plot())
+      dev.off()
+    }
+  )
+  
+  output$download_sanctsound <- downloadHandler(
+    filename = function() {
+      indices <- paste(sort(selected_indices()), collapse = "_")
+      indices <- gsub("[^[:alnum:]]", "_", indices)
+      paste0("timeseries_Olowalu_Maui_HI_", indices, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_sanctsound_plot())
+      dev.off()
+    }
+  )
   
   # Data download handlers
   output$download_keywest_data <- downloadHandler(

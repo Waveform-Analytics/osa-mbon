@@ -288,7 +288,48 @@ server_tab4 <- function(input, output, session) {
   })
   
   # Download handlers
-  output$download_heatmap1 <- create_download_handler("trellis", generate_heatmap1, "index_hour_heatmap")
-  output$download_heatmap2 <- create_download_handler("trellis", generate_heatmap2, "location_hour_heatmap")
-  output$download_heatmap3 <- create_download_handler("trellis", generate_heatmap3, "day_hour_heatmap")
+  output$download_heatmap1 <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      sr_value <- gsub("[^[:alnum:]]", "_", as.character(selected_sr()))
+      paste0("index_hour_heatmap_", dataset_name, "_", sr_value, "kHz_", 
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_heatmap1())
+      dev.off()
+    }
+  )
+
+  output$download_heatmap2 <- downloadHandler(
+    filename = function() {
+      # Get current index selection and clean it for filename use
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("location_hour_heatmap_", index_name, "_16kHz_", 
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_heatmap2())
+      dev.off()
+    }
+  )
+
+  output$download_heatmap3 <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      sr_value <- gsub("[^[:alnum:]]", "_", as.character(selected_sr()))
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("day_hour_heatmap_", dataset_name, "_", sr_value, "kHz_", index_name, "_",
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_heatmap3())
+      dev.off()
+    }
+  )
 }

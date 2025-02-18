@@ -148,3 +148,4 @@ cython_debug/
 
 .Rproj.user
 python-prep/index_data_all-cols.csv
+/python-prep/data/

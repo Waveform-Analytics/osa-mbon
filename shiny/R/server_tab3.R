@@ -344,9 +344,49 @@ server_tab3 <- function(input, output, session) {
       dev.off()
     }
   )
-  output$download_waterclasses <- create_download_handler("ggplot", generate_waterclasses, "waterclasses_plot")
-  output$download_boxplot <- create_download_handler("ggplot", generate_boxplot, "boxplot_plot")
-  output$download_corr <- create_download_handler("ggplot", generate_corrplot, "correlation_plot")
+  
+  output$download_waterclasses <- downloadHandler(
+    filename = function() {
+      # Get current dataset selection and clean it for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      paste0("waterclasses_plot_", dataset_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_waterclasses())
+      dev.off()
+    }
+  )
+  
+  output$download_boxplot <- downloadHandler(
+    filename = function() {
+      # Get current dataset and index selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      paste0("boxplot_", dataset_name, "_", index_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_boxplot())
+      dev.off()
+    }
+  )
+  
+  output$download_corr <- downloadHandler(
+    filename = function() {
+      # Get current selections and clean them for filename use
+      dataset_name <- gsub("[^[:alnum:]]", "_", selected_dataset())
+      index_name <- gsub("[^[:alnum:]]", "_", selected_index())
+      class_name <- gsub("[^[:alnum:]]", "_", selected_class())
+      paste0("correlation_plot_", dataset_name, "_", index_name, "_class", class_name, "_", 
+             format(Sys.time(), "%Y%m%d_%H%M%S"), ".png")
+    },
+    content = function(file) {
+      png(file, width = 800, height = 600)
+      print(generate_corrplot())
+      dev.off()
+    }
+  )
   
   # Download handler for heatmap data
   output$download_heatmap_data <- downloadHandler(
