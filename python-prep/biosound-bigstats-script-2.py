@@ -30,8 +30,9 @@ df_aco['date_formatted'] = pd.to_datetime(df_aco['Date'])
 df_seascaper['date_formatted'] = pd.to_datetime(df_seascaper['date'])
 
 # Extract only the indices
-#prefixes = df_index_cats["Prefix"].tolist()
+# prefixes = df_aco.columns[7:-2].tolist()
 prefixes = ["ACI", "ZCR", "BGNt", "EVNtCount", "Ht", "ADI", "BI", "Hf", "NDSI", "MEANf", "SNRf"]
+
 # Filter df_aco columns based on the prefixes.
 # Select columns in df_aco whose names match the prefix list
 index_columns = [col for col in df_aco.columns if any (col == prefix for prefix in prefixes)]
@@ -52,7 +53,8 @@ merged_df = pd.merge(df_aco_daily, df_seascaper, on=['date', 'Dataset'])
 # Clean up daily data and save
 keep_columns_daily = ['date', 'Dataset', 'Sampling_Rate_kHz', 'FFT', 'Duration_sec'] + prefixes + ['cellvalue', 'n_cells']
 df_merged_clean = merged_df[keep_columns_daily].dropna()
-#df_merged_clean.to_csv("daily_data.csv")
+
+# df_merged_clean.to_csv("data/daily_data.csv")
 
 # Clean up index data and save
 keep_columns = ['Date', 'Dataset', 'Sampling_Rate_kHz', 'Duration_sec'] + prefixes
@@ -61,8 +63,8 @@ df_aco_norm_clean['Date'] = pd.to_datetime(df_aco_norm_clean['Date'])
 df_aco_norm_clean = df_aco_norm_clean[
     (df_aco_norm_clean['Date'].dt.month == 2) & (df_aco_norm_clean['Sampling_Rate_kHz'] == 16)
 ]
-#df_aco_norm_clean.to_csv("index_data.csv")
-#df_aco_norm.to_csv("index_data_all-cols.csv")
+#df_aco_norm_clean.to_csv("data/index_data.csv")
+#df_aco_norm.to_csv("data/index_data_all-cols.csv")
 
 ## correlating index vs water columns
 datasets = np.unique(df_merged_clean['Dataset'])
